@@ -1,0 +1,59 @@
+import commons.drive as drive
+import neptune.new as neptune
+import os
+import click
+from commons.exceptions import ArgumentError
+import logging
+
+__all__ = ["evaluate", "evaluate_group"]
+
+from commons.timing import command_success
+
+LOGGER = logging.getLogger(__name__)
+
+@click.group()
+def evaluate_group():
+    pass
+
+@evaluate_group.command()
+@click.option("--model", "-m", help="Name of the model to evaluate")
+def evaluate(model: str):
+    if model is None:
+        model = os.getenv("model")
+        if model is None:
+            raise ArgumentError("Provide model using '-m', '--model' or through environment variable 'model'")
+
+    NEPTUNE_API_TOKEN = os.getenv("NEPTUNE_API_TOKEN")
+    if NEPTUNE_API_TOKEN is None:
+        raise ArgumentError("'NEPTUNE_API_TOKEN' is not set.")
+    # Download test dataset
+    LOGGER.info("Getting test dataset")
+    # Generate predictions
+    LOGGER.info("Generating predictions from model")
+    # Compare predictions to labels
+    LOGGER.info("Comparing predictions to labels")
+
+    LOGGER.info("Storing results in Neptune")
+    command_success(LOGGER)
+    #run = neptune.init(
+    #    name=model_name,
+    #    project="lpiekarski/S-P-2137",
+    #    api_token
+    #
+    #    ="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIzMTQ4NTdmMy00OWRkLTQ2MmUtYWIwNC03MWVhZmM2MDQxNDMifQ==", #os.getenv("NEPTUNE_API_TOKEN")
+    #)
+
+    #params = {"learning_rate": 0.001, "optimizer": "Adam"}
+    #run["parameters"] = params
+
+    #for epoch in range(10):
+    #    run["train/loss"].log(0.9 ** epoch)
+
+    #run["eval/f1_score"] = 0.66
+
+    #run.stop()
+
+
+
+if __name__ == '__main__':
+    evaluate()

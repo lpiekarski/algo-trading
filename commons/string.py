@@ -1,0 +1,2 @@
+TAB = '\t'
+ENDLINE = '\n'
