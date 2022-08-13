@@ -1,4 +1,4 @@
-FROM ubuntu:stable
+FROM ubuntu:latest
 
 COPY files/ files/
 
