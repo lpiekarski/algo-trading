@@ -1,0 +1,27 @@
+name: Collect, predict and trade
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        run: apt-get install -y python && python -m venv venv --upgrade-deps && source venv/bin/activate && pip install -r requirements.txt
+
+      - name: Run collector
+        run: python bot.py -DLOG_FILE=logs/bot.log -DFILE_LOG_LEVEL=DEBUG collect
+
+      - name: Archive
+        uses: actions/upload-artifact@v3
+        with:
+          name: logs
+          path: |
+            **/*.log
