@@ -1,4 +1,5 @@
-from model.predictor import Predictor
+import pandas as pd
+import numpy as np
 
-class Default(Predictor):
-    pass
+def predict(X):
+    return np.zeros_like(X["Close"])
