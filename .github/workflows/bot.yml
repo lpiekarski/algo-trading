@@ -17,7 +17,7 @@ jobs:
         run: cd docker && docker build -t sp2137 . && cd ..
 
       - name: Run collector
-        run: docker run --rm -v $(pwd):/project -w /project sp2137 ./venv/bin/python bot.py -DLOG_FILE=logs/bot.log -DFILE_LOG_LEVEL=DEBUG collect
+        run: docker run --rm -v $(pwd):/project -w /project sp2137 ./venv/bin/python3 bot.py -DLOG_FILE=logs/bot.log -DFILE_LOG_LEVEL=DEBUG collect
 
       - name: Archive
         uses: actions/upload-artifact@v3
