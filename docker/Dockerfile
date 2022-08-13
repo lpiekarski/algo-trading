@@ -1,6 +1,7 @@
 FROM ubuntu:latest
 
 COPY files/ files/
+COPY ../requirements.txt requirements.txt
 
 RUN apt-get update
 RUN apt-get install -y $(cat files/dependencies.txt)
