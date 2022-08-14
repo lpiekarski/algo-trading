@@ -17,10 +17,10 @@ jobs:
         run: cd docker && docker build -t sp2137 . && cd ..
 
       - name: Run collector
-        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/collector.log -DFILE_LOG_LEVEL=DEBUG collect --date=latest --name=latest
+        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/collector.log -DFILE_LOG_LEVEL=DEBUG -DDATA_STORAGE_DIR=./project/data collect --date=latest --name=latest
 
       - name: Run predictor
-        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/predictor.log -DFILE_LOG_LEVEL=DEBUG predict --dataset=latest --output=prediction --model=default
+        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/predictor.log -DFILE_LOG_LEVEL=DEBUG -DDATA_STORAGE_DIR=./project/data predict --dataset=latest --output=prediction --model=default
 
       - name: Archive
         if: always()
