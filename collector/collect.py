@@ -31,8 +31,6 @@ def collect(date: str, name: str):
     end_date = end_date.replace(minute=0, second=0, microsecond=0)
     LOGGER.info(f"Collecting data for period {start_date} - {end_date}")
     df = yf.download(tickers='^GSPC', start=start_date, end=end_date, interval='1h')
-    if df.empty:
-        raise BotErrorWithoutStacktrace("Failed to collect data")
     if name is None:
         name = start_date.strftime("%Y-%m-%d-%H")
     put_dataset(name, df)
