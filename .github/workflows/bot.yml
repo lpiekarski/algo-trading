@@ -23,6 +23,7 @@ jobs:
         run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/predictor.log -DFILE_LOG_LEVEL=DEBUG predict --dataset=latest --output=prediction --model=default
 
       - name: Archive
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: logs
