@@ -23,5 +23,6 @@ def put_dataset(name: str, df: pd.DataFrame):
     drive = get_drive_module()
     DATA_STORAGE_DIR = getenv("DATA_STORAGE_DIR", './data')
     local_path = os.path.join(DATA_STORAGE_DIR, name)
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
     df.to_csv(local_path)
     drive.upload(local_path, name)
