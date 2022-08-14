@@ -8,6 +8,7 @@ def getenv(name, default=None):
     value = os.getenv(name)
     if value is None:
         return default
+    return value
 
 def require_env(name):
     value = os.getenv(name)
