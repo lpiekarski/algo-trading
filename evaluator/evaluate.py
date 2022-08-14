@@ -12,6 +12,7 @@ import logging
 __all__ = ["evaluate", "evaluate_group"]
 
 from commons.timing import command_success
+from model.predictors import get_model_module
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ def evaluate_group():
 
 @evaluate_group.command()
 @click.option("--model", "-m", help="Name of the model to evaluate")
-@click.option("--dataset", "-d", help="Dataset to use for evaluation")
+@click.option("--dataset", "-d", help="Labelled dataset to use for evaluation")
 def evaluate(model: str, dataset: str):
     if model is None:
         model = os.getenv("model")
@@ -35,13 +36,13 @@ def evaluate(model: str, dataset: str):
 
     NEPTUNE_API_TOKEN = os.getenv("NEPTUNE_API_TOKEN")
     if NEPTUNE_API_TOKEN is None:
-        raise ArgumentError("'NEPTUNE_API_TOKEN' is not set.")
+        LOGGER.warning(f"'NEPTUNE_API_TOKEN' is not set, evaluation results will not be stored.")
     # Download test dataset
     LOGGER.info("Getting test dataset")
     X = get_dataset(dataset)
     # Generate predictions
     LOGGER.info("Generating predictions from model")
-    model_module = importlib.import_module(f"model.predictors.{model}")
+    model_module = get_model_module(model)
     y_pred = model_module.predict(X)
     # Compare predictions to labels
     LOGGER.info("Comparing predictions to labels")
