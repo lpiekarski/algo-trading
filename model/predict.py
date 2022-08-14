@@ -4,7 +4,7 @@ import os
 import click
 import logging
 
-from commons.dataset import get_dataset
+from commons.dataset import get_dataset, put_dataset
 from commons.exceptions import ArgumentError
 from commons.timing import command_success
 
@@ -20,7 +20,8 @@ def predict_group():
 @predict_group.command()
 @click.option("--model", "-m", help="Name of the model")
 @click.option("--dataset", "-d", help="Dataset to generate a prediction for")
-def predict(model: str, dataset: str):
+@click.option("--output", "-o", help="Name of the results file")
+def predict(model: str, dataset: str, output: str):
     if model is None:
         model = os.getenv("model")
         if model is None:
@@ -31,13 +32,16 @@ def predict(model: str, dataset: str):
         if dataset is None:
             raise ArgumentError("Provide dataset using '-d', '--dataset' or through environment variable 'dataset'")
 
-    LOGGER.info("Getting test dataset")
+    LOGGER.info(f"Getting dataset '{dataset}'")
     X = get_dataset(dataset)
     # Generate predictions
-    LOGGER.info("Generating predictions from model")
+    LOGGER.info(f"Generating predictions from model '{model}'")
     model_module = importlib.import_module(f"model.predictors.{model}")
     y_pred = model_module.predict(X)
-
+    if output is None:
+        output = f"{dataset}_results_{model}"
+    LOGGER.info(f"Saving results as {output}")
+    put_dataset(output, y_pred)
     command_success(LOGGER)
 
 if __name__ == '__main__':
