@@ -8,7 +8,7 @@ from commons.timing import command_success
 
 __all__ = ["test", "test_group"]
 
-from testing.test_module import test_module
+from testing.validate_module import validate_shape
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def validate_module_shapes():
                     if not basename.startswith("__"):
                         LOGGER.info(f"Testing module constraints for: {path}")
                         module = module_from_file(path)
-                        test_module(module, interface)
+                        validate_shape(module, interface)
 
 def module_from_file(path):
     spec = importlib.util.spec_from_file_location(str(path), path)
