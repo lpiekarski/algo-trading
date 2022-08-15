@@ -26,6 +26,7 @@ def collect(date: str, name: str):
         df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)
         if df.empty:
             raise BotErrorWithoutStacktrace("Failed to collect data")
+        LOGGER.debug(f"Downloaded yfinance data: {df.head()}")
         df = df[df.Volume != 0].tail(1)
         start_date = df.index[0]
     else:
@@ -34,10 +35,11 @@ def collect(date: str, name: str):
         start_date = start_date.replace(minute=0, second=0, microsecond=0)
         end_date = end_date.replace(minute=0, second=0, microsecond=0)
         LOGGER.info(f"Collecting data for period {start_date} - {end_date}")
-        df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)
+        df = yf.download(tickers='^GSPC', start=start_date, end=end_date, prepost=True)
         if df.empty:
             raise BotErrorWithoutStacktrace("Failed to collect data")
         df = df[df.Volume != 0].tail(1)
+    LOGGER.info(f"Collection start date is {start_date}")
     if name is None:
         name = start_date.strftime("%Y-%m-%d-%H-%M")
     put_dataset(name, df)
