@@ -11,10 +11,12 @@ from commons.timing import command_failure
 from evaluator.evaluate import evaluate_group
 from model.predict import predict_group
 from model.train import train_group
+from testing.test import test_group
 
 LOGGER = logging.getLogger(__name__)
 
-@click.command(cls=click.CommandCollection, sources=[evaluate_group, collect_group, predict_group, train_group])
+@click.command(cls=click.CommandCollection, sources=[evaluate_group, collect_group, predict_group, train_group,
+                                                     test_group])
 @click.option("-D", "env", multiple=True, help="Set environment variable e.g. -Dvar=value")
 def bot(env):
     for entry in env:

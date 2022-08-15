@@ -1,0 +1,28 @@
+name: Run tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+
+jobs:
+  Bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        run: cd docker && docker build -t sp2137 . && cd ..
+
+      - name: Run tests
+        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/collector.log -DFILE_LOG_LEVEL=DEBUG -DDATA_STORAGE_DIR=./project/data test
+
+      - name: Archive
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logs
+          path: |
+            **/*.log

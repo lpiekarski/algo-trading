@@ -17,3 +17,7 @@ class ArgumentError(BotErrorWithoutStacktrace):
 class CloudFileNotFoundError(BotErrorWithoutStacktrace):
     def __init__(self, *args):
         super(CloudFileNotFoundError, self).__init__(*args)
+
+class DataDownloadError(BotErrorWithoutStacktrace):
+    def __init__(self, *args):
+        super(DataDownloadError, self).__init__(*args)

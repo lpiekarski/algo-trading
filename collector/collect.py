@@ -8,7 +8,7 @@ from dateutil import parser
 __all__ = ["collect", "collect_group"]
 
 from commons.dataset import put_dataset
-from commons.exceptions import BotErrorWithoutStacktrace
+from commons.exceptions import BotErrorWithoutStacktrace, DataDownloadError
 from commons.timing import command_success
 
 LOGGER = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ def collect(date: str, name: str):
         LOGGER.info(f"Collecting latest data")
         df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)
         if df.empty:
-            raise BotErrorWithoutStacktrace("Failed to collect data")
+            raise DataDownloadError("Failed to collect data")
         LOGGER.debug(f"Downloaded yfinance data: {df.head()}")
         df = df[df.Volume != 0].tail(1)
         start_date = df.index[0]
@@ -37,7 +37,7 @@ def collect(date: str, name: str):
         LOGGER.info(f"Collecting data for period {start_date} - {end_date}")
         df = yf.download(tickers='^GSPC', start=start_date, end=end_date, prepost=True)
         if df.empty:
-            raise BotErrorWithoutStacktrace("Failed to collect data")
+            raise DataDownloadError("Failed to collect data")
         df = df[df.Volume != 0].tail(1)
     LOGGER.info(f"Collection start date is {start_date}")
     if name is None:
