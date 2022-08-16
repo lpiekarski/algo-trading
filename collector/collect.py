@@ -1,5 +1,6 @@
 import datetime
-import pandas as pd
+from parser import ParserError
+
 import click
 import logging
 import yfinance as yf
@@ -8,7 +9,7 @@ from dateutil import parser
 __all__ = ["collect", "collect_group"]
 
 from commons.dataset import put_dataset
-from commons.exceptions import BotErrorWithoutStacktrace, DataDownloadError
+from commons.exceptions import BotError, DataDownloadError
 from commons.timing import command_success
 
 LOGGER = logging.getLogger(__name__)
@@ -30,16 +31,20 @@ def collect(date: str, name: str):
         df = df[df.Volume != 0].tail(1)
         start_date = df.index[0]
     else:
-        start_date = parser.parse(date)
+        LOGGER.info(f"Collecting data starting from '{date}'")
+        try:
+            start_date = parser.parse(date)
+        except ParserError as e:
+            raise BotError(f"Failed to parse date '{date}'")
         end_date = start_date + datetime.timedelta(hours=1)
         start_date = start_date.replace(minute=0, second=0, microsecond=0)
         end_date = end_date.replace(minute=0, second=0, microsecond=0)
-        LOGGER.info(f"Collecting data for period {start_date} - {end_date}")
+        LOGGER.info(f"Collecting data for period '{start_date}' - '{end_date}'")
         df = yf.download(tickers='^GSPC', start=start_date, end=end_date, prepost=True)
         if df.empty:
             raise DataDownloadError("Failed to collect data")
         df = df[df.Volume != 0].tail(1)
-    LOGGER.info(f"Collection start date is {start_date}")
+    LOGGER.info(f"Collection start date is '{start_date}'")
     if name is None:
         name = start_date.strftime("%Y-%m-%d-%H-%M")
     put_dataset(name, df)

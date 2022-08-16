@@ -32,7 +32,7 @@ def predict(model: str, dataset: str, output: str):
         if dataset is None:
             raise ArgumentError("Provide dataset using '-d', '--dataset' or through environment variable 'dataset'")
 
-    LOGGER.info(f"Getting dataset '{dataset}'")
+    LOGGER.debug(f"Dataset to generate predictions for: '{dataset}'")
     try:
         X = get_dataset(dataset)
     except CloudFileNotFoundError as e:
@@ -42,9 +42,10 @@ def predict(model: str, dataset: str, output: str):
     LOGGER.info(f"Generating predictions from model '{model}'")
     model_module = get_model_module(model)
     y_pred = model_module.predict(X)
+    LOGGER.info(f"Prediction results: {y_pred}")
     if output is None:
         output = f"{dataset}_results_{model}"
-    LOGGER.info(f"Saving results as {output}")
+    LOGGER.info(f"Saving results as '{output}'")
     put_dataset(output, y_pred)
     command_success(LOGGER)
 

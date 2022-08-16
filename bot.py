@@ -5,7 +5,7 @@ import logging
 
 from collector.collect import collect_group
 from commons.logging import init_logging
-from commons.exceptions import ArgumentError, BotErrorWithStacktrace, BotErrorWithoutStacktrace
+from commons.exceptions import ArgumentError, BotError
 from commons.string import ENDLINE, TAB
 from commons.timing import command_failure
 from evaluator.evaluate import evaluate_group
@@ -31,11 +31,11 @@ def bot(env):
 if __name__ == '__main__':
     try:
         bot()
-    except BotErrorWithStacktrace as e:
-        LOGGER.error(f"Error during command execution: {e}", exc_info=e)
+    except BotError as e:
+        LOGGER.error(f"Error during command execution: {e}")
         command_failure(LOGGER)
         sys.exit(-1)
-    except BotErrorWithoutStacktrace as e:
-        LOGGER.error(f"Error during command execution: {e}")
+    except Exception as e:
+        LOGGER.error(f"Error during command execution: {e}", exc_info=e)
         command_failure(LOGGER)
         sys.exit(-1)

@@ -39,8 +39,8 @@ def train(model: str, dataset: str):
         LOGGER.error(f"Cannot find dataset '{dataset}'")
         raise e
 
-    # Generate predictions
-    LOGGER.info(f"Generating predictions from model '{model}'")
+    # Train
+    LOGGER.info(f"Train model '{model}'")
     model_module = get_model_module(model)
     model_module.train(X, y)
     command_success(LOGGER)
