@@ -1,9 +1,7 @@
-import importlib
 import os
 import click
 import logging
-import importlib.util
-import sys
+from commons.import_utils import module_from_file
 from commons.timing import command_success
 
 __all__ = ["test", "test_group"]
@@ -17,8 +15,10 @@ def test_group():
     pass
 
 @test_group.command()
-def test():
-    validate_module_shapes()
+@click.option("--skip_shapes", "-s", is_flag=True)
+def test(skip_shapes: bool):
+    if not skip_shapes:
+        validate_module_shapes()
     command_success(LOGGER)
 
 def validate_module_shapes():
@@ -27,6 +27,7 @@ def validate_module_shapes():
             if name == "__shapes__.py":
                 shapes = module_from_file(os.path.join(root, name))
                 interface = getattr(shapes, "interface")
+                LOGGER.debug(f"Validating modules '{root}', expected interface:\n{interface}")
                 for file in os.listdir(root):
                     path = os.path.join(root, file)
                     basename = os.path.basename(path)
@@ -34,14 +35,6 @@ def validate_module_shapes():
                         LOGGER.info(f"Testing module constraints for: {path}")
                         module = module_from_file(path)
                         validate_shape(module, interface)
-
-def module_from_file(path):
-    spec = importlib.util.spec_from_file_location(str(path), path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[str(path)] = module
-    spec.loader.exec_module(module)
-    return module
-
 
 if __name__ == '__main__':
     test()

@@ -1,16 +1,14 @@
 import datetime
-from parser import ParserError
-
 import click
 import logging
 import yfinance as yf
 from dateutil import parser
-
-__all__ = ["collect", "collect_group"]
-
+from dateutil.parser import ParserError
 from commons.dataset import put_dataset
 from commons.exceptions import BotError, DataDownloadError
 from commons.timing import command_success
+
+__all__ = ["collect", "collect_group"]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -20,7 +18,7 @@ def collect_group():
 
 @collect_group.command()
 @click.option("--date", "-d", help="Date for which to collect the data (can be 'latest' for last available hour)")
-@click.option("--name", "-n", help="Name of the created dataset. If none is provided defaults to the yyyy-MM-dd-HH date")
+@click.option("--name", "-n", help="Name of the created dataset. If none is provided defaults to the YYYY-mm-dd-HH-MM date")
 def collect(date: str, name: str):
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
