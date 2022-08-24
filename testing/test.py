@@ -28,13 +28,13 @@ def test(skip_shapes: bool, skip_drives: bool):
     if not skip_shapes:
         try:
             run_shape_tests()
-        except AssertionError as e:
+        except Exception as e:
             results['shape_tests'] = f'FAILURE: {e}'
             failed = True
     if not skip_drives:
         try:
             run_drive_tests()
-        except AssertionError as e:
+        except Exception as e:
             results['drive_tests'] = f'FAILURE: {e}'
             failed = True
     LOGGER.info(f"{BREAK}")
