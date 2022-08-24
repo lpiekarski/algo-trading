@@ -3,7 +3,7 @@ import os
 
 from commons.import_utils import module_from_file
 from commons.string import BREAK
-from testing.validate_module import validate_shape
+from testing.shape_tests.validate_module import validate_shape
 
 LOGGER = logging.getLogger(__name__)
 

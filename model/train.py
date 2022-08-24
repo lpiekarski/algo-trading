@@ -22,9 +22,7 @@ def train_group():
 @click.option("--model", "-m", help="Name of the model")
 @click.option("--dataset", "-d", help="Train dataset")
 def train(model: str, dataset: str):
-    LOGGER.info(f"{BREAK}")
-    LOGGER.info(break_padded(f"Running Train"))
-    LOGGER.info(f"{BREAK}")
+    LOGGER.info(break_padded(f"model:train"))
     if model is None:
         model = getenv("model")
         if model is None:

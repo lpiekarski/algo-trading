@@ -22,9 +22,7 @@ def test_group():
 @click.option("--skip_shapes", "-s", is_flag=True)
 @click.option("--skip_drives", "-d", is_flag=True)
 def test(skip_shapes: bool, skip_drives: bool):
-    LOGGER.info(f"{BREAK}")
-    LOGGER.info(break_padded(f"Running Test"))
-    LOGGER.info(f"{BREAK}")
+    LOGGER.info(break_padded(f"testing:test"))
     results = {
         'shape_tests': 'SUCCESS',
         'drive_tests': 'SUCCESS'

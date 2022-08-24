@@ -21,9 +21,7 @@ def collect_group():
 @click.option("--date", "-d", help="Date for which to collect the data (can be 'latest' for last available hour)")
 @click.option("--name", "-n", help="Name of the created dataset. If none is provided defaults to the YYYY-mm-dd-HH-MM date")
 def collect(date: str, name: str):
-    LOGGER.info(f"{BREAK}")
-    LOGGER.info(break_padded(f"Running Collect"))
-    LOGGER.info(f"{BREAK}")
+    LOGGER.info(break_padded(f"collector:collect"))
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
         df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)

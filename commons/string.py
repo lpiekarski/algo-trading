@@ -4,7 +4,7 @@ BREAK_LENGTH = 72
 BREAK = '-' * BREAK_LENGTH
 
 def break_padded(text: str) -> str:
-    return padded(f"<{text}>", '-', BREAK_LENGTH)
+    return padded(f"< {text} >", '-', BREAK_LENGTH)
 
 def padded(text: str, pad_symbol: str, length: int) -> str:
     result = text
