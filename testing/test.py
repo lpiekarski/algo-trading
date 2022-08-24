@@ -4,7 +4,7 @@ import logging
 
 from commons.exceptions import TestsFailedError
 from commons.import_utils import module_from_file
-from commons.string import BREAK
+from commons.string import BREAK, break_padded
 from commons.timing import command_failure, command_success
 
 __all__ = ["test", "test_group"]
@@ -23,7 +23,7 @@ def test_group():
 @click.option("--skip_drives", "-d", is_flag=True)
 def test(skip_shapes: bool, skip_drives: bool):
     LOGGER.info(f"{BREAK}")
-    LOGGER.info(f"Running Test")
+    LOGGER.info(break_padded(f"Running Test"))
     LOGGER.info(f"{BREAK}")
     results = {
         'shape_tests': 'SUCCESS',

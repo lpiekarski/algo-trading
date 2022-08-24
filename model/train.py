@@ -8,7 +8,7 @@ __all__ = ["train", "train_group"]
 from commons.dataset import get_dataset
 from commons.env import getenv
 from commons.exceptions import ArgumentError, CloudFileNotFoundError
-from commons.string import BREAK
+from commons.string import BREAK, break_padded
 from commons.timing import command_success
 from model.predictors import get_model_module
 
@@ -23,7 +23,7 @@ def train_group():
 @click.option("--dataset", "-d", help="Train dataset")
 def train(model: str, dataset: str):
     LOGGER.info(f"{BREAK}")
-    LOGGER.info(f"Running Train")
+    LOGGER.info(break_padded(f"Running Train"))
     LOGGER.info(f"{BREAK}")
     if model is None:
         model = getenv("model")

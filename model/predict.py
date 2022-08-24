@@ -6,7 +6,7 @@ import logging
 from commons.dataset import get_dataset, put_dataset
 from commons.env import getenv
 from commons.exceptions import ArgumentError, CloudFileNotFoundError
-from commons.string import BREAK
+from commons.string import BREAK, break_padded
 from commons.timing import command_success
 
 __all__ = ["predict", "predict_group"]
@@ -25,7 +25,7 @@ def predict_group():
 @click.option("--output", "-o", help="Name of the results file")
 def predict(model: str, dataset: str, output: str):
     LOGGER.info(f"{BREAK}")
-    LOGGER.info(f"Running Predict")
+    LOGGER.info(break_padded(f"Running Predict"))
     LOGGER.info(f"{BREAK}")
     if model is None:
         model = getenv("model")

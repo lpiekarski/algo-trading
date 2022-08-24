@@ -2,7 +2,7 @@ import click
 import logging
 
 from commons.broker_api import get_broker_module
-from commons.string import BREAK
+from commons.string import BREAK, break_padded
 from commons.timing import command_success
 
 __all__ = ["trade", "trade_group"]
@@ -19,7 +19,7 @@ def trade_group():
 @click.option("--input", "-i", help="Input file to base the decisions from")
 def trade(broker: str, input: str):
     LOGGER.info(f"{BREAK}")
-    LOGGER.info(f"Running Trader")
+    LOGGER.info(break_padded(f"Running Trader"))
     LOGGER.info(f"{BREAK}")
     broker_module = get_broker_module(broker)
     command_success(LOGGER)

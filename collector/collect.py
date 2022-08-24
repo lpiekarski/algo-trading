@@ -6,7 +6,7 @@ from dateutil import parser
 from dateutil.parser import ParserError
 from commons.dataset import put_dataset
 from commons.exceptions import BotError, DataDownloadError
-from commons.string import BREAK
+from commons.string import BREAK, break_padded
 from commons.timing import command_success
 
 __all__ = ["collect", "collect_group"]
@@ -22,7 +22,7 @@ def collect_group():
 @click.option("--name", "-n", help="Name of the created dataset. If none is provided defaults to the YYYY-mm-dd-HH-MM date")
 def collect(date: str, name: str):
     LOGGER.info(f"{BREAK}")
-    LOGGER.info(f"Running Collect")
+    LOGGER.info(break_padded(f"Running Collect"))
     LOGGER.info(f"{BREAK}")
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
