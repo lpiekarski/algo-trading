@@ -14,6 +14,7 @@ def upload(local_path: str, cloud_path: str) -> None:
 	target = os.path.join(LOCAL_STORE, cloud_path)
 	LOGGER.debug(f"Local drive uploading file from '{os.path.normpath(local_path)}' to '{os.path.normpath(target)}'")
 	if os.path.normpath(local_path) != os.path.normpath(target):
+		os.makedirs(os.path.dirname(target), exist_ok=True)
 		shutil.copy(local_path, target)
 
 def download(cloud_path: str, local_path: str) -> None:
@@ -23,4 +24,5 @@ def download(cloud_path: str, local_path: str) -> None:
 		raise CloudFileNotFoundError(f"Cannot find file in remote location: '{source}'")
 	LOGGER.debug(f"Local drive downloading file from '{os.path.normpath(source)}' to '{os.path.normpath(local_path)}'")
 	if os.path.normpath(local_path) != os.path.normpath(source):
+		os.makedirs(os.path.dirname(local_path), exist_ok=True)
 		shutil.copy(source, local_path)
