@@ -34,4 +34,4 @@ def padded(text: str, pad_symbol: str, length: int) -> str:
     while l < length:
         result = pad_symbol + result + pad_symbol
         l += 2 * len(pad_symbol)
-    return f'{BOLD}{result}{ENDC}'
+    return f'{BOLD}{result[:length]}{ENDC}'

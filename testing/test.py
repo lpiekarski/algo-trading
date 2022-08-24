@@ -5,12 +5,12 @@ import logging
 from commons.exceptions import TestsFailedError
 from commons.import_utils import module_from_file
 from commons.string import BREAK, break_padded
-from commons.timing import command_failure, command_success
+from commons.timing import command_failure, command_success, subcommand
 
 __all__ = ["test", "test_group"]
 
-from testing.drive_tests import run_drive_tests
-from testing.shape_tests import run_shape_tests
+from testing.drive_tests import drive_tests
+from testing.shape_tests import shape_tests
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,30 +21,12 @@ def test_group():
 @test_group.command()
 @click.option("--skip_shapes", "-s", is_flag=True)
 @click.option("--skip_drives", "-d", is_flag=True)
-def test(skip_shapes: bool, skip_drives: bool):
-    LOGGER.info(break_padded(f"testing:test"))
-    results = {
-        'shape_tests': 'OK',
-        'drive_tests': 'OK'
-    }
-    failed = False
-    if not skip_shapes:
-        try:
-            run_shape_tests()
-        except Exception as e:
-            results['shape_tests'] = f'FAILURE: {e}'
-            failed = True
-    if not skip_drives:
-        try:
-            run_drive_tests()
-        except Exception as e:
-            results['drive_tests'] = f'FAILURE: {e}'
-            failed = True
-    if failed:
-        raise TestsFailedError(results)
-    else:
-        command_success(LOGGER)
+def test(*args, **kwargs):
+    test_subcommand(*args, **kwargs)
 
+@subcommand("testing:test", [shape_tests, drive_tests])
+def test_subcommand(*args, **kwargs):
+    pass
 
 if __name__ == '__main__':
     test()

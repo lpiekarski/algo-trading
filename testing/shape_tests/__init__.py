@@ -2,14 +2,16 @@ import logging
 import os
 
 from commons.import_utils import module_from_file
-from commons.string import BREAK
-from commons.timing import start_step, step_success
+from commons.timing import run_step
 from testing.shape_tests.validate_module import validate_shape
 
 LOGGER = logging.getLogger(__name__)
 
-def run_shape_tests():
-    start_step(LOGGER, 'shape tests')
+@run_step
+def shape_tests(skip_shapes=False, *args, **kwargs):
+    if skip_shapes:
+        LOGGER.info("Tests are skipped.")
+        return
     cd = os.path.dirname(os.path.realpath(__file__))
     for root, _, files in os.walk(os.path.join(cd, '..', '..'), topdown=False):
         for name in files:
@@ -25,4 +27,3 @@ def run_shape_tests():
                         module = module_from_file(path)
                         validate_shape(module, interface)
                         LOGGER.info(f"\tModule '{os.path.abspath(module.__name__)}' is valid")
-    step_success('shape tests')

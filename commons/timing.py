@@ -1,24 +1,46 @@
+import logging
 import time
 from datetime import datetime, timedelta
 
-from commons.string import BOLD, BREAK, ENDC, FAIL, OKGREEN
+from commons.string import BOLD, BREAK, ENDC, FAIL, OKGREEN, break_padded
 
 start_time = time.time()
 
 steps = {}
 
-def start_step(LOGGER, step_name):
-    steps[step_name] = {'start': time.time(), 'end': None, 'result': None}
-    LOGGER.info("")
-    LOGGER.info(f"--- {step_name} ---")
+def run_step(step_func):
+    def wrap(*args, **kwargs):
+        step_name = step_func.__name__.replace('_', ' ')
+        LOGGER = logging.getLogger(step_func.__module__)
+        steps[step_name] = {'start': time.time(), 'end': None, 'result': None}
+        LOGGER.info("")
+        LOGGER.info(f"--- {step_name} ---")
+        try:
+            result = step_func(*args, **kwargs)
+            steps[step_name]['end'] = time.time()
+            steps[step_name]['result'] = 'SUCCESS'
+            return result
+        except Exception as e:
+            steps[step_name]['end'] = time.time()
+            steps[step_name]['result'] = 'FAILURE'
+            LOGGER.error(e, exc_info=e)
+    return wrap
 
-def step_success(step_name):
-    steps[step_name]['end'] = time.time()
-    steps[step_name]['result'] = 'SUCCESS'
 
-def step_failure(step_name):
-    steps[step_name]['end'] = time.time()
-    steps[step_name]['result'] = 'FAILURE'
+def subcommand(name, step_list):
+    def inner(subcommand_func):
+        def wrapper(*args, **kwargs):
+            LOGGER = logging.getLogger(subcommand_func.__module__)
+            LOGGER.info(break_padded(name))
+            LOGGER.info("")
+            previous_step_result = None
+            for step in step_list:
+                previous_step_result = step(previous_step_result=previous_step_result, *args, **kwargs)
+            subcommand_func(*args, **kwargs)
+            command_success(LOGGER)
+        return wrapper
+    return inner
+
 
 def command_success(LOGGER):
     log_command_resolution(LOGGER, "SUCCESS")
