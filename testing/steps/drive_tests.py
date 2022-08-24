@@ -4,7 +4,6 @@ import os
 
 from commons.env import getenv
 from commons.import_utils import module_from_file
-from commons.string import BREAK
 from commons.timing import run_step
 
 LOGGER = logging.getLogger(__name__)
