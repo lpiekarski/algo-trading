@@ -29,7 +29,7 @@ def run_drive_tests():
             path = os.path.join(root, file)
             basename = os.path.basename(path)
             if not basename.startswith("__"):
-                LOGGER.info(f"Testing drive module: {path}")
+                LOGGER.info(f"Testing drive module: {os.path.abspath(path)}")
                 drive_module = module_from_file(path)
                 LOGGER.info(f"\tUploading test file")
                 drive_module.upload(resources_testfile, test_filename)
