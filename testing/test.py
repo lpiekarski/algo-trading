@@ -40,10 +40,6 @@ def test(skip_shapes: bool, skip_drives: bool):
         except Exception as e:
             results['drive_tests'] = f'FAILURE: {e}'
             failed = True
-    LOGGER.info(f"")
-    LOGGER.info(f"--- results ---")
-    for test_name, status in results.items():
-        LOGGER.info(f"{test_name}: {status}")
     if failed:
         raise TestsFailedError(results)
     else:

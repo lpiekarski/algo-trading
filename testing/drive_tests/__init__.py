@@ -5,12 +5,12 @@ import os
 from commons.env import getenv
 from commons.import_utils import module_from_file
 from commons.string import BREAK
+from commons.timing import start_step, step_failure, step_success
 
 LOGGER = logging.getLogger(__name__)
 
 def run_drive_tests():
-    LOGGER.info("")
-    LOGGER.info(f'--- drive tests ---')
+    start_step(LOGGER, 'drive tests')
     cd = os.path.dirname(os.path.realpath(__file__))
     LOCAL_STORE = getenv("CACHE_DIR")
     root = os.path.join(cd, '..', '..', 'commons/drive')
@@ -46,4 +46,6 @@ def run_drive_tests():
             if os.path.exists(local_store_testfile):
                 os.remove(local_store_testfile)
     if fail_cause is not None:
+        step_failure('drive tests')
         raise AssertionError(fail_cause)
+    step_success('drive tests')
