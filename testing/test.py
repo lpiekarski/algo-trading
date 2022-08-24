@@ -2,11 +2,13 @@ import os
 import click
 import logging
 from commons.import_utils import module_from_file
-from commons.timing import command_success
+from commons.string import BREAK
+from commons.timing import command_failure, command_success
 
 __all__ = ["test", "test_group"]
 
-from testing.validate_module import validate_shape
+from testing.drive_tests import run_drive_tests
+from testing.shape_tests import run_shape_tests
 
 LOGGER = logging.getLogger(__name__)
 
@@ -16,25 +18,35 @@ def test_group():
 
 @test_group.command()
 @click.option("--skip_shapes", "-s", is_flag=True)
-def test(skip_shapes: bool):
+@click.option("--skip_drives", "-d", is_flag=True)
+def test(skip_shapes: bool, skip_drives: bool):
+    results = {
+        'shape_tests': 'SUCCESS',
+        'drive_tests': 'SUCCESS'
+    }
+    failed = False
     if not skip_shapes:
-        validate_module_shapes()
-    command_success(LOGGER)
+        try:
+            run_shape_tests()
+        except AssertionError as e:
+            results['shape_tests'] = f'FAILURE: {e}'
+            failed = True
+    if not skip_drives:
+        try:
+            run_drive_tests()
+        except AssertionError as e:
+            results['drive_tests'] = f'FAILURE: {e}'
+            failed = True
+    LOGGER.info(f"{BREAK}")
+    LOGGER.info(f"Test results:")
+    LOGGER.info(f"{BREAK}")
+    for test_name, status in results.items():
+        LOGGER.info(f"{test_name}: {status}")
+    if failed:
+        command_failure(LOGGER)
+    else:
+        command_success(LOGGER)
 
-def validate_module_shapes():
-    for root, _, files in os.walk(".", topdown=False):
-        for name in files:
-            if name == "__shapes__.py":
-                shapes = module_from_file(os.path.join(root, name))
-                interface = getattr(shapes, "interface")
-                LOGGER.debug(f"Validating modules '{root}', expected interface:\n{interface}")
-                for file in os.listdir(root):
-                    path = os.path.join(root, file)
-                    basename = os.path.basename(path)
-                    if not basename.startswith("__"):
-                        LOGGER.info(f"Testing module constraints for: {path}")
-                        module = module_from_file(path)
-                        validate_shape(module, interface)
 
 if __name__ == '__main__':
     test()
