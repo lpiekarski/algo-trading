@@ -6,6 +6,7 @@ import logging
 __all__ = ["train", "train_group"]
 
 from commons.dataset import get_dataset
+from commons.env import getenv
 from commons.exceptions import ArgumentError, CloudFileNotFoundError
 from commons.timing import command_success
 from model.predictors import get_model_module
@@ -21,12 +22,12 @@ def train_group():
 @click.option("--dataset", "-d", help="Train dataset")
 def train(model: str, dataset: str):
     if model is None:
-        model = os.getenv("model")
+        model = getenv("model")
         if model is None:
             raise ArgumentError("Provide model using '-m', '--model' or through environment variable 'model'")
 
     if dataset is None:
-        dataset = os.getenv("dataset")
+        dataset = getenv("dataset")
         if dataset is None:
             raise ArgumentError("Provide dataset using '-d', '--dataset' or through environment variable 'dataset'")
 

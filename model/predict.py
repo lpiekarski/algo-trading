@@ -4,6 +4,7 @@ import click
 import logging
 
 from commons.dataset import get_dataset, put_dataset
+from commons.env import getenv
 from commons.exceptions import ArgumentError, CloudFileNotFoundError
 from commons.timing import command_success
 
@@ -23,12 +24,12 @@ def predict_group():
 @click.option("--output", "-o", help="Name of the results file")
 def predict(model: str, dataset: str, output: str):
     if model is None:
-        model = os.getenv("model")
+        model = getenv("model")
         if model is None:
             raise ArgumentError("Provide model using '-m', '--model' or through environment variable 'model'")
 
     if dataset is None:
-        dataset = os.getenv("dataset")
+        dataset = getenv("dataset")
         if dataset is None:
             raise ArgumentError("Provide dataset using '-d', '--dataset' or through environment variable 'dataset'")
 

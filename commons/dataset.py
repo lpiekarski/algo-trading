@@ -11,8 +11,8 @@ LOGGER = logging.getLogger(__name__)
 
 def get_dataset(name: str):
     drive = get_drive_module()
-    DATA_STORAGE_DIR = getenv("DATA_STORAGE_DIR", './data')
-    local_path = os.path.join(DATA_STORAGE_DIR, name)
+    cache_dir = getenv("CACHE_DIR")
+    local_path = os.path.join(cache_dir, name)
     if not os.path.exists(local_path):
         LOGGER.debug(f"Dataset '{name}' is not cached, downloading using drive '{drive.__name__}'")
         drive.download(name, local_path)
@@ -20,8 +20,8 @@ def get_dataset(name: str):
 
 def put_dataset(name: str, df: pd.DataFrame):
     drive = get_drive_module()
-    DATA_STORAGE_DIR = getenv("DATA_STORAGE_DIR", './data')
-    local_path = os.path.join(DATA_STORAGE_DIR, name)
+    cache_dir = getenv("CACHE_DIR")
+    local_path = os.path.join(cache_dir, name)
     LOGGER.debug(f"Saving dataset '{name}' to local file '{local_path}'")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
     df.to_csv(local_path)

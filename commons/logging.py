@@ -3,12 +3,13 @@ import logging
 
 __all__ = ["init_logging"]
 
+from commons.env import getenv
 
 def init_logging():
     rootLogger = logging.getLogger()
     rootLogger.setLevel(logging.NOTSET)
 
-    LOG_LEVEL = os.getenv("LOG_LEVEL")
+    LOG_LEVEL = getenv("LOG_LEVEL")
     if LOG_LEVEL is None:
         LOG_LEVEL = logging.INFO
     else:
@@ -22,10 +23,10 @@ def init_logging():
     rootLogger.addHandler(consoleHandler)
 
     # file logging
-    LOG_FILE = os.getenv("LOG_FILE")
+    LOG_FILE = getenv("LOG_FILE")
     if LOG_FILE is not None:
-        if os.getenv("LOG_LEVEL") is None:
-            FILE_LOG_LEVEL = os.getenv("FILE_LOG_LEVEL")
+        if getenv("LOG_LEVEL") is None:
+            FILE_LOG_LEVEL = getenv("FILE_LOG_LEVEL")
             if FILE_LOG_LEVEL is None:
                 FILE_LOG_LEVEL = logging.INFO
             else:

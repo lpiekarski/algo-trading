@@ -13,7 +13,7 @@ def run_drive_tests():
     LOGGER.info(f'Running drive tests')
     LOGGER.info(f'{BREAK}')
     cd = os.path.dirname(os.path.realpath(__file__))
-    LOCAL_STORE = getenv("DATA_STORAGE_DIR", './data')
+    LOCAL_STORE = getenv("CACHE_DIR")
     root = os.path.join(cd, '..', '..', 'commons/drive')
     fail_cause = None
     test_filename = 'drive_test.txt'
@@ -36,9 +36,9 @@ def run_drive_tests():
                 LOGGER.info(f"\tDownloading test file")
                 drive_module.download(test_filename, local_store_testfile)
                 if not os.path.exists(local_store_testfile):
-                    raise AssertionError(f"Drive module '{drive_module.__name__}' failed to download test file")
+                    raise AssertionError(f"Drive module '{os.path.abspath(drive_module.__name__)}' failed to download test file")
                 if not filecmp.cmp(resources_testfile, local_store_testfile):
-                    raise AssertionError(f"Downloaded file is not the same as uploaded for drive '{drive_module.__name__}'")
+                    raise AssertionError(f"Downloaded file is not the same as uploaded for drive '{os.path.abspath(drive_module.__name__)}'")
         except Exception as e:
             LOGGER.error(f"{e}", exc_info=e)
             if fail_cause is None:

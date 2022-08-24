@@ -6,6 +6,7 @@ import os
 import click
 
 from commons.dataset import get_dataset
+from commons.env import getenv
 from commons.exceptions import ArgumentError
 import logging
 
@@ -25,16 +26,16 @@ def evaluate_group():
 @click.option("--dataset", "-d", help="Labelled dataset to use for evaluation")
 def evaluate(model: str, dataset: str):
     if model is None:
-        model = os.getenv("model")
+        model = getenv("model")
         if model is None:
             raise ArgumentError("Provide model using '-m', '--model' or through environment variable 'model'")
 
     if dataset is None:
-        dataset = os.getenv("dataset")
+        dataset = getenv("dataset")
         if dataset is None:
             raise ArgumentError("Provide dataset using '-d', '--dataset' or through environment variable 'dataset'")
 
-    NEPTUNE_API_TOKEN = os.getenv("NEPTUNE_API_TOKEN")
+    NEPTUNE_API_TOKEN = getenv("NEPTUNE_API_TOKEN")
     if NEPTUNE_API_TOKEN is None:
         LOGGER.warning(f"'NEPTUNE_API_TOKEN' is not set, evaluation results will not be stored.")
     # Download test dataset

@@ -10,7 +10,7 @@ __all__ = ["upload", "download"]
 LOGGER = logging.getLogger(__name__)
 
 def upload(local_path: str, cloud_path: str) -> None:
-	LOCAL_STORE = getenv("DATA_STORAGE_DIR", './data')
+	LOCAL_STORE = getenv("LOCAL_DRIVE_STORE")
 	target = os.path.join(LOCAL_STORE, cloud_path)
 	LOGGER.debug(f"Local drive uploading file from '{os.path.normpath(local_path)}' to '{os.path.normpath(target)}'")
 	if os.path.normpath(local_path) != os.path.normpath(target):
@@ -18,7 +18,7 @@ def upload(local_path: str, cloud_path: str) -> None:
 		shutil.copy(local_path, target)
 
 def download(cloud_path: str, local_path: str) -> None:
-	LOCAL_STORE = getenv("DATA_STORAGE_DIR", './data')
+	LOCAL_STORE = getenv("LOCAL_DRIVE_STORE")
 	source = os.path.join(LOCAL_STORE, cloud_path)
 	if not os.path.exists(source):
 		raise CloudFileNotFoundError(f"Cannot find file in remote location: '{source}'")
