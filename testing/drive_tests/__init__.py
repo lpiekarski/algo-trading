@@ -40,7 +40,7 @@ def run_drive_tests():
                 if not filecmp.cmp(resources_testfile, local_store_testfile):
                     raise AssertionError(f"Downloaded file is not the same as uploaded for drive '{drive_module.__name__}'")
         except Exception as e:
-            LOGGER.error(f"{e}")
+            LOGGER.error(f"{e}", exc_info=e)
             if fail_cause is None:
                 fail_cause = e
         finally:
