@@ -22,6 +22,7 @@ def collect_group():
 @click.option("--name", "-n", help="Name of the created dataset. If none is provided defaults to the YYYY-mm-dd-HH-MM date")
 def collect(date: str, name: str):
     LOGGER.info(break_padded(f"collector:collect"))
+    LOGGER.info("")
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
         df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)

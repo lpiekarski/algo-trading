@@ -25,6 +25,7 @@ def predict_group():
 @click.option("--output", "-o", help="Name of the results file")
 def predict(model: str, dataset: str, output: str):
     LOGGER.info(break_padded(f"model:predict"))
+    LOGGER.info("")
     if model is None:
         model = getenv("model")
         if model is None:

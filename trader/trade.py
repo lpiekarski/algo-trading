@@ -18,9 +18,8 @@ def trade_group():
 @click.option("--broker", "-b", help="Broker backend name")
 @click.option("--input", "-i", help="Input file to base the decisions from")
 def trade(broker: str, input: str):
-    LOGGER.info(f"{BREAK}")
-    LOGGER.info(break_padded(f"Running Trader"))
-    LOGGER.info(f"{BREAK}")
+    LOGGER.info(break_padded(f"trader:trade"))
+    LOGGER.info("")
     broker_module = get_broker_module(broker)
     command_success(LOGGER)
 

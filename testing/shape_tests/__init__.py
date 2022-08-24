@@ -8,9 +8,8 @@ from testing.shape_tests.validate_module import validate_shape
 LOGGER = logging.getLogger(__name__)
 
 def run_shape_tests():
-    LOGGER.info(f'{BREAK}')
-    LOGGER.info(f'Running shape tests')
-    LOGGER.info(f'{BREAK}')
+    LOGGER.info("")
+    LOGGER.info(f'--- shape tests ---')
     cd = os.path.dirname(os.path.realpath(__file__))
     for root, _, files in os.walk(os.path.join(cd, '..', '..'), topdown=False):
         for name in files:

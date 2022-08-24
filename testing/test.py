@@ -24,8 +24,8 @@ def test_group():
 def test(skip_shapes: bool, skip_drives: bool):
     LOGGER.info(break_padded(f"testing:test"))
     results = {
-        'shape_tests': 'SUCCESS',
-        'drive_tests': 'SUCCESS'
+        'shape_tests': 'OK',
+        'drive_tests': 'OK'
     }
     failed = False
     if not skip_shapes:
@@ -40,9 +40,8 @@ def test(skip_shapes: bool, skip_drives: bool):
         except Exception as e:
             results['drive_tests'] = f'FAILURE: {e}'
             failed = True
-    LOGGER.info(f"{BREAK}")
-    LOGGER.info(f"Test results:")
-    LOGGER.info(f"{BREAK}")
+    LOGGER.info(f"")
+    LOGGER.info(f"--- results ---")
     for test_name, status in results.items():
         LOGGER.info(f"{test_name}: {status}")
     if failed:

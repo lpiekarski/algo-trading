@@ -27,6 +27,7 @@ def evaluate_group():
 @click.option("--dataset", "-d", help="Labelled dataset to use for evaluation")
 def evaluate(model: str, dataset: str):
     LOGGER.info(break_padded(f"evaluator:evaluate"))
+    LOGGER.info("")
     if model is None:
         model = getenv("model")
         if model is None:

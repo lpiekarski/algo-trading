@@ -9,9 +9,8 @@ from commons.string import BREAK
 LOGGER = logging.getLogger(__name__)
 
 def run_drive_tests():
-    LOGGER.info(f'{BREAK}')
-    LOGGER.info(f'Running drive tests')
-    LOGGER.info(f'{BREAK}')
+    LOGGER.info("")
+    LOGGER.info(f'--- drive tests ---')
     cd = os.path.dirname(os.path.realpath(__file__))
     LOCAL_STORE = getenv("CACHE_DIR")
     root = os.path.join(cd, '..', '..', 'commons/drive')
