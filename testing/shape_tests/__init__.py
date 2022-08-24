@@ -11,7 +11,8 @@ def run_shape_tests():
     LOGGER.info(f'{BREAK}')
     LOGGER.info(f'Running shape tests')
     LOGGER.info(f'{BREAK}')
-    for root, _, files in os.walk(".", topdown=False):
+    cd = os.path.dirname(os.path.realpath(__file__))
+    for root, _, files in os.walk(os.path.join(cd, '..', '..'), topdown=False):
         for name in files:
             if name == "__shapes__.py":
                 shapes = module_from_file(os.path.join(root, name))
