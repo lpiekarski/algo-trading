@@ -13,3 +13,8 @@ class CloudFileNotFoundError(BotError):
 class DataDownloadError(BotError):
     def __init__(self, *args):
         super(DataDownloadError, self).__init__(*args)
+
+class TestsFailedError(BotError):
+    def __init__(self, *args):
+        super(TestsFailedError, self).__init__(*args)
+

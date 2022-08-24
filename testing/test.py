@@ -1,6 +1,8 @@
 import os
 import click
 import logging
+
+from commons.exceptions import TestsFailedError
 from commons.import_utils import module_from_file
 from commons.string import BREAK
 from commons.timing import command_failure, command_success
@@ -43,7 +45,7 @@ def test(skip_shapes: bool, skip_drives: bool):
     for test_name, status in results.items():
         LOGGER.info(f"{test_name}: {status}")
     if failed:
-        command_failure(LOGGER)
+        raise TestsFailedError(results)
     else:
         command_success(LOGGER)
 
