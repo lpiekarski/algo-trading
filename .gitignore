@@ -3,3 +3,6 @@
 /logs/
 __pycache__/
 /cache/
+/data/
+/data/H1.csv
+/data/M1.csv

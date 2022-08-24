@@ -12,6 +12,7 @@ import logging
 
 __all__ = ["evaluate", "evaluate_group"]
 
+from commons.string import BREAK
 from commons.timing import command_success
 from model.predictors import get_model_module
 
@@ -25,6 +26,9 @@ def evaluate_group():
 @click.option("--model", "-m", help="Name of the model to evaluate")
 @click.option("--dataset", "-d", help="Labelled dataset to use for evaluation")
 def evaluate(model: str, dataset: str):
+    LOGGER.info(f"{BREAK}")
+    LOGGER.info(f"Running Evaluate")
+    LOGGER.info(f"{BREAK}")
     if model is None:
         model = getenv("model")
         if model is None:
