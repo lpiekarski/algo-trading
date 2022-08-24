@@ -16,29 +16,35 @@ def run_drive_tests():
     LOCAL_STORE = getenv("DATA_STORAGE_DIR", './data')
     root = os.path.join(cd, '..', '..', 'commons/drive')
     fail_cause = None
+    test_filename = 'drive_test.txt'
+    local_store_testfile = os.path.join(LOCAL_STORE, test_filename)
+    resources_testfile = os.path.join(cd, '..', 'resources', test_filename)
+    LOGGER.info(f'Paths:')
+    LOGGER.info(f'Local store test file location: {os.path.abspath(local_store_testfile)}')
+    LOGGER.info(f'Test file in resources: {os.path.abspath(resources_testfile)}')
     for file in os.listdir(root):
         try:
-            if os.path.exists(os.path.join(LOCAL_STORE, 'drive_test.txt')):
-                os.remove(os.path.join(LOCAL_STORE, 'drive_test.txt'))
+            if os.path.exists(local_store_testfile):
+                os.remove(local_store_testfile)
             path = os.path.join(root, file)
             basename = os.path.basename(path)
             if not basename.startswith("__"):
                 LOGGER.info(f"Testing drive module: {path}")
                 drive_module = module_from_file(path)
                 LOGGER.info(f"\tUploading test file")
-                drive_module.upload(os.path.join(cd, '..', 'resources/drive_test.txt'), 'drive_test.txt')
+                drive_module.upload(resources_testfile, test_filename)
                 LOGGER.info(f"\tDownloading test file")
-                drive_module.download('drive_test.txt', os.path.join(LOCAL_STORE, 'drive_test.txt'))
-                if not os.path.exists(os.path.join(LOCAL_STORE, 'drive_test.txt')):
+                drive_module.download(test_filename, local_store_testfile)
+                if not os.path.exists(local_store_testfile):
                     raise AssertionError(f"Drive module '{drive_module.__name__}' failed to download test file")
-                if not filecmp.cmp(os.path.join(cd, '..', 'resources/drive_test.txt'), os.path.join(LOCAL_STORE, 'drive_test.txt')):
+                if not filecmp.cmp(resources_testfile, local_store_testfile):
                     raise AssertionError(f"Downloaded file is not the same as uploaded for drive '{drive_module.__name__}'")
         except AssertionError as e:
             LOGGER.error(f"{e}")
             if fail_cause is None:
                 fail_cause = e
         finally:
-            if os.path.exists(os.path.join(LOCAL_STORE, 'drive_test.txt')):
-                os.remove(os.path.join(LOCAL_STORE, 'drive_test.txt'))
+            if os.path.exists(local_store_testfile):
+                os.remove(local_store_testfile)
     if fail_cause is not None:
         raise AssertionError(fail_cause)
