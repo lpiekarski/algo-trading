@@ -1,6 +1,26 @@
 # Stock market bot
 
-## Contents
+## Installation (ubuntu)
+1. Clone the repository
+   ```bash
+   git clone https://github.com/lpiekarski/SP2137.git
+   cd SP2137
+   ```
+2. Install python
+   ```bash
+   apt-get update
+   apt-get install -y python3 python3-venv
+   ```
+3. Create python virtual environment
+   ```bash
+   python3 -m venv venv --upgrade-deps
+   ```
+4. Install required python dependencies
+   ```bash
+   ./venv/bin/python3 -m pip install -r docker/files/requirements.txt
+   ```
+
+## Repository contents
 - Github configuration (in `/.github`)
   - Contains directory `/.github/workflows` with github actions definition
 - Data Collector (in `/collector`)
@@ -10,6 +30,8 @@
   - Features in saved data need not be normalized or standardized
 - Commons (in `/commons`)
   - A technical module containing code that is reused across multiple modules
+- Data (in `/data`)
+  - Precomputed datasets stored using git-lfs
 - Docker (in `/docker`)
   - Files needed for running bot using docker
 - Evaluator (in `/evaluator`)
@@ -21,5 +43,7 @@
   - Exposes `/model/predict.py` script that generates model predictions for the specified dataset
 - Testing (in `/testing`)
   - Test runner module containing script `/testing/test.py` that runs tests
+- Trader (in `/trader`)
+  - Trade using `/trader/trade.py` connecting through chosen broker API, perform decision based on command options or the result from Model
 - Bot (in `/bot.py`)
   - CLI that bridges scripts exposed by modules into one command line tool
