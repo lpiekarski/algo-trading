@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from commons.timing import run_step
+from commons.timing import step
 import yfinance as yf
 from dateutil import parser
 from dateutil.parser import ParserError
@@ -9,7 +9,7 @@ from commons.exceptions import BotError, DataDownloadError
 
 LOGGER = logging.getLogger(__name__)
 
-@run_step
+@step
 def download_data(date="latest", *args, **kwargs):
     if date == "latest":
         LOGGER.info(f"Collecting latest data")

@@ -1,10 +1,10 @@
 import logging
 
-from commons.timing import run_step
+from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
-@run_step
+@step
 def submit_to_neptune(*args, **kwargs):
     LOGGER.info("Storing results in Neptune")
     # run = neptune.init(

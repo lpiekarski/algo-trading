@@ -1,9 +1,9 @@
 import logging
 
-from commons.timing import run_step
+from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
-@run_step
+@step
 def evaluate_predictions(*args, **kwargs):
     LOGGER.info("Comparing predictions to labels")

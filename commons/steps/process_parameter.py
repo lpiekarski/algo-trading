@@ -2,7 +2,7 @@ import logging
 
 from commons.env import getenv
 from commons.exceptions import ArgumentError
-from commons.timing import run_step
+from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
@@ -18,4 +18,4 @@ def process_parameter(param_name: str, optional=False):
             return {param_name: param_value}
 
     process_parameter_step.__name__ = f"process_'{param_name}'_parameter"
-    return run_step(process_parameter_step)
+    return step(process_parameter_step)

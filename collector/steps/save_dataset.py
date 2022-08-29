@@ -1,7 +1,7 @@
 from commons.dataset import put_dataset
-from commons.timing import run_step
+from commons.timing import step
 
-@run_step
+@step
 def save_dataset(name=None, df=None, start_date=None, *args, **kwargs):
     if name is None:
         name = start_date.strftime("%Y-%m-%d-%H-%M")

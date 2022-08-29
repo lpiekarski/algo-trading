@@ -10,14 +10,15 @@ start_time = time.time()
 
 steps = {}
 
-def run_step(step_func):
+def step(step_func):
     @wraps(step_func)
     def wrap(*args, **kwargs):
         step_name = step_func.__name__.replace('_', ' ')
+        step_module = step_func.__module__
         LOGGER = logging.getLogger(step_func.__module__)
         steps[step_name]['start'] = time.time()
         LOGGER.info("")
-        LOGGER.info(f"--- {step_name} ---")
+        LOGGER.info(f"{BOLD}--- {step_name} (@{step_module}) ---{ENDC}")
         try:
             result = step_func(*args, **kwargs)
             steps[step_name]['end'] = time.time()
@@ -37,7 +38,7 @@ def subcommand(step_list):
         @wraps(subcommand_func)
         def wrapper(*args, **kwargs):
             LOGGER = logging.getLogger(subcommand_func.__module__)
-            LOGGER.info(break_padded(f"{subcommand_func.__module__}:{subcommand_func.__name__}"))
+            LOGGER.info(BOLD + break_padded(f"{subcommand_func.__module__}:{subcommand_func.__name__}") + ENDC)
             LOGGER.info("")
             previous_step_result = dict()
 

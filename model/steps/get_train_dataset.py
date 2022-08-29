@@ -2,11 +2,11 @@ import logging
 
 from commons.dataset import get_dataset
 from commons.exceptions import CloudFileNotFoundError
-from commons.timing import run_step
+from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
-@run_step
+@step
 def get_train_dataset(dataset=None, *args, **kwargs):
     LOGGER.info(f"Getting dataset '{dataset}'")
     try:

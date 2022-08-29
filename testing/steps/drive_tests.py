@@ -4,11 +4,11 @@ import os
 
 from commons.env import getenv
 from commons.import_utils import module_from_file
-from commons.timing import run_step
+from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
-@run_step
+@step
 def drive_tests(skip_drive=False, *args, **kwargs):
     if skip_drive:
         LOGGER.info("Tests are skipped.")

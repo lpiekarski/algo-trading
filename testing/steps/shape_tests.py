@@ -2,12 +2,12 @@ import logging
 import os
 
 from commons.import_utils import module_from_file
-from commons.timing import run_step
+from commons.timing import step
 from commons.testing.validate_module import validate_shape
 
 LOGGER = logging.getLogger(__name__)
 
-@run_step
+@step
 def shape_tests(skip_shapes=False, *args, **kwargs):
     if skip_shapes:
         LOGGER.info("Tests are skipped.")
