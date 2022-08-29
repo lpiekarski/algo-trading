@@ -1,7 +1,9 @@
 import logging
 import time
 from datetime import datetime, timedelta
+from functools import wraps
 
+from commons.exceptions import CommandInterruption
 from commons.string import BOLD, BREAK, ENDC, FAIL, OKGREEN, break_padded
 
 start_time = time.time()
@@ -9,10 +11,11 @@ start_time = time.time()
 steps = {}
 
 def run_step(step_func):
+    @wraps(step_func)
     def wrap(*args, **kwargs):
         step_name = step_func.__name__.replace('_', ' ')
         LOGGER = logging.getLogger(step_func.__module__)
-        steps[step_name] = {'start': time.time(), 'end': None, 'result': None}
+        steps[step_name]['start'] = time.time()
         LOGGER.info("")
         LOGGER.info(f"--- {step_name} ---")
         try:
@@ -24,18 +27,27 @@ def run_step(step_func):
             steps[step_name]['end'] = time.time()
             steps[step_name]['result'] = 'FAILURE'
             LOGGER.error(e, exc_info=e)
+            if isinstance(e, CommandInterruption):
+                raise e
     return wrap
 
 
-def subcommand(name, step_list):
+def subcommand(step_list):
     def inner(subcommand_func):
+        @wraps(subcommand_func)
         def wrapper(*args, **kwargs):
             LOGGER = logging.getLogger(subcommand_func.__module__)
-            LOGGER.info(break_padded(name))
+            LOGGER.info(break_padded(f"{subcommand_func.__module__}:{subcommand_func.__name__}"))
             LOGGER.info("")
-            previous_step_result = None
+            previous_step_result = dict()
+
+            for step_func in step_list:
+                step_name = step_func.__name__.replace('_', ' ')
+                steps[step_name] = {'start': None, 'end': None, 'result': None}
             for step in step_list:
-                previous_step_result = step(previous_step_result=previous_step_result, *args, **kwargs)
+                if previous_step_result is not None and isinstance(previous_step_result, dict):
+                    kwargs.update(**previous_step_result)
+                previous_step_result = step(*args, **kwargs)
             subcommand_func(*args, **kwargs)
             command_success(LOGGER)
         return wrapper
@@ -55,7 +67,10 @@ def log_command_resolution(LOGGER, status):
     LOGGER.info(f"Results:")
     LOGGER.info(f"")
     for step_name, summary in steps.items():
-        LOGGER.info(f"{step_name + ' ' :.<52} {color_status(summary['result'])} [{summary['end'] - summary['start'] :.5f} s]")
+        if summary['result'] is None:
+            LOGGER.info(f"{step_name + ' ' :.<52} SKIPPED")
+        else:
+            LOGGER.info(f"{step_name + ' ' :.<52} {color_status(summary['result'])} [{summary['end'] - summary['start'] :.5f} s]")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
     LOGGER.info(f"COMMAND {color_status(status)}")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")

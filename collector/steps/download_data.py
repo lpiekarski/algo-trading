@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from commons.timing import run_step
@@ -19,7 +20,7 @@ def download_data(date="latest", *args, **kwargs):
         df = df[df.Volume != 0].tail(1)
         start_date = df.index[0]
         LOGGER.info(f"Collection start date is '{start_date}'")
-        return df, start_date
+        return dict(df=df, start_date=start_date)
     else:
         LOGGER.info(f"Collecting data starting from '{date}'")
         try:
@@ -35,4 +36,4 @@ def download_data(date="latest", *args, **kwargs):
             raise DataDownloadError("Failed to collect data")
         df = df[df.Volume != 0].tail(1)
         LOGGER.info(f"Collection start date is '{start_date}'")
-        return df, start_date
+        return dict(df=df, start_date=start_date)

@@ -12,11 +12,11 @@ def test_group():
 @test_group.command()
 @option("--skip_shapes", "-s", is_flag=True)
 @option("--skip_drives", "-d", is_flag=True)
+@subcommand([
+    shape_tests,
+    drive_tests
+])
 def test(*args, **kwargs):
-    test_subcommand(*args, **kwargs)
-
-@subcommand("testing:test", [shape_tests, drive_tests])
-def test_subcommand(*args, **kwargs):
     pass
 
 if __name__ == '__main__':
