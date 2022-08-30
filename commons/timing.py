@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 from commons.exceptions import CommandInterruption
-from commons.string import BOLD, BREAK, ENDC, FAIL, OKGREEN, break_padded
+from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, break_padded
 
 start_time = time.time()
 
@@ -18,7 +18,7 @@ def step(step_func):
         LOGGER = logging.getLogger(step_func.__module__)
         steps[step_name]['start'] = time.time()
         LOGGER.info("")
-        LOGGER.info(f"{BOLD}--- {step_name} @ {step_module} ---{ENDC}")
+        LOGGER.info(f"{BOLD}---{ENDC} {UNDERLINE}{OKBLUE}{step_name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{step_module}{ENDC} {BOLD}---{ENDC}")
         try:
             result = step_func(*args, **kwargs)
             steps[step_name]['end'] = time.time()
