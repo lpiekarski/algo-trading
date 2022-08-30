@@ -18,7 +18,7 @@ def step(step_func):
         LOGGER = logging.getLogger(step_func.__module__)
         steps[step_name]['start'] = time.time()
         LOGGER.info("")
-        LOGGER.info(f"{BOLD}--- {step_name} (@{step_module}) ---{ENDC}")
+        LOGGER.info(f"{BOLD}--- {step_name} @ {step_module} ---{ENDC}")
         try:
             result = step_func(*args, **kwargs)
             steps[step_name]['end'] = time.time()

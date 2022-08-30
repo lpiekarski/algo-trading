@@ -1,14 +1,14 @@
 import logging
 
 from commons.dataset import get_dataset
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import CloudFileNotFoundError, CommandInterruption
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
 @step
-def get_train_dataset(dataset=None, *args, **kwargs):
-    LOGGER.info(f"Getting dataset '{dataset}'")
+def get_labeled_dataset(dataset=None, *args, **kwargs):
+    LOGGER.info(f"Getting labeled dataset '{dataset}'")
     try:
         X = get_dataset(dataset)
         y = X["y"].copy()
@@ -16,4 +16,7 @@ def get_train_dataset(dataset=None, *args, **kwargs):
     except CloudFileNotFoundError as e:
         LOGGER.error(f"Cannot find dataset '{dataset}'")
         raise e
+    except KeyError as e:
+        LOGGER.error(f"Dataset doesn't contain label column ('y')")
+        raise CommandInterruption(e)
     return dict(X=X, y=y)

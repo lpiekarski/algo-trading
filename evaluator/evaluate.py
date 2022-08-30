@@ -5,6 +5,7 @@ import logging
 __all__ = ["evaluate_group"]
 
 from commons.dataset import get_dataset
+from commons.steps.get_labeled_dataset import get_labeled_dataset
 from commons.steps.process_parameter import process_parameter
 from commons.timing import subcommand
 from evaluator.steps.evaluate_predictions import evaluate_predictions
@@ -25,7 +26,7 @@ def evaluate_group():
     process_parameter("model"),
     process_parameter("dataset"),
     process_parameter("NEPTUNE_API_KEY", optional=True),
-    get_dataset,
+    get_labeled_dataset,
     generate_predictions,
     evaluate_predictions,
     submit_to_neptune

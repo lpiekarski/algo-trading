@@ -2,9 +2,9 @@ import click
 
 __all__ = ["train", "train_group"]
 
+from commons.steps.get_labeled_dataset import get_labeled_dataset
 from commons.steps.process_parameter import process_parameter
 from commons.timing import subcommand
-from model.steps.get_train_dataset import get_train_dataset
 from model.steps.run_training import run_training
 
 @click.group()
@@ -17,7 +17,7 @@ def train_group():
 @subcommand([
     process_parameter('model'),
     process_parameter('dataset'),
-    get_train_dataset,
+    get_labeled_dataset,
     run_training,
 ])
 def train(model: str, dataset: str):
