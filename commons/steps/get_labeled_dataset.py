@@ -1,7 +1,7 @@
 import logging
 
 from commons.dataset import get_dataset
-from commons.exceptions import CloudFileNotFoundError, CommandInterruption
+from commons.exceptions import CloudFileNotFoundError
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
@@ -16,7 +16,4 @@ def get_labeled_dataset(dataset=None, *args, **kwargs):
     except CloudFileNotFoundError as e:
         LOGGER.error(f"Cannot find dataset '{dataset}'")
         raise e
-    except KeyError as e:
-        LOGGER.error(f"Dataset doesn't contain label column ('y')")
-        raise CommandInterruption(e)
     return dict(X=X, y=y)

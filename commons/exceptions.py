@@ -2,23 +2,23 @@ class BotError(RuntimeError):
     def __init__(self, *args):
         super(BotError, self).__init__(*args)
 
-class CommandInterruption(BotError):
+class NotInterruptingError(BotError):
     def __init__(self, *args):
-        super(CommandInterruption, self).__init__(*args)
+        super(NotInterruptingError, self).__init__(*args)
 
-class ArgumentError(CommandInterruption):
+class ArgumentError(BotError):
     def __init__(self, *args):
         super(ArgumentError, self).__init__(*args)
 
-class CloudFileNotFoundError(CommandInterruption):
+class CloudFileNotFoundError(BotError):
     def __init__(self, *args):
         super(CloudFileNotFoundError, self).__init__(*args)
 
-class DataDownloadError(CommandInterruption):
+class DataDownloadError(BotError):
     def __init__(self, *args):
         super(DataDownloadError, self).__init__(*args)
 
-class TestsFailedError(BotError):
+class TestsFailedError(NotInterruptingError):
     def __init__(self, *args):
         super(TestsFailedError, self).__init__(*args)
 

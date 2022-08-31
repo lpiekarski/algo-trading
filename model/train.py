@@ -1,15 +1,14 @@
 import click
 
-__all__ = ["train", "train_group"]
-
 from commons.steps.get_labeled_dataset import get_labeled_dataset
 from commons.steps.process_parameter import process_parameter
 from commons.timing import subcommand
 from model.steps.run_training import run_training
 
+__all__ = ["train_group"]
+
 @click.group()
-def train_group():
-    pass
+def train_group(): pass
 
 @train_group.command()
 @click.option("--model", "-m", help="Name of the model")
@@ -20,8 +19,4 @@ def train_group():
     get_labeled_dataset,
     run_training,
 ])
-def train(model: str, dataset: str):
-    pass
-
-if __name__ == '__main__':
-    train()
+def train(*args, **kwargs): pass

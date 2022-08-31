@@ -6,8 +6,7 @@ from testing.steps.shape_tests import shape_tests
 __all__ = ["test_group"]
 
 @group()
-def test_group():
-    pass
+def test_group(): pass
 
 @test_group.command()
 @option("--skip_shapes", "-s", is_flag=True)
@@ -16,8 +15,4 @@ def test_group():
     shape_tests,
     drive_tests
 ])
-def test(*args, **kwargs):
-    pass
-
-if __name__ == '__main__':
-    test()
+def test(*args, **kwargs): pass

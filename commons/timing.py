@@ -3,8 +3,8 @@ import time
 from datetime import datetime, timedelta
 from functools import wraps
 
-from commons.exceptions import CommandInterruption
-from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, break_padded
+from commons.exceptions import NotInterruptingError
+from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, WARNING, break_padded
 
 start_time = time.time()
 
@@ -18,7 +18,7 @@ def step(step_func):
         LOGGER = logging.getLogger(step_func.__module__)
         steps[step_name]['start'] = time.time()
         LOGGER.info("")
-        LOGGER.info(f"{BOLD}---{ENDC} {UNDERLINE}{OKBLUE}{step_name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{step_module}{ENDC} {BOLD}---{ENDC}")
+        LOGGER.info(f"{BOLD}---{ENDC} {OKCYAN}{step_name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{step_module}{ENDC} {BOLD}---{ENDC}")
         try:
             result = step_func(*args, **kwargs)
             steps[step_name]['end'] = time.time()
@@ -28,7 +28,7 @@ def step(step_func):
             steps[step_name]['end'] = time.time()
             steps[step_name]['result'] = 'FAILURE'
             LOGGER.error(e, exc_info=e)
-            if isinstance(e, CommandInterruption):
+            if not isinstance(e, NotInterruptingError):
                 raise e
     return wrap
 
@@ -38,17 +38,25 @@ def subcommand(step_list):
         @wraps(subcommand_func)
         def wrapper(*args, **kwargs):
             LOGGER = logging.getLogger(subcommand_func.__module__)
-            LOGGER.info(BOLD + break_padded(f"{subcommand_func.__module__}:{subcommand_func.__name__}") + ENDC)
+            LOGGER.info(BOLD + OKBLUE + break_padded(f"{subcommand_func.__module__}:{subcommand_func.__name__}") + ENDC)
+            LOGGER.info("")
+            LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
+            LOGGER.info("\tExecution plan:")
             LOGGER.info("")
             previous_step_result = dict()
 
             for step_func in step_list:
                 step_name = step_func.__name__.replace('_', ' ')
                 steps[step_name] = {'start': None, 'end': None, 'result': None}
+                LOGGER.info(f"\t\t{step_name} @ {step_func.__module__}")
+            LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
+
             for step in step_list:
                 if previous_step_result is not None and isinstance(previous_step_result, dict):
                     kwargs.update(**previous_step_result)
                 previous_step_result = step(*args, **kwargs)
+                LOGGER.debug(f"Step completed, kwargs:")
+                LOGGER.debug(f"\t{kwargs}")
             subcommand_func(*args, **kwargs)
             command_success(LOGGER)
         return wrapper
@@ -84,4 +92,4 @@ def color_status(status):
         return f"{OKGREEN}{status}{ENDC}"
     if status == 'FAILURE':
         return f"{FAIL}{status}{ENDC}"
-    return f"{BOLD}{status}{ENDC}"
+    return f"{WARNING}{status}{ENDC}"
