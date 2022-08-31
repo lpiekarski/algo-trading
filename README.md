@@ -20,7 +20,32 @@
    ./venv/bin/python3 -m pip install -r docker/files/requirements.txt
    ```
 
-## Repository contents
+## Creating and Evaluating Models
+1. Create a new `[model_name].py` file inside `/model/predictors` directory.
+2. Copy the content of `/model/predictors/template.py` into your file.
+3. Implement `train(X, y)` and `predict(X)` methods for your model.
+4. Method `train(X, y)` should fit the model to the given dataset and store the result using `commons.drive`
+5. Method `predict(X)` should return the model's prediction for a given input `X`
+6. After finishing the implementation run the following command to evaluate and submit the evaluation results to neptune: 
+    ```bash
+    python3 bot.py evaluate --model=[model_name] --dataset=validate.csv --NEPTUNE_API_KEY=[neptune api token]
+    ```
+
+## Examples
+1. Run tests:
+   ```bash
+   python3 bot.py test
+   ```
+2. Evaluate [model] using [dataset] (without saving results to neptune):
+   ```bash
+   python3 bot.py evaluate --model=[model] --dataset=[dataset]
+   ```
+3. Generate the output using [model] for given input [dataset] and save the results in [output] file:
+    ```bash
+    python3 bot.py predict --model=[model] --dataset=[dataset] --output=[output] 
+    ```
+
+## Repository Contents
 - Github configuration (in `/.github`)
   - Contains directory `/.github/workflows` with github actions definition
 - Data Collector (in `/collector`)
