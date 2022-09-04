@@ -20,6 +20,6 @@ git add <some-file>
 git commit
 git push -u origin <branch-name>
 ```
-7. After pushing all of your changes go to "Pull requests" tab on github and create a new pull request. As a "base:" branch select "master" and as a "compare:" branch select your <branch-name>. Click create pull request. Put the name of the issue as the pull request title. In the comment describe your changes, at the end of the comment after one empty line include the link to the issue. Go to the issue you're working on and update the status: remove "state: in progress" label and add the "state: review".
+7. After pushing all of your changes go to "Pull requests" tab on github and create a new pull request. As a "base:" branch select "master" and as a "compare:" branch select your <branch-name>. Click create pull request. Put the name of the issue as the pull request title. In the comment describe your changes, at the end of the comment after one empty line include the link to the issue. Put the same title and description as a merge title/description. Go to the issue you're working on and update the status: remove "state: in progress" label and add the "state: review".
 8. Wait for the pull request to be reviewed. Make improvements to the code if they are necessary and repeats steps 5-6.
 9. Finally the pull request will be approved and merged into the master branch. After this is done close the issue and remove the "state: review" label from it.
