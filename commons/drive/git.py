@@ -9,7 +9,7 @@ __all__ = ["upload", "download"]
 
 LOGGER = logging.getLogger(__name__)
 REPO_PATH = "./.git-drive"
-REPO_URL = f"https://{getenv('GIT_USERNAME')}:{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
+REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
 
 def initialize():
     if not os.path.exists(REPO_PATH):
