@@ -12,6 +12,7 @@ REPO_PATH = "./.git-drive"
 
 def initialize():
     if not os.path.exists(REPO_PATH):
+        LOGGER.info(os.environ)
         REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
         git.clone(REPO_URL, REPO_PATH)
 
