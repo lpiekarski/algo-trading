@@ -30,7 +30,7 @@ LOGGER = logging.getLogger(__name__)
 @click.option("-D", "env", multiple=True, help="Set environment variable e.g. -Dvar=value")
 def bot(env):
     for entry in env:
-        entry_split = entry.split("=")
+        entry_split = entry.split("=", 1)
         if len(entry_split) != 2:
             raise ArgumentError(f"Invalid argument '{entry}'")
         var, value = entry_split

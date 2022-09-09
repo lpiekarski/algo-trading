@@ -1,5 +1,5 @@
 import logging
-import neptune
+import neptune.new as neptune
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
