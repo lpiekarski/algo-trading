@@ -9,10 +9,10 @@ __all__ = ["upload", "download"]
 
 LOGGER = logging.getLogger(__name__)
 REPO_PATH = "./.git-drive"
-REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
 
 def initialize():
     if not os.path.exists(REPO_PATH):
+        REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
         git.clone(REPO_URL, REPO_PATH)
 
 def upload(local_path: str, cloud_path: str) -> None:
