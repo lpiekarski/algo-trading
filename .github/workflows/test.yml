@@ -15,14 +15,8 @@ on:
 jobs:
   Bot:
     runs-on: ubuntu-latest
-    env:
-      GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+    environment: env
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -30,7 +24,7 @@ jobs:
         run: cd docker && docker build -t sp2137 . && cd ..
 
       - name: Run tests
-        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DGIT_PASSWORD=$GIT_PASSWORD -DLOG_FILE=project/logs/test.log -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache test
+        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=project/logs/test.log -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache test
 
       - name: Archive
         if: always()
