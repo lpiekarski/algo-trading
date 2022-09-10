@@ -43,6 +43,6 @@ def delete(cloud_path: str) -> None:
     checked_out_path = os.path.join(REPO_PATH, cloud_path)
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
-    git.remove(checked_out_path, cwd=REPO_PATH)
+    git.remove(cloud_path, cwd=REPO_PATH)
     git.commit(f"Automated: delete '{cloud_path}' from the storage", cwd=REPO_PATH)
     git.push(cwd=REPO_PATH)
