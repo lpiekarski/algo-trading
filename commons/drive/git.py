@@ -40,7 +40,6 @@ def download(cloud_path: str, local_path: str) -> None:
 
 def delete(cloud_path: str) -> None:
     initialize()
-    checked_out_path = os.path.join(REPO_PATH, cloud_path)
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     git.remove(cloud_path, cwd=REPO_PATH)
