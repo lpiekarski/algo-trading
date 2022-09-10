@@ -9,6 +9,7 @@ on:
 jobs:
   Bot:
     runs-on: ubuntu-latest
+    environment: env
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,10 +18,10 @@ jobs:
         run: cd docker && docker build -t sp2137 . && cd ..
 
       - name: Run collector
-        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/collector.log -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache collect --date=latest --name=latest
+        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/collector.log -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache collect --date=latest --name=latest
 
       - name: Run predictor
-        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/predictor.log -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache predict --dataset=latest --output=prediction --model=template
+        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DLOG_FILE=project/logs/predictor.log -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache predict --dataset=latest --output=prediction --model=template
 
       - name: Archive
         if: always()

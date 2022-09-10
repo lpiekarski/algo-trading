@@ -7,3 +7,4 @@ __pycache__/
 /data/H1.csv
 /data/M1.csv
 .neptune/
+.git-drive/
