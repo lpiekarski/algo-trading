@@ -13,7 +13,7 @@ def add(path: str, base: str="git", **kwargs):
     subprocess.run([base, "add", path], **kwargs).check_returncode()
 
 def commit(message: str, base: str="git", **kwargs):
-    subprocess.run([base, "commit", "-m", f'"{message}"'], **kwargs).check_returncode()
+    subprocess.run([base, "commit", "-m", message], **kwargs).check_returncode()
 
 def push(base: str="git", **kwargs):
     subprocess.run([base, "push", "origin", "main"], **kwargs).check_returncode()
