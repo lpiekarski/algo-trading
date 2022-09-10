@@ -3,8 +3,8 @@ import subprocess
 def clone(url: str, path: str, base: str="git", **kwargs):
     subprocess.run([base, "clone", url, path], **kwargs).check_returncode()
 
-def bare_clone(url: str, path: str, base: str="git", **kwargs):
-    subprocess.run([base, "clone", "--filter=blob:none", "--no-checkout", url, path], **kwargs).check_returncode()
+def clone_no_checkout(url: str, path: str, base: str="git", **kwargs):
+    subprocess.run([base, "clone", "--no-checkout", url, path], **kwargs).check_returncode()
 
 def fetch(base: str="git", **kwargs):
     subprocess.run([base, "fetch"], **kwargs).check_returncode()
@@ -23,3 +23,6 @@ def push(base: str="git", **kwargs):
 
 def remove(path: str, base: str="git", **kwargs):
     subprocess.run([base, "rm", path], **kwargs).check_returncode()
+
+def restore_staged(path: str, base: str="git", **kwargs):
+    subprocess.run([base, "restore", "--staged", path], **kwargs).check_returncode()
