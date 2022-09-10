@@ -26,3 +26,11 @@ def download(cloud_path: str, local_path: str) -> None:
 	if os.path.normpath(local_path) != os.path.normpath(source):
 		os.makedirs(os.path.dirname(local_path), exist_ok=True)
 		shutil.copy(source, local_path)
+
+def delete(cloud_path: str) -> None:
+	LOCAL_STORE = getenv("LOCAL_DRIVE_STORE")
+	full_path = os.path.join(LOCAL_STORE, cloud_path)
+	if not os.path.exists(full_path):
+		raise CloudFileNotFoundError(f"Cannot find file in remote location: '{full_path}'")
+	LOGGER.debug(f"Local drive deleting file from '{os.path.normpath(full_path)}'")
+	os.remove(full_path)
