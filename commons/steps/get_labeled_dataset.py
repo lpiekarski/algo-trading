@@ -1,6 +1,6 @@
 import logging
 
-from commons.drive_utils.dataset import get_dataset
+from commons.drive_utils.datasets import get_dataset
 from commons.exceptions import CloudFileNotFoundError
 from commons.timing import step
 

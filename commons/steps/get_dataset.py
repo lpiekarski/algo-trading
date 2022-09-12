@@ -1,6 +1,6 @@
 import logging
 
-import commons.drive_utils.dataset as ds
+import commons.drive_utils.datasets as ds
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
