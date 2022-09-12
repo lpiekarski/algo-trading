@@ -15,7 +15,7 @@ def get_dataset(name: str):
     local_path = os.path.join(cache_dir, name)
     if not os.path.exists(local_path):
         LOGGER.debug(f"Dataset '{name}' is not cached, downloading using drive '{drive.__name__}'")
-        drive.download(name, local_path)
+        drive.download(os.path.join('datasets', name), local_path)
     return pd.read_csv(local_path)
 
 def put_dataset(name: str, df: pd.DataFrame):
@@ -25,4 +25,4 @@ def put_dataset(name: str, df: pd.DataFrame):
     LOGGER.debug(f"Saving dataset '{name}' to local file '{local_path}'")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
     df.to_csv(local_path)
-    drive.upload(local_path, name)
+    drive.upload(local_path, os.path.join('datasets', name))

@@ -34,7 +34,7 @@ def drive_tests(skip_drive=False, *args, **kwargs):
                 drive_module = module_from_file(path)
                 LOGGER.info(f"\tUploading test file")
                 random_suffix = ''.join([str(random.randint(0, 9)) for _ in range(10)])
-                remote_filename = f'drive_test_{random_suffix}.txt'
+                remote_filename = f'tests/drive_test_{random_suffix}.txt'
                 try:
                     drive_module.upload(resources_testfile, remote_filename)
                     LOGGER.info(f"\tDownloading test file")
