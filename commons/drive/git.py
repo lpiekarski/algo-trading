@@ -1,11 +1,14 @@
 import logging
 import shutil
 import os
+from subprocess import CalledProcessError
+
 import commons.git as git
 from commons.env import getenv
 
 __all__ = ["upload", "download"]
 
+from commons.exceptions import CloudFileNotFoundError
 
 LOGGER = logging.getLogger(__name__)
 REPO_PATH = "./.git-drive"
@@ -32,7 +35,10 @@ def download(cloud_path: str, local_path: str) -> None:
     checked_out_path = os.path.join(REPO_PATH, cloud_path)
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
-    git.checkout(cloud_path, cwd=REPO_PATH)
+    try:
+        git.checkout(cloud_path, cwd=REPO_PATH)
+    except CalledProcessError as e:
+        raise CloudFileNotFoundError(f"File not found in the repository. {e}")
     if os.path.normpath(local_path) != os.path.normpath(checked_out_path):
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
         shutil.copy(checked_out_path, local_path)
