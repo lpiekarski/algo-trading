@@ -8,3 +8,9 @@ def predict(X: pd.DataFrame) -> pd.DataFrame:
 
 def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
     pass
+
+def save(path: str) -> None:
+    pass
+
+def load(path: str) -> None:
+    pass
