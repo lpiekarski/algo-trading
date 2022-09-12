@@ -1,7 +1,7 @@
 import logging
 
 from commons.exceptions import CloudFileNotFoundError
-from commons.model_data import download_model_data
+from commons.drive_utils.model_data import download_model_data
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)

@@ -1,6 +1,5 @@
 import logging
-
-from commons.dataset import put_dataset
+from commons.drive_utils.predictions import put_prediction
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
@@ -10,4 +9,4 @@ def save_prediction_result(output=None, model=None, dataset=None, y_pred=None, *
     if output is None:
         output = f"{dataset}_results_{model}"
     LOGGER.info(f"Saving results as '{output}'")
-    put_dataset(output, y_pred)
+    put_prediction(output, y_pred)

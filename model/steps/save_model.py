@@ -1,7 +1,7 @@
 import logging
 import os
 
-from commons.model_data import get_model_cache_path, upload_model_data
+from commons.drive_utils.model_data import get_model_cache_path, upload_model_data
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)

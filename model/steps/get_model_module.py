@@ -1,5 +1,4 @@
 import logging
-from commons.model_data import upload_model_data
 from commons.timing import step
 from model import predictors
 
