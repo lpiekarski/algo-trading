@@ -16,7 +16,7 @@ def train_group(): pass
 @train_group.command()
 @click.option("--model", "-m", help="Name of the model")
 @click.option("--dataset", "-d", help="Train dataset")
-@click.option("--skip_save", "-s", help="Do not save the results of the training", flag=True)
+@click.option("--skip_save", "-s", help="Do not save the results of the training", is_flag=True)
 @subcommand([
     process_parameter('model'),
     process_parameter('dataset'),
