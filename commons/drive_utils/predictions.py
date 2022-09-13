@@ -5,11 +5,11 @@ from commons.drive import get_drive_module
 from commons.env import getenv
 import pandas as pd
 
-__all__ = ["get_prediction", "put_prediction"]
+__all__ = ["download_prediction", "upload_prediction"]
 
 LOGGER = logging.getLogger(__name__)
 
-def get_prediction(name: str):
+def download_prediction(name: str):
     drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, name)
@@ -18,7 +18,7 @@ def get_prediction(name: str):
         drive.download(os.path.join('predictions', name), local_path)
     return pd.read_csv(local_path)
 
-def put_prediction(name: str, df: pd.DataFrame):
+def upload_prediction(name: str, df: pd.DataFrame):
     drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, name)
