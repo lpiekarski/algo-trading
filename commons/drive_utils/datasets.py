@@ -24,7 +24,7 @@ def upload_dataset(name: str, df: pd.DataFrame, append: bool=False):
     drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, name)
-    df = df.set_index(pd.DatetimeIndex(df["Data"]))
+    df = df.set_index(pd.DatetimeIndex(df["Date"]))
     if append:
         try:
             drive.download(os.path.join('datasets', name), local_path)
