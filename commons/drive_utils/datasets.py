@@ -24,10 +24,11 @@ def upload_dataset(name: str, df: pd.DataFrame, append: bool=False):
     drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, name)
+    df = df.set_index(pd.DatetimeIndex(df["Data"]))
     if append:
         try:
             drive.download(os.path.join('datasets', name), local_path)
-            dataset = pd.concat([pd.read_csv(local_path), df])
+            dataset = pd.concat([pd.read_csv(local_path, parse_dates=True, index_col="Date"), df])
         except CloudFileNotFoundError:
             LOGGER.debug(f"Dataset not found on the drive, creating (append=True)")
             dataset = df
