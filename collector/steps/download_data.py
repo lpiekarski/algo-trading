@@ -19,7 +19,7 @@ def download_data(date="latest", *args, **kwargs):
         LOGGER.debug(f"Downloaded yfinance data: {df.head()}")
         df = df[df.Volume != 0].tail(1)
         start_date = df.index[0]
-        df.rename(columns={'T': 'Date'}, inplace=True)
+        df.index.name = "Date"
         LOGGER.info(f"Collection start date is '{start_date}'")
         return dict(df=df, start_date=start_date)
     else:
@@ -36,6 +36,6 @@ def download_data(date="latest", *args, **kwargs):
         if df.empty:
             raise DataDownloadError("Failed to collect data")
         df = df[df.Volume != 0].tail(1)
-        df.rename(columns={'T': 'Date'}, inplace=True)
+        df.index.name = "Date"
         LOGGER.info(f"Collection start date is '{start_date}'")
         return dict(df=df, start_date=start_date)
