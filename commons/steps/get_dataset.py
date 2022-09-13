@@ -12,4 +12,4 @@ def get_dataset(dataset=None, *args, **kwargs):
     if dataset is None:
         dataset = str(datetime.datetime.now().year)
         LOGGER.info(f"Dataset not specified, using current year dataset '{dataset}'")
-    return dict(X=ds.download_dataset(dataset))
+    return dict(X=ds.download_dataset(dataset), dataset=dataset)
