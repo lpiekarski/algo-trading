@@ -57,6 +57,7 @@ def download(cloud_path: str, local_path: str) -> None:
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
     with SplitFileReader(list(split_filenames(checked_out_path))) as sfr:
         with zipfile.ZipFile(file=sfr, mode='r') as zf:
+            LOGGER.info(f"Extracting to {os.path.dirname(local_path)}")
             zf.extractall(os.path.dirname(local_path))
     shutil.move(os.path.join(os.path.dirname(local_path), os.path.basename(cloud_path)), local_path)
 
