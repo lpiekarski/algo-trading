@@ -48,6 +48,7 @@ def download(cloud_path: str, local_path: str) -> None:
     while True:
         try:
             git.checkout(f"{cloud_path}.zip.{i:03}", cwd=REPO_PATH)
+            i += 1
         except CalledProcessError as e:
             if i == 0:
                 raise CloudFileNotFoundError(f"File not found in the repository. {e}")
@@ -69,6 +70,7 @@ def delete(cloud_path: str) -> None:
             git.remove(f"{cloud_path}.zip.{i:03}", cwd=REPO_PATH)
             git.commit(f"Automated: delete '{cloud_path}.zip.{i:03}' from the storage", cwd=REPO_PATH)
             git.push(cwd=REPO_PATH)
+            i += 1
         except CalledProcessError as e:
             if i == 0:
                 raise CloudFileNotFoundError(f"File not found in the repository. {e}")
