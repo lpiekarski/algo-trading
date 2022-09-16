@@ -18,8 +18,8 @@ def add(path: str, base: str="git", **kwargs):
 def commit(message: str, base: str="git", **kwargs):
     subprocess.run([base, "commit", "-m", message], **kwargs).check_returncode()
 
-def push(base: str="git", **kwargs):
-    subprocess.run([base, "push", "origin", "main"], **kwargs).check_returncode()
+def push(base: str="git", branch="main", **kwargs):
+    subprocess.run([base, "push", "origin", branch], **kwargs).check_returncode()
 
 def remove(path: str, base: str="git", **kwargs):
     subprocess.run([base, "rm", path], **kwargs).check_returncode()

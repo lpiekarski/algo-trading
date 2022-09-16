@@ -1,8 +1,10 @@
 import logging
 import shutil
 import os
+import zipfile
 from subprocess import CalledProcessError
-
+from split_file_reader import SplitFileReader
+from split_file_reader.split_file_writer.split_file_writer import SplitFileWriter
 import commons.git as git
 from commons.env import getenv
 
@@ -15,38 +17,66 @@ REPO_PATH = "./.git-drive"
 
 def initialize():
     if not os.path.exists(REPO_PATH):
-        REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
+        git_password = getenv('GIT_PASSWORD')
+        if git_password is not None:
+            REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data-test"
+        else:
+            REPO_URL = f"https://github.com/S-P-2137/Data-test"
         git.clone_no_checkout(REPO_URL, REPO_PATH)
 
 def upload(local_path: str, cloud_path: str) -> None:
     initialize()
+    max_file_size = int(getenv('GIT_DRIVE_MAX_FILE_SIZE'))
     add_path = os.path.join(REPO_PATH, cloud_path)
-    if os.path.normpath(local_path) != os.path.normpath(add_path):
-        os.makedirs(os.path.dirname(add_path), exist_ok=True)
-        shutil.copy(local_path, add_path)
+    os.makedirs(os.path.dirname(add_path), exist_ok=True)
+    with SplitFileWriter(f"{add_path}.zip.", max_file_size) as sfw:
+        with zipfile.ZipFile(file=sfw, mode='w') as zf:
+            zf.write(local_path, os.path.basename(local_path))
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
-    git.add(os.path.abspath(add_path), cwd=REPO_PATH)
-    git.commit(f"Automated: add '{cloud_path}' to the storage", cwd=REPO_PATH)
-    git.push(cwd=REPO_PATH)
+    for file in split_filenames(f"{add_path}.zip."):
+        git.add(os.path.abspath(file), cwd=REPO_PATH)
+        git.commit(f"Automated: add '{file}' to the storage", cwd=REPO_PATH)
+        git.push(cwd=REPO_PATH)
 
 def download(cloud_path: str, local_path: str) -> None:
     initialize()
-    checked_out_path = os.path.join(REPO_PATH, cloud_path)
+    checked_out_path = os.path.join(REPO_PATH, f"{cloud_path}.zip.")
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
-    try:
-        git.checkout(cloud_path, cwd=REPO_PATH)
-    except CalledProcessError as e:
-        raise CloudFileNotFoundError(f"File not found in the repository. {e}")
-    if os.path.normpath(local_path) != os.path.normpath(checked_out_path):
-        os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        shutil.copy(checked_out_path, local_path)
+    i = 0
+    while True:
+        try:
+            git.checkout(f"{cloud_path}.zip.{i:03}", cwd=REPO_PATH)
+        except CalledProcessError as e:
+            if i == 0:
+                raise CloudFileNotFoundError(f"File not found in the repository. {e}")
+            else:
+                break
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+    with SplitFileReader(list(split_filenames(checked_out_path))) as sfr:
+        with zipfile.ZipFile(file=sfr, mode='r') as zf:
+            zf.extractall(os.path.dirname(local_path))
+    shutil.move(os.path.join(os.path.dirname(local_path), os.path.basename(cloud_path)), local_path)
 
 def delete(cloud_path: str) -> None:
     initialize()
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
-    git.remove(cloud_path, cwd=REPO_PATH)
-    git.commit(f"Automated: delete '{cloud_path}' from the storage", cwd=REPO_PATH)
-    git.push(cwd=REPO_PATH)
+    i = 0
+    while True:
+        try:
+            git.remove(f"{cloud_path}.zip.{i:03}", cwd=REPO_PATH)
+            git.commit(f"Automated: delete '{cloud_path}.zip.{i:03}' from the storage", cwd=REPO_PATH)
+            git.push(cwd=REPO_PATH)
+        except CalledProcessError as e:
+            if i == 0:
+                raise CloudFileNotFoundError(f"File not found in the repository. {e}")
+            else:
+                break
+
+def split_filenames(path: str):
+    i = 0
+    while os.path.exists(f"{path}{i:03}"):
+        yield f"{path}{i:03}"
+        i += 1

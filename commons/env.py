@@ -27,3 +27,4 @@ class DefaultEnv:
     CACHE_DIR = './cache'
     drive = 'local'
     LOG_LEVEL = None
+    GIT_DRIVE_MAX_FILE_SIZE = '100000000'
