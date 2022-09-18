@@ -6,3 +6,5 @@ __pycache__/
 /data/
 .neptune/
 .git-drive/
+M1_test.csv
+M1_test_indicators.csv
