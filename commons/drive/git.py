@@ -31,7 +31,7 @@ def upload(local_path: str, cloud_path: str) -> None:
     os.makedirs(os.path.dirname(add_path), exist_ok=True)
     with SplitFileWriter(f"{add_path}.zip.", max_file_size) as sfw:
         with zipfile.ZipFile(file=sfw, mode='w') as zf:
-            zf.write(local_path, os.path.basename(local_path))
+            zf.write(local_path, os.path.basename(cloud_path))
     git.fetch(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     for file in split_filenames(f"{add_path}.zip."):
