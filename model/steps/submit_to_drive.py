@@ -1,7 +1,10 @@
 import logging
 import os
 import datetime
+from subprocess import CalledProcessError
+
 import pandas as pd
+import commons.git as git
 from commons.drive import get_drive_module
 from commons.env import getenv
 from commons.exceptions import CloudFileNotFoundError
@@ -25,12 +28,18 @@ def submit_to_drive(*, binary_cross_entropy, model, dataset, label, **kwargs):
         LOGGER.warning(f"Evaluation results file doesn't exist on drive '{drive}', creating one")
         results = pd.DataFrame({
             "parameters/model": [],
+            "parameters/version": [],
             "parameters/dataset": [],
             "eval/binary_cross_entropy": [],
             "eval/label": []
         }, index=pd.DatetimeIndex([], name='date'))
+    try:
+        version = git.file_version(f"model/predictors/{model}.py")
+    except CalledProcessError as e:
+        version = "unknown"
     run = pd.DataFrame({
         "parameters/model": [str(model)],
+        "parameters/version": [version],
         "parameters/dataset": [str(dataset)],
         "eval/binary_cross_entropy": [binary_cross_entropy],
         "eval/label": [label]

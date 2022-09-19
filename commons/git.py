@@ -29,3 +29,8 @@ def remove(path: str, base: str="git", **kwargs):
 
 def restore_staged(path: str, base: str="git", **kwargs):
     subprocess.run([base, "restore", "--staged", path], **kwargs).check_returncode()
+
+def file_version(path: str, base: str="git", **kwargs):
+    sp = subprocess.run([base, "log", "-n", "1", "--pretty=format:%h", "--", path], capture_output=True, encoding='utf-8', **kwargs)
+    sp.check_returncode()
+    return sp.stdout.strip()
