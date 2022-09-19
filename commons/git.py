@@ -7,7 +7,10 @@ def clone_no_checkout(url: str, path: str, base: str="git", **kwargs):
     subprocess.run([base, "clone", "--no-checkout", url, path], **kwargs).check_returncode()
 
 def fetch(base: str="git", **kwargs):
-    subprocess.run([base, "fetch"], **kwargs).check_returncode()
+    subprocess.run([base, "fetch", "origin", "main"], **kwargs).check_returncode()
+
+def reset_soft(base: str="git", **kwargs):
+    subprocess.run([base, "reset", "--soft", "main"], **kwargs).check_returncode()
 
 def checkout(path: str, base: str="git", **kwargs):
     subprocess.run([base, "checkout", "origin/main", "--", path], **kwargs).check_returncode()

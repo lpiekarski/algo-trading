@@ -33,6 +33,7 @@ def upload(local_path: str, cloud_path: str) -> None:
         with zipfile.ZipFile(file=sfw, mode='w') as zf:
             zf.write(local_path, os.path.basename(cloud_path))
     git.fetch(cwd=REPO_PATH)
+    git.reset_soft(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     for file in split_filenames(f"{add_path}.zip."):
         git.add(os.path.abspath(file), cwd=REPO_PATH)
@@ -43,6 +44,7 @@ def download(cloud_path: str, local_path: str) -> None:
     initialize()
     checked_out_path = os.path.join(REPO_PATH, f"{cloud_path}.zip.")
     git.fetch(cwd=REPO_PATH)
+    git.reset_soft(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     i = 0
     while True:
@@ -65,6 +67,7 @@ def download(cloud_path: str, local_path: str) -> None:
 def delete(cloud_path: str) -> None:
     initialize()
     git.fetch(cwd=REPO_PATH)
+    git.reset_soft(cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     i = 0
     while True:

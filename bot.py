@@ -8,7 +8,7 @@ from commons.logging import init_logging
 from commons.exceptions import ArgumentError, BotError
 from commons.string import ENDLINE, TAB
 from commons.timing import command_failure
-from evaluator.evaluate import evaluate_group
+from model.evaluate import evaluate_group
 from model.predict import predict_group
 from model.train import train_group
 from testing.test import test_group

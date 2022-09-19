@@ -1,10 +1,8 @@
 import pandas as pd
 import numpy as np
 
-def predict(X: pd.DataFrame) -> pd.DataFrame:
-    res = pd.DataFrame()
-    res['y_pred'] = np.random.random(X.shape[0])
-    return res
+def predict(X: pd.DataFrame) -> np.ndarray:
+    return np.random.random(X.shape[0])
 
 def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
     pass
