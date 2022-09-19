@@ -8,6 +8,9 @@ from commons.logging import init_logging
 from commons.exceptions import ArgumentError, BotError
 from commons.string import ENDLINE, TAB
 from commons.timing import command_failure
+from drive.delete import delete_group
+from drive.download import download_group
+from drive.upload import upload_group
 from model.evaluate import evaluate_group
 from model.predict import predict_group
 from model.train import train_group
@@ -24,7 +27,10 @@ LOGGER = logging.getLogger(__name__)
         predict_group,
         train_group,
         test_group,
-        trade_group
+        trade_group,
+        download_group,
+        upload_group,
+        delete_group,
     ]
 )
 @click.option("-D", "env", multiple=True, help="Set environment variable e.g. -Dvar=value")
