@@ -19,9 +19,9 @@ def initialize():
     if not os.path.exists(REPO_PATH):
         git_password = getenv('GIT_PASSWORD')
         if git_password is not None:
-            REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data-test"
+            REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
         else:
-            REPO_URL = f"https://github.com/S-P-2137/Data-test"
+            REPO_URL = f"https://github.com/S-P-2137/Data"
         git.clone_no_checkout(REPO_URL, REPO_PATH)
 
 def upload(local_path: str, cloud_path: str) -> None:
