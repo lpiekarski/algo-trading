@@ -5,7 +5,7 @@ import lightgbm as lgbm
 model: lgbm.Booster = None
 
 def predict(X: pd.DataFrame) -> np.ndarray:
-    return model.predict(X.drop(['Date', 'Datetime', 'time', 'Datetime.1'], axis=1))
+    return model.predict(X.drop(['Date', 'Datetime', 'time', 'Datetime.1'], axis=1), predict_disable_shape_check=True)
 
 def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
     global model
