@@ -7,7 +7,7 @@ import pandas as pd
 import commons.git as git
 from commons.drive import get_drive_module
 from commons.env import getenv
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import BotError, CloudFileNotFoundError
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
@@ -34,6 +34,8 @@ def submit_to_drive(*, binary_cross_entropy, accuracy, model, dataset, label, **
             "eval/accuracy": [],
             "eval/label": []
         }, index=pd.DatetimeIndex([], name='date'))
+    if getenv('drive') == 'git' and git.get_branch() != 'master':
+        raise BotError('Submitting results from non-master branch is prohibited.')
     try:
         version = git.file_version(f"model/predictors/{model}.py")
     except CalledProcessError as e:
