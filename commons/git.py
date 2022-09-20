@@ -38,3 +38,6 @@ def file_version(path: str, base: str="git", **kwargs):
     sp = subprocess.run([base, "log", "-n", "1", "--pretty=format:%h", "--", path], capture_output=True, encoding='utf-8', **kwargs)
     sp.check_returncode()
     return sp.stdout.strip()
+
+def get_branch(base: str="git", **kwargs):
+    return subprocess.run([base, "branch", "--show-current"], capture_output=True, encoding='utf-8', check=True, **kwargs).stdout.strip()
