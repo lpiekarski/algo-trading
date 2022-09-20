@@ -8,10 +8,7 @@ from commons.testing.validate_module import validate_shape
 LOGGER = logging.getLogger(__name__)
 
 @step
-def shape_tests(skip_shapes=False, *args, **kwargs):
-    if skip_shapes:
-        LOGGER.info("Tests are skipped.")
-        return
+def shape_tests(*args, **kwargs):
     cd = os.path.dirname(os.path.realpath(__file__))
     for root, _, files in os.walk(os.path.join(cd, '..', '..'), topdown=False):
         for name in files:

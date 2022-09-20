@@ -24,7 +24,6 @@ def train_group(): pass
     process_parameter('skip_save'),
     get_model_module,
     get_labeled_dataset,
-    download_model,
     run_training,
     save_model
 ])

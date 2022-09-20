@@ -34,10 +34,12 @@ def restore_staged(path: str, base: str="git", **kwargs):
 
 def file_version(path: str, base: str="git", **kwargs):
     if subprocess.run([base, "status", "--short", path], capture_output=True, encoding='utf-8', check=True).stdout.strip() != "":
-        raise BotError(f"File '{path}' has been modified. Commit or revert the changes.")
+        suffix = "-dirty"
+    else:
+        suffix = ""
     sp = subprocess.run([base, "log", "-n", "1", "--pretty=format:%h", "--", path], capture_output=True, encoding='utf-8', **kwargs)
     sp.check_returncode()
-    return sp.stdout.strip()
+    return sp.stdout.strip() + suffix
 
 def get_branch(base: str="git", **kwargs):
     return subprocess.run([base, "branch", "--show-current"], capture_output=True, encoding='utf-8', check=True, **kwargs).stdout.strip()

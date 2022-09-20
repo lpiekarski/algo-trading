@@ -17,8 +17,9 @@ def step(step_func):
         step_module = step_func.__module__
         LOGGER = logging.getLogger(step_func.__module__)
         steps[step_name]['start'] = time.time()
-        LOGGER.info("")
-        LOGGER.info(f"{BOLD}---{ENDC} {OKCYAN}{step_name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{step_module}{ENDC} {BOLD}---{ENDC}")
+        if not steps[step_name]['invisible']:
+            LOGGER.info("")
+            LOGGER.info(f"{BOLD}---{ENDC} {OKCYAN}{step_name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{step_module}{ENDC} {BOLD}---{ENDC}")
         try:
             result = step_func(*args, **kwargs)
             steps[step_name]['end'] = time.time()
@@ -47,8 +48,14 @@ def subcommand(step_list):
 
             for step_func in step_list:
                 step_name = step_func.__name__.replace('_', ' ')
-                steps[step_name] = {'start': None, 'end': None, 'result': None}
-                LOGGER.info(f"\t\t{step_name} @ {step_func.__module__}")
+                steps[step_name] = {
+                    'start': None,
+                    'end': None,
+                    'result': None,
+                    'invisible': hasattr(step_func, 'invisible') and step_func.invisible
+                }
+                if not steps[step_name]['invisible']:
+                    LOGGER.info(f"\t\t{step_name} @ {step_func.__module__}")
             LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
 
             for step in step_list:
@@ -76,6 +83,8 @@ def log_command_resolution(LOGGER, status):
     LOGGER.info(f"Results:")
     LOGGER.info(f"")
     for step_name, summary in steps.items():
+        if summary['invisible']:
+            continue
         if summary['result'] is None:
             LOGGER.info(f"{step_name + ' ' :.<52} SKIPPED")
         else:

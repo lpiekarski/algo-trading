@@ -13,7 +13,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def submit_to_drive(*, binary_cross_entropy, accuracy, model, dataset, label, **kwargs):
+def submit_to_drive(*, binary_cross_entropy, accuracy, model, test_dataset, train_dataset, test_label, train_label, **kwargs):
     LOGGER.info("Storing the results")
 
     cache_dir = getenv("CACHE_DIR")
@@ -29,24 +29,28 @@ def submit_to_drive(*, binary_cross_entropy, accuracy, model, dataset, label, **
         results = pd.DataFrame({
             "parameters/model": [],
             "parameters/version": [],
-            "parameters/dataset": [],
+            "parameters/train_dataset": [],
+            "parameters/test_dataset": [],
+            "parameters/train_label": [],
+            "parameters/test_label": [],
             "eval/binary_cross_entropy": [],
-            "eval/accuracy": [],
-            "eval/label": []
+            "eval/accuracy": []
         }, index=pd.DatetimeIndex([], name='date'))
-    if getenv('drive') == 'git' and git.get_branch() != 'master':
-        raise BotError('Submitting results from non-master branch is prohibited.')
-    try:
-        version = git.file_version(f"model/predictors/{model}.py")
-    except CalledProcessError as e:
-        version = "unknown"
+    version = git.file_version(f"model/predictors/{model}.py")
+    if getenv('drive') == 'git':
+        if git.get_branch() != 'master':
+            raise BotError('Submitting results from non-master branch is prohibited.')
+        if version.endswith("-dirty"):
+            raise BotError('Submitting results from a dirty predictor file is prohibited. Commit or revert the changes.')
     run = pd.DataFrame({
         "parameters/model": [str(model)],
         "parameters/version": [version],
-        "parameters/dataset": [str(dataset)],
+        "parameters/train_dataset": [str(train_dataset)],
+        "parameters/test_dataset": [str(test_dataset)],
+        "parameters/train_label": [str(train_label)],
+        "parameters/test_label": [str(test_label)],
         "eval/binary_cross_entropy": [binary_cross_entropy],
-        "eval/accuracy": [accuracy],
-        "eval/label": [label]
+        "eval/accuracy": [accuracy]
     }, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
     LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")
     pd.concat([results, run]).to_csv(local_path)

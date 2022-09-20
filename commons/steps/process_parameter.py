@@ -15,9 +15,10 @@ def process_parameter(param_name: str, optional=False):
                     LOGGER.warning(f"'{param_name}' is not set.")
                 else:
                     raise ArgumentError(f"Provide --{param_name} option or set it through an environment variable '{param_name}'.")
-            LOGGER.info(f"'{param_name} is set to '{param_value}'.")
+            LOGGER.debug(f"'{param_name} is set to '{param_value}'.")
             return {param_name: param_value}
-        LOGGER.info(f"'{param_name}' has value '{kwargs[param_name]}'.")
+        LOGGER.debug(f"'{param_name}' has value '{kwargs[param_name]}'.")
 
     process_parameter_step.__name__ = f"process_'{param_name}'_parameter"
+    process_parameter_step.invisible = True
     return step(process_parameter_step)

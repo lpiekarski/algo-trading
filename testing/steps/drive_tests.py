@@ -10,10 +10,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def drive_tests(skip_drive=False, *args, **kwargs):
-    if skip_drive:
-        LOGGER.info("Tests are skipped.")
-        return
+def drive_tests(*args, **kwargs):
     cd = os.path.dirname(os.path.realpath(__file__))
     LOCAL_STORE = getenv("CACHE_DIR")
     root = os.path.join(cd, '..', '..', 'commons/drive')

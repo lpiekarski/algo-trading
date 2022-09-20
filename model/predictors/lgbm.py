@@ -10,7 +10,7 @@ def predict(X: pd.DataFrame) -> np.ndarray:
 def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
     global model
     if model is None:
-        model = lgbm.Booster(train_set=(X.drop(['Date', 'Datetime', 'time', 'Datetime.1'], axis=1), y))
+        model = lgbm.Booster(train_set=lgbm.Dataset(X.drop(['Date', 'Datetime', 'time', 'Datetime.1'], axis=1), y))
     else:
         model.refit(X.drop(['Date', 'Datetime', 'time', 'Datetime.1'], axis=1), y)
 
