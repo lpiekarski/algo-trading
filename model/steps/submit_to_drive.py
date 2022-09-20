@@ -13,7 +13,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def submit_to_drive(*, binary_cross_entropy, model, dataset, label, **kwargs):
+def submit_to_drive(*, binary_cross_entropy, accuracy, model, dataset, label, **kwargs):
     LOGGER.info("Storing the results")
 
     cache_dir = getenv("CACHE_DIR")
@@ -31,6 +31,7 @@ def submit_to_drive(*, binary_cross_entropy, model, dataset, label, **kwargs):
             "parameters/version": [],
             "parameters/dataset": [],
             "eval/binary_cross_entropy": [],
+            "eval/accuracy": [],
             "eval/label": []
         }, index=pd.DatetimeIndex([], name='date'))
     try:
@@ -42,6 +43,7 @@ def submit_to_drive(*, binary_cross_entropy, model, dataset, label, **kwargs):
         "parameters/version": [version],
         "parameters/dataset": [str(dataset)],
         "eval/binary_cross_entropy": [binary_cross_entropy],
+        "eval/accuracy": [accuracy],
         "eval/label": [label]
     }, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
 
