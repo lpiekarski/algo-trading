@@ -46,6 +46,6 @@ def submit_to_drive(*, binary_cross_entropy, accuracy, model, dataset, label, **
         "eval/accuracy": [accuracy],
         "eval/label": [label]
     }, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
-
+    LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")
     pd.concat([results, run]).to_csv(local_path)
     drive.upload(local_path, cloud_path)
