@@ -13,9 +13,9 @@ def get_labeled_dataset(*, dataset, label, **kwargs):
         X = download_dataset(dataset)
         y = X[label].copy()
         X.drop(label, axis=1, inplace=True)
-        X.drop(list(X.filter(regex=r'$next_long_.*^')), axis=1, inplace=True)
-        X.drop(list(X.filter(regex=r'$next_short_.*^')), axis=1, inplace=True)
-        X.drop(list(X.filter(regex=r'$Long_short_.*^')), axis=1, inplace=True)
+        X.drop(list(X.filter(regex=r'^next_long_.*$')), axis=1, inplace=True)
+        X.drop(list(X.filter(regex=r'^next_short_.*$')), axis=1, inplace=True)
+        X.drop(list(X.filter(regex=r'^Long_short_.*$')), axis=1, inplace=True)
     except CloudFileNotFoundError as e:
         LOGGER.error(f"Cannot find dataset '{dataset}'")
         raise e
