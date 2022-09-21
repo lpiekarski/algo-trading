@@ -26,30 +26,40 @@ def initialize():
 
 def upload(local_path: str, cloud_path: str) -> None:
     initialize()
+    cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
     max_file_size = int(getenv('GIT_DRIVE_MAX_FILE_SIZE'))
-    add_path = os.path.join(REPO_PATH, cloud_path)
+    add_path = os.path.join(REPO_PATH, os.path.basename(cloud_path))
+    git.reset_hard("main", cwd=REPO_PATH)
+    git.checkout("main", cwd=REPO_PATH)
+    git.checkout(cloud_path, cwd=REPO_PATH)
+    try:
+        git.fetch(cloud_path, cwd=REPO_PATH)
+        git.reset_soft(cloud_path, cwd=REPO_PATH)
+        git.restore_staged('.', cwd=REPO_PATH)
+    except CalledProcessError as e:
+        LOGGER.debug(f"Error on fetch: {e}")
     os.makedirs(os.path.dirname(add_path), exist_ok=True)
     with SplitFileWriter(f"{add_path}.zip.", max_file_size) as sfw:
         with zipfile.ZipFile(file=sfw, mode='w') as zf:
             zf.write(local_path, os.path.basename(cloud_path))
-    git.fetch(cwd=REPO_PATH)
-    git.reset_soft(cwd=REPO_PATH)
-    git.restore_staged('.', cwd=REPO_PATH)
     for file in split_filenames(f"{add_path}.zip."):
         git.add(os.path.abspath(file), cwd=REPO_PATH)
         git.commit(f"Automated: add '{file}' to the storage", cwd=REPO_PATH)
-        git.push(cwd=REPO_PATH)
+        git.push(cloud_path, cwd=REPO_PATH)
 
 def download(cloud_path: str, local_path: str) -> None:
     initialize()
-    checked_out_path = os.path.join(REPO_PATH, f"{cloud_path}.zip.")
-    git.fetch(cwd=REPO_PATH)
-    git.reset_soft(cwd=REPO_PATH)
+    cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
+    checked_out_path = os.path.join(REPO_PATH, f"{os.path.basename(cloud_path)}.zip.")
+    git.restore_staged('.', cwd=REPO_PATH)
+    git.checkout(cloud_path, cwd=REPO_PATH)
+    git.fetch(cloud_path, cwd=REPO_PATH)
+    git.reset_soft(cloud_path, cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     i = 0
     while True:
         try:
-            git.checkout(f"{cloud_path}.zip.{i:03}", cwd=REPO_PATH)
+            git.checkout_file(f"{os.path.basename(cloud_path)}.zip.{i:03}", branch=cloud_path, cwd=REPO_PATH)
             i += 1
         except CalledProcessError as e:
             if i == 0:
@@ -66,21 +76,8 @@ def download(cloud_path: str, local_path: str) -> None:
 
 def delete(cloud_path: str) -> None:
     initialize()
-    git.fetch(cwd=REPO_PATH)
-    git.reset_soft(cwd=REPO_PATH)
-    git.restore_staged('.', cwd=REPO_PATH)
-    i = 0
-    while True:
-        try:
-            git.remove(f"{cloud_path}.zip.{i:03}", cwd=REPO_PATH)
-            git.commit(f"Automated: delete '{cloud_path}.zip.{i:03}' from the storage", cwd=REPO_PATH)
-            git.push(cwd=REPO_PATH)
-            i += 1
-        except CalledProcessError as e:
-            if i == 0:
-                raise CloudFileNotFoundError(f"File not found in the repository. {e}")
-            else:
-                break
+    cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
+    git.delete_branch(cloud_path, cwd=REPO_PATH)
 
 def split_filenames(path: str):
     i = 0

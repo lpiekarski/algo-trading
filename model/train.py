@@ -1,4 +1,6 @@
 import click
+
+from commons.steps.conditional import conditional
 from commons.steps.get_labeled_dataset import get_labeled_dataset
 from commons.steps.process_parameter import process_parameter
 from commons.timing import subcommand
@@ -25,6 +27,6 @@ def train_group(): pass
     get_model_module,
     get_labeled_dataset,
     run_training,
-    save_model
+    conditional(save_model, "skip_save", negation=True)
 ])
 def train(*args, **kwargs): pass

@@ -8,14 +8,20 @@ def clone(url: str, path: str, base: str="git", **kwargs):
 def clone_no_checkout(url: str, path: str, base: str="git", **kwargs):
     subprocess.run([base, "clone", "--no-checkout", url, path], **kwargs).check_returncode()
 
-def fetch(base: str="git", **kwargs):
-    subprocess.run([base, "fetch", "origin", "main"], **kwargs).check_returncode()
+def fetch(branch: str="main", base: str="git", **kwargs):
+    subprocess.run([base, "fetch", "origin", branch], **kwargs).check_returncode()
 
-def reset_soft(base: str="git", **kwargs):
-    subprocess.run([base, "reset", "--soft", "main"], **kwargs).check_returncode()
+def reset_soft(branch: str="main", base: str="git", **kwargs):
+    subprocess.run([base, "reset", "--soft", branch], **kwargs).check_returncode()
 
-def checkout(path: str, base: str="git", **kwargs):
-    subprocess.run([base, "checkout", "origin/main", "--", path], **kwargs).check_returncode()
+def reset_hard(branch: str = "main", base: str = "git", **kwargs):
+    subprocess.run([base, "reset", "--hard", branch], **kwargs).check_returncode()
+
+def checkout_file(path: str, branch: str="main", base: str="git", **kwargs):
+    subprocess.run([base, "checkout", f"origin/{branch}", "--", path], **kwargs).check_returncode()
+
+def checkout(branch: str, base: str="git", **kwargs):
+    subprocess.run([base, "checkout", "-B", branch], check=True, **kwargs)
 
 def add(path: str, base: str="git", **kwargs):
     subprocess.run([base, "add", path], **kwargs).check_returncode()
@@ -23,8 +29,11 @@ def add(path: str, base: str="git", **kwargs):
 def commit(message: str, base: str="git", **kwargs):
     subprocess.run([base, "commit", "-m", message], **kwargs).check_returncode()
 
-def push(base: str="git", branch="main", **kwargs):
+def push(branch="main", base: str="git", **kwargs):
     subprocess.run([base, "push", "origin", branch], **kwargs).check_returncode()
+
+def delete_branch(branch: str, base: str="git", **kwargs):
+    subprocess.run([base, "push", "origin", "--delete", branch], check=True, **kwargs)
 
 def remove(path: str, base: str="git", **kwargs):
     subprocess.run([base, "rm", path], **kwargs).check_returncode()

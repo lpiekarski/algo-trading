@@ -25,6 +25,7 @@ def evaluate_group(): pass
 @click.option("--train_label", "-k", help="Name of the label column within the train dataset", default="y")
 @click.option("--test_dataset", "-e", help="Labelled dataset to use for evaluation")
 @click.option("--test_label", "-l", help="Name of the label column within the test dataset", default="y")
+@click.option("--skip_save", "-s", help="Do not save the results of the training", is_flag=True)
 @subcommand([
     process_parameter("model"),
     conditional(process_parameter("train_dataset"), "train"),
@@ -35,7 +36,7 @@ def evaluate_group(): pass
     get_model_module,
     conditional(get_labeled_dataset, "train"),
     conditional(run_training, "train"),
-    conditional(save_model, "train"),
+    conditional(conditional(save_model, "skip_save", negation=True), "train"),
     conditional(download_model, "train", negation=True),
     rename_parameters({"test_dataset": "dataset", "test_label": "label"}, keep_old=True),
     get_labeled_dataset,
