@@ -1,5 +1,0 @@
-click
-yfinance
-tensorflow
-pandas
-pandas-ta
