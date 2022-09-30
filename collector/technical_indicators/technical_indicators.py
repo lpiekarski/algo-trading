@@ -260,7 +260,3 @@ def add_technical_indicators(df, time_tag):
     df = add_accbands(df, time_tag)
 
     return df
-
-def actual_technical_indicators(df_h, df_actual, time_tag="hoour", high=0, low=0):
-    df_supp = df_h.append(df_actual.iloc[-1])
-    return add_technical_indicators(df_supp, "actual")

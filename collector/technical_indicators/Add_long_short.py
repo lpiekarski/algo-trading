@@ -38,7 +38,7 @@ def find_next_time_with_diff_price(df, x, direction):
     df['Low'] *= direction
     return next_long
 
-def ADD(df, x):
+def add_long_short(df, x):
     df[f'next_long_{x}'] = find_next_time_with_diff_price(df, x, direction=1)
     df[f'next_short_{x}'] = find_next_time_with_diff_price(df, x, direction=-1)
 
@@ -47,21 +47,23 @@ def ADD(df, x):
 
     df[f'Long_short_{x}'] = df.apply(lambda y: '1' if y[f'next_long_{x}'] <=
                                                        y[f'next_short_{x}'] else 0, axis=1)
+    return df
 
-df = pd.read_csv('M1.csv', index_col=0, parse_dates=True)
+if __name__ == '__main__':
+    df = pd.read_csv('M1.csv', index_col=0, parse_dates=True)
 
-df['time'] = pd.to_datetime(df.index)
+    df['time'] = pd.to_datetime(df.index)
 
-print(
-    f'{len(df):,.0f} rows with {len(df["Open"].unique()):,.0f} unique prices ranging from ${df["Open"].min():,.2f} to ${df["Open"].max():,.2f}')
+    print(
+        f'{len(df):,.0f} rows with {len(df["Open"].unique()):,.0f} unique prices ranging from ${df["Open"].min():,.2f} to ${df["Open"].max():,.2f}')
 
-# 0.01
-ADD(df, 0.01)
+    # 0.01
+    add_long_short(df, 0.01)
 
-# 0.025
-ADD(df, 0.025)
+    # 0.025
+    add_long_short(df, 0.025)
 
-# 0.05
-ADD(df, 0.05)
+    # 0.05
+    add_long_short(df, 0.05)
 
-print(df)
+    print(df)
