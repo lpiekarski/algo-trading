@@ -7,7 +7,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def get_labeled_dataset(*, dataset, label, **kwargs):
+def get_labeled_dataset(dataset, label, **kwargs):
     LOGGER.info(f"Getting labeled dataset '{dataset}'")
     try:
         X = download_dataset(dataset)

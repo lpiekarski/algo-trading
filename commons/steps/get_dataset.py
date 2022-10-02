@@ -7,7 +7,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def get_dataset(dataset=None, *args, **kwargs):
+def get_dataset(dataset, **kwargs):
     LOGGER.info("Getting dataset")
     if dataset is None:
         dataset = str(datetime.datetime.now().year)

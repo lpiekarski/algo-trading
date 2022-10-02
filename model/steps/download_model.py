@@ -7,7 +7,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def download_model(model=None, model_module=None, *args, **kwargs):
+def download_model(model, model_module, **kwargs):
     LOGGER.info(f"Trying to get stored model '{model}'")
     try:
         model_data_path = download_model_data(model)

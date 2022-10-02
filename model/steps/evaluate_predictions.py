@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score
 LOGGER = logging.getLogger(__name__)
 
 @step
-def evaluate_predictions(*, y, y_pred, **kwargs):
+def evaluate_predictions(y, y_pred, **kwargs):
     LOGGER.info("Comparing predictions to labels")
     cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=False)
     batch_size = 1024

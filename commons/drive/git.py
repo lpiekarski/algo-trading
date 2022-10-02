@@ -53,7 +53,10 @@ def download(cloud_path: str, local_path: str) -> None:
     checked_out_path = os.path.join(REPO_PATH, f"{os.path.basename(cloud_path)}.zip.")
     git.restore_staged('.', cwd=REPO_PATH)
     git.checkout(cloud_path, cwd=REPO_PATH)
-    git.fetch(cloud_path, cwd=REPO_PATH)
+    try:
+        git.fetch(cloud_path, cwd=REPO_PATH)
+    except CalledProcessError as e:
+        raise CloudFileNotFoundError(f"File not found in the repository. {e}")
     git.reset_soft(cloud_path, cwd=REPO_PATH)
     git.restore_staged('.', cwd=REPO_PATH)
     i = 0
@@ -66,13 +69,14 @@ def download(cloud_path: str, local_path: str) -> None:
                 raise CloudFileNotFoundError(f"File not found in the repository. {e}")
             else:
                 break
-    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+    local_dirname = os.path.dirname(os.path.abspath(local_path))
+    os.makedirs(local_dirname, exist_ok=True)
     with SplitFileReader(list(split_filenames(checked_out_path))) as sfr:
         with zipfile.ZipFile(file=sfr, mode='r') as zf:
-            LOGGER.debug(f"Extracting to {os.path.dirname(local_path)}")
-            zf.extractall(os.path.dirname(local_path))
-    LOGGER.debug(f"Directory after extraction: {os.listdir(os.path.dirname(local_path))}")
-    shutil.move(os.path.join(os.path.dirname(local_path), os.path.basename(cloud_path)), local_path)
+            LOGGER.debug(f"Extracting to {local_dirname}")
+            zf.extractall(local_dirname)
+    LOGGER.debug(f"Directory after extraction: {os.listdir(local_dirname)}")
+    shutil.move(os.path.join(local_dirname, os.path.basename(cloud_path)), local_path)
 
 def delete(cloud_path: str) -> None:
     initialize()

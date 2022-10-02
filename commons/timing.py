@@ -54,8 +54,8 @@ def subcommand(step_list):
                     'result': None,
                     'invisible': hasattr(step_func, 'invisible') and step_func.invisible
                 }
-                if not steps[step_name]['invisible']:
-                    LOGGER.info(f"\t\t{step_name} @ {step_func.__module__}")
+                log_func = LOGGER.debug if steps[step_name]['invisible'] else LOGGER.info
+                log_func(f"\t\t{step_name} @ {step_func.__module__}")
             LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
 
             for step in step_list:
@@ -83,12 +83,11 @@ def log_command_resolution(LOGGER, status):
     LOGGER.info(f"Results:")
     LOGGER.info(f"")
     for step_name, summary in steps.items():
-        if summary['invisible']:
-            continue
+        log_func = LOGGER.debug if summary['invisible'] else LOGGER.info
         if summary['result'] is None:
-            LOGGER.info(f"{step_name + ' ' :.<52} SKIPPED")
+            log_func(f"{step_name + ' ' :.<52} SKIPPED")
         else:
-            LOGGER.info(f"{step_name + ' ' :.<52} {color_status(summary['result'])} [{summary['end'] - summary['start'] :.5f} s]")
+            log_func(f"{step_name + ' ' :.<52} {color_status(summary['result'])} [{summary['end'] - summary['start'] :.5f} s]")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
     LOGGER.info(f"COMMAND {color_status(status)}")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")

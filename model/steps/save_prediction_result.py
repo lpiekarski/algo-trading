@@ -6,7 +6,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def save_prediction_result(output=None, model=None, dataset=None, y_pred=None, *args, **kwargs):
+def save_prediction_result(output, model, dataset, y_pred, **kwargs):
     if output is None:
         time = datetime.datetime.now()
         output = f"{dataset}_results_{model}_{time.year}_{time.month}_{time.day}_{time.hour}_{time.minute}"

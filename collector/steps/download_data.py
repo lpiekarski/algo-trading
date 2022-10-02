@@ -10,7 +10,7 @@ from commons.exceptions import BotError, DataDownloadError
 LOGGER = logging.getLogger(__name__)
 
 @step
-def download_data(date="latest", *args, **kwargs):
+def download_data(date, **kwargs):
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
         df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)

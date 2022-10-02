@@ -8,7 +8,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def save_model(*, model, model_module, **kwargs):
+def save_model(model, model_module, **kwargs):
     model_data_path = get_model_cache_path(model)
     try:
         os.remove(model_data_path)

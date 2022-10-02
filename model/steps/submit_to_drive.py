@@ -13,7 +13,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def submit_to_drive(*, binary_cross_entropy, accuracy, model, test_dataset, train_dataset, test_label, train_label, **kwargs):
+def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_dataset, test_label, train_label, **kwargs):
     LOGGER.info("Storing the results")
 
     cache_dir = getenv("CACHE_DIR")
