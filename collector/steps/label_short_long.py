@@ -14,15 +14,10 @@ from commons.exceptions import BotError, DataDownloadError
 LOGGER = logging.getLogger(__name__)
 
 @step
-def label_long_short(df=None, sigma=0.01, output=None, file_path=None, *args, **kwargs):
+def label_long_short(df=None, sigma=0.01, *args, **kwargs):
     if df is None:
         LOGGER.error("There is no Date Frame loaded!")
     df['time'] = pd.to_datetime(df.index)
     df = add_long_short(df, sigma)
     LOGGER.info(df)
-    if output is not None:
-        output_filename = output
-    else:
-        output_filename = "{0}_{2}.{1}".format(*file_path.rsplit('.', 1) + ['indicators'])
-    df.to_csv(output_filename)
     return dict(df=df)
