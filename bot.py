@@ -4,6 +4,7 @@ import sys
 import logging
 
 from collector.collect import collect_group
+from collector.extract import extract_group
 from commons.logging import init_logging
 from commons.exceptions import ArgumentError, BotError
 from commons.string import ENDLINE, TAB
@@ -24,6 +25,7 @@ LOGGER = logging.getLogger(__name__)
     sources=[
         evaluate_group,
         collect_group,
+        extract_group,
         predict_group,
         train_group,
         test_group,
