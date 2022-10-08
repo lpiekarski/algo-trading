@@ -31,7 +31,7 @@ def upload(local_path: str, cloud_path: str) -> None:
     add_path = os.path.join(REPO_PATH, os.path.basename(cloud_path))
     git.reset_hard("main", cwd=REPO_PATH)
     git.checkout("main", cwd=REPO_PATH)
-    git.checkout(cloud_path, cwd=REPO_PATH)
+    git.checkout_create(cloud_path, cwd=REPO_PATH)
     try:
         git.fetch(cloud_path, cwd=REPO_PATH)
         git.reset_soft(cloud_path, cwd=REPO_PATH)
@@ -51,14 +51,17 @@ def download(cloud_path: str, local_path: str) -> None:
     initialize()
     cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
     checked_out_path = os.path.join(REPO_PATH, f"{os.path.basename(cloud_path)}.zip.")
-    git.restore_staged('.', cwd=REPO_PATH)
+    git.reset_hard("main", cwd=REPO_PATH)
     git.checkout(cloud_path, cwd=REPO_PATH)
     try:
         git.fetch(cloud_path, cwd=REPO_PATH)
     except CalledProcessError as e:
         raise CloudFileNotFoundError(f"File not found in the repository. {e}")
     git.reset_soft(cloud_path, cwd=REPO_PATH)
-    git.restore_staged('.', cwd=REPO_PATH)
+    try:
+        git.restore_staged('.', cwd=REPO_PATH)
+    except CalledProcessError:
+        pass
     i = 0
     while True:
         try:
