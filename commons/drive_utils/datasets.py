@@ -20,7 +20,7 @@ def download_dataset(name: str):
         LOGGER.debug(f"Dataset '{name}' is not cached, downloading using drive '{drive.__name__}'")
         drive.download(os.path.join('datasets', name), local_path)
     LOGGER.debug(f"Reading CSV from '{local_path}'")
-    return pd.read_csv(local_path)
+    return pd.read_csv(local_path, parse_dates=True, index_col='Date')
 
 def upload_dataset(name: str, df: pd.DataFrame, append: bool=False):
     LOGGER.debug(f'Upload dataset "{name}", append={append}')

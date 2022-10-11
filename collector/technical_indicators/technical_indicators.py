@@ -123,8 +123,8 @@ def add_accbands(df, time_tag):
     df[f'ACCBM_20_{time_tag}'] = acceleration_bands['ACCBM_20']
     df[f'ACCBU_20_{time_tag}'] = acceleration_bands['ACCBU_20']
 
-def add_date_based(df, time_tag):
-    timefunc = lambda name, sincos, length: sincos(getattr(df['Date'].dt, name) / length * 2 * np.pi)
+def add_cyclical_datetime(df, time_tag):
+    timefunc = lambda name, sincos, length: sincos(getattr(df.index, name) / length * 2 * np.pi)
     df[f'Day_sin_{time_tag}'] = timefunc('day', np.sin, 31)
     df[f'Day_cos_{time_tag}'] = timefunc('day', np.cos, 31)
     df[f'Month_sin_{time_tag}'] = timefunc('month', np.sin, 12)
@@ -162,12 +162,11 @@ INDICATORS = dict(
     add_bop=None,
     add_uo=None,
     add_accbands=None,
-    add_date_based=None
+    add_cyclical_datetime=None
 )
 
 def add_technical_indicators(df, time_tag):
-
-    for indicator, params in INDICATORS:
+    for indicator, params in INDICATORS.items():
         indicator_func = getattr(sys.modules[__name__], indicator)
         if params is None:
             indicator_func(df, time_tag)
@@ -179,5 +178,3 @@ def add_technical_indicators(df, time_tag):
                     indicator_func(df, time_tag, **param)
                 else:
                     indicator_func(df, time_tag, param)
-
-    return df

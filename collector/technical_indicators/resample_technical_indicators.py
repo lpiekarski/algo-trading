@@ -50,17 +50,15 @@ def resample_technical_indicators(df, time_tag="1h"):
 
 def get_max_lookback():
     result = 0
-    for indicator, params in ti.INDICATORS:
+    for indicator, params in ti.INDICATORS.items():
         if params is None:
             pass
         else:
             for param in params:
                 if isinstance(param, list):
-                    for subparam in param:
-                        result = max(result, subparam)
+                    result = max(result, param[0])
                 elif isinstance(param, dict):
-                    for subparam_key, subparam_value in param.items():
-                        result = max(result, subparam_value)
+                    result = max(result, param['length'])
                 else:
                     result = max(result, param)
     return result
