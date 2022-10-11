@@ -1,6 +1,7 @@
 # libraries
 import pandas as pd
 import pandas_ta as pta
+import numpy as np
 
 # Keltner Channel
 def KELCH(df, n):
@@ -147,6 +148,19 @@ def add_accbands(df, time_tag):
     df[f'ACCBM_20_{time_tag}'] = acceleration_bands['ACCBM_20']
     df[f'ACCBU_20_{time_tag}'] = acceleration_bands['ACCBU_20']
     return df
+
+def add_date_based(df, time_tag):
+    timefunc = lambda name, sincos, length: sincos(getattr(df['Date'].dt, name) / length * 2 * np.pi)
+    df[f'Day_sin_{time_tag}'] = timefunc('day', np.sin, 31)
+    df[f'Day_cos_{time_tag}'] = timefunc('day', np.cos, 31)
+    df[f'Month_sin_{time_tag}'] = timefunc('month', np.sin, 12)
+    df[f'Month_cos_{time_tag}'] = timefunc('month', np.cos, 12)
+    df[f'Hour_sin_{time_tag}'] = timefunc('hour', np.sin, 24)
+    df[f'Hour_cos_{time_tag}'] = timefunc('hour', np.cos, 24)
+    df[f'Minute_sin_{time_tag}'] = timefunc('minute', np.sin, 60)
+    df[f'Minute_cos_{time_tag}'] = timefunc('minute', np.cos, 60)
+    df[f'DayOfWeek_sin_{time_tag}'] = timefunc('dayofweek', np.sin, 7)
+    df[f'DayOfWeek_cos_{time_tag}'] = timefunc('dayofweek', np.cos, 7)
 
 # add technical indicators for all
 def add_technical_indicators(df, time_tag):
