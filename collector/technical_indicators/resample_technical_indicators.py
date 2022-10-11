@@ -46,6 +46,8 @@ def resample_technical_indicators(df, time_tag="1h"):
         if count % 500 == 0 or count == size:
             LOGGER.info(f"{count}/{size} = {100 * progress_bar}%")
             LOGGER.info("----")
+    result = pd.DataFrame(result_rows)
+    result.drop(['Open', 'High', 'Low', 'Close'], axis=1, inplace=True)
     return pd.DataFrame(result_rows)
 
 def get_max_lookback():
