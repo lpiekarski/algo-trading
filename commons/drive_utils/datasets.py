@@ -39,5 +39,5 @@ def upload_dataset(name: str, df: pd.DataFrame, append: bool=False):
         dataset = df
     LOGGER.debug(f"Saving dataset '{name}' to local file '{local_path}'")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
-    dataset.to_csv(local_path)
+    dataset.to_csv(local_path, index_label='Date')
     drive.upload(local_path, os.path.join('datasets', name))

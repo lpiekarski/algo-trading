@@ -35,7 +35,7 @@ def resample_technical_indicators(df, time_tag="1h"):
         if len(resample_df.index) < max_lookback:
             continue
         resample_df = resample_df.tail(max_lookback)
-        resample_df = ti.add_technical_indicators(resample_df, time_tag)
+        ti.add_technical_indicators(resample_df, time_tag)
 
         last_record = resample_df.iloc[-1]
         last_record.name = index
