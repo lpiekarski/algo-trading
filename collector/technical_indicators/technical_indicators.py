@@ -136,38 +136,38 @@ def add_date_based(df, time_tag):
     df[f'DayOfWeek_sin_{time_tag}'] = timefunc('dayofweek', np.sin, 7)
     df[f'DayOfWeek_cos_{time_tag}'] = timefunc('dayofweek', np.cos, 7)
 
-# add technical indicators for all
-def add_technical_indicators(df, time_tag):
-    indicators = dict(
-        add_sma=[10, 20, 50, 100, 200],
-        add_ema=[10, 20, 50, 100, 200],
-        add_dema=[10, 20, 50, 100, 200],
-        add_kama=[10, 20, 50, 100, 200],
-        add_bolinger_bands=None,
-        add_ichimoku=None,
-        add_parabolic_sar=None,
-        add_stdev=[10, 20, 50, 100, 200],
-        add_linreg=[10, 20, 50, 100, 200],
-        add_atr=[14],
-        add_rsi=[14, 26],
-        add_cci=[20, 50],
-        add_momentum=[10, 14, 21],
-        add_macd=None,
-        add_stochrsi=[14, [46, 46]],
-        add_stoch=None,
-        add_rvi=[14],
-        add_willr=[14],
-        add_ao=None,
-        add_ha=None,
-        add_donchian=None,
-        add_KELCH=None,
-        add_bop=None,
-        add_uo=None,
-        add_accbands=None,
-        add_date_based=None
-    )
+INDICATORS = dict(
+    add_sma=[10, 20, 50, 100, 200],
+    add_ema=[10, 20, 50, 100, 200],
+    add_dema=[10, 20, 50, 100, 200],
+    add_kama=[10, 20, 50, 100, 200],
+    add_bolinger_bands=None,
+    add_ichimoku=None,
+    add_parabolic_sar=None,
+    add_stdev=[10, 20, 50, 100, 200],
+    add_linreg=[10, 20, 50, 100, 200],
+    add_atr=[14],
+    add_rsi=[14, 26],
+    add_cci=[20, 50],
+    add_momentum=[10, 14, 21],
+    add_macd=None,
+    add_stochrsi=[14, [46, 46]],
+    add_stoch=None,
+    add_rvi=[14],
+    add_willr=[14],
+    add_ao=None,
+    add_ha=None,
+    add_donchian=None,
+    add_KELCH=None,
+    add_bop=None,
+    add_uo=None,
+    add_accbands=None,
+    add_date_based=None
+)
 
-    for indicator, params in indicators:
+def add_technical_indicators(df, time_tag):
+
+    for indicator, params in INDICATORS:
         indicator_func = getattr(sys.modules[__name__], indicator)
         if params is None:
             indicator_func(df, time_tag)
