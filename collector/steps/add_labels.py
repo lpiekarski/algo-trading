@@ -6,5 +6,5 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def add_labels(X, deviation, **kwargs):
-    add_best_decision(X, deviation)
+def add_labels(dataset, deviation, **kwargs):
+    add_best_decision(dataset, deviation)

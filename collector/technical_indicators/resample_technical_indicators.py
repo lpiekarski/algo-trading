@@ -4,51 +4,63 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
-def resample_technical_indicators(df, time_tag="1h"):
-    ohlc = {
-        'Open': 'first',
-        'High': 'max',
-        'Low': 'min',
-        'Close': 'last'
-    }
+OHLC_RESAMPLE_MAP = {
+    'Open': 'first',
+    'High': 'max',
+    'Low': 'min',
+    'Close': 'last'
+}
+
+def resample_technical_indicators(dataset, time_tag="1h"):
     result_rows = []
-    # Loop on each minutes
-    actual_time = None
-    past_resample_df = None
-    size = len(df.index)
-    count = 0
     max_lookback = get_max_lookback()
-    for index, row in df.iterrows():
-        count += 1
-        if actual_time != index.round(time_tag):
-            # da się zapamiętać ostatnie.
-            actual_time = index.round(time_tag)
-            past_supp_df = df.loc[df.index < actual_time]
-            # resample past records
-            past_resample_df = past_supp_df.resample(time_tag).apply(ohlc)
-        # resample actual sample
-        mask = (df.index >= actual_time) & (df.index <= index)
-        supp_df = df.loc[mask]
-        resample_df = supp_df.resample(time_tag).apply(ohlc)
-        resample_df = pd.concat([past_resample_df, resample_df])
+    resampler = Resampler()
+    progress_bar = ProgressBar(dataset.df.shape[0])
 
-        if len(resample_df.index) < max_lookback:
+    for index, row in dataset.df.iterrows():
+        resampled_df = resampler.get_resampled_df(dataset.df, index, time_tag)
+        if resampled_df.shape[0] < max_lookback:
             continue
-        resample_df = resample_df.tail(max_lookback)
-        ti.add_technical_indicators(resample_df, time_tag)
+        resampled_df = resampled_df.tail(max_lookback).copy()
 
-        last_record = resample_df.iloc[-1]
+        ti.add_technical_indicators(resampled_df, time_tag)
+
+        last_record = resampled_df.iloc[-1]
         last_record.name = index
-
         result_rows.append(last_record)
 
-        progress_bar = count / size
-        if count % 500 == 0 or count == size:
-            LOGGER.info(f"{count}/{size} = {100 * progress_bar}%")
-            LOGGER.info("----")
-    result = pd.DataFrame(result_rows)
-    result.drop(['Open', 'High', 'Low', 'Close'], axis=1, inplace=True)
+        progress_bar.update()
+
     return pd.DataFrame(result_rows)
+
+class Resampler:
+    def __init__(self):
+        self.bucket_time = None
+        self.past_resampled_df = None
+
+    def get_resampled_df(self, df, index, time_tag):
+        current_time = index.floor(time_tag)
+        if self.bucket_time != current_time:
+            LOGGER.debug(f"Processing datetime '{current_time}'")
+            self.bucket_time = current_time
+            past_supp_df = df.loc[df.index <= self.bucket_time]
+            self.past_resampled_df = past_supp_df.resample(time_tag).apply(OHLC_RESAMPLE_MAP)
+        current_bucket_df = df.loc[(df.index > self.bucket_time) & (df.index <= index)]
+        if current_bucket_df.empty:
+            return self.past_resampled_df
+        return pd.concat([self.past_resampled_df, current_bucket_df.tail(1)])
+
+class ProgressBar:
+    def __init__(self, num_updates):
+        self.count = 0
+        self.length = num_updates
+
+    def update(self, count=1):
+        self.count += count
+        completed_percent = 100 * self.count / self.length
+        if self.count % 500 == 0 or self.count == self.length:
+            LOGGER.info(f"{self.count}/{self.length} = {completed_percent:.2f}%")
+            LOGGER.info("----")
 
 def get_max_lookback():
     result = 0
@@ -63,4 +75,5 @@ def get_max_lookback():
                     result = max(result, param['length'])
                 else:
                     result = max(result, param)
+    LOGGER.info(f"Max lookback for indicators is {result}")
     return result

@@ -1,6 +1,7 @@
 import logging
 import os
 
+from commons.dataset import Dataset
 from commons.drive import get_drive_module
 from commons.env import getenv
 import pandas as pd
@@ -15,29 +16,30 @@ def download_dataset(name: str):
     LOGGER.debug(f"Download dataset '{name}'")
     drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
-    local_path = os.path.join(cache_dir, name)
+    local_path = os.path.join(cache_dir, 'datasets', name)
     if not os.path.exists(local_path):
         LOGGER.debug(f"Dataset '{name}' is not cached, downloading using drive '{drive.__name__}'")
         drive.download(os.path.join('datasets', name), local_path)
-    LOGGER.debug(f"Reading CSV from '{local_path}'")
-    return pd.read_csv(local_path, parse_dates=True, index_col='Date')
+    LOGGER.debug(f"Loading dataset from '{local_path}'")
+    return Dataset.load(local_path)
 
-def upload_dataset(name: str, df: pd.DataFrame, append: bool=False):
+def upload_dataset(name: str, dataset: Dataset, append: bool=False):
     LOGGER.debug(f'Upload dataset "{name}", append={append}')
     drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
-    local_path = os.path.join(cache_dir, name)
+    local_path = os.path.join(cache_dir, 'datasets', name)
     if append:
         try:
             drive.download(os.path.join('datasets', name), local_path)
-            dataset = pd.concat([pd.read_csv(local_path, parse_dates=True), df])
+            result_dataset = Dataset.load(local_path)
+            result_dataset.concat(dataset)
             drive.delete(os.path.join('datasets', name))
         except CloudFileNotFoundError:
             LOGGER.debug(f"Dataset not found on the drive, creating (append=True)")
-            dataset = df
+            result_dataset = dataset
     else:
-        dataset = df
+        result_dataset = dataset
     LOGGER.debug(f"Saving dataset '{name}' to local file '{local_path}'")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
-    dataset.to_csv(local_path, index_label='Date')
+    result_dataset.save(local_path)
     drive.upload(local_path, os.path.join('datasets', name))

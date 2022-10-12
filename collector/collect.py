@@ -1,6 +1,6 @@
 from click import group, option
 
-from collector.steps.download_data import download_data
+from collector.steps.create_dataset import create_dataset
 from collector.steps.save_dataset import save_dataset
 from collector.steps.wait_before_download import wait_before_download
 from commons.steps.conditional import conditional
@@ -23,7 +23,7 @@ def collect_group(): pass
     process_parameter("skip_wait"),
     process_parameter("append"),
     conditional(wait_before_download, 'wait'),
-    download_data,
+    create_dataset,
     save_dataset
 ])
 def collect(*args, **kwargs): pass

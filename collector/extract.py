@@ -32,7 +32,6 @@ def extract_group(): pass
     add_indicators,
     add_labels,
     add_resample_indicators,
-    rename_parameters({'resampled_X': 'df'}),
     save_dataset
 ])
 def extract(*args, **kwargs):

@@ -13,5 +13,5 @@ from commons.exceptions import BotError, DataDownloadError
 LOGGER = logging.getLogger(__name__)
 
 @step
-def add_indicators(X, **kwargs):
-    add_technical_indicators(X, time_tag="") #TODO: is this time_tag correct?
+def add_indicators(dataset, **kwargs):
+    add_technical_indicators(dataset, time_tag="") #TODO: is this time_tag correct?

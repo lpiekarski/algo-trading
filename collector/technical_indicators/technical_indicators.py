@@ -4,6 +4,8 @@ import pandas as pd
 import pandas_ta as pta
 import numpy as np
 
+from commons.dataset import Dataset
+
 def KELCH(df, n):
     KelChM = pd.Series(((df['High'] + df['Low'] + df['Close']) / 3), name='KelChM_' + str(n)).rolling(window=n).mean()
     KelChU = pd.Series(((4 * df['High'] - 2 * df['Low'] + df['Close']) / 3),
@@ -165,7 +167,8 @@ INDICATORS = dict(
     add_cyclical_datetime=None
 )
 
-def add_technical_indicators(df, time_tag):
+def add_technical_indicators(dataset, time_tag):
+    df = dataset.df if isinstance(dataset, Dataset) else dataset
     for indicator, params in INDICATORS.items():
         indicator_func = getattr(sys.modules[__name__], indicator)
         if params is None:

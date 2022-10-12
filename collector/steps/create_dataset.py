@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+from commons.dataset import Dataset
 from commons.timing import step
 import yfinance as yf
 from dateutil import parser
@@ -10,7 +11,7 @@ from commons.exceptions import BotError, DataDownloadError
 LOGGER = logging.getLogger(__name__)
 
 @step
-def download_data(date, **kwargs):
+def create_dataset(date, **kwargs):
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
         df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)
@@ -21,7 +22,7 @@ def download_data(date, **kwargs):
         start_date = df.index[0]
         df.index.name = "Date"
         LOGGER.info(f"Collection start date is '{start_date}'")
-        return dict(df=df, start_date=start_date)
+        return dict(dataset=Dataset(df))
     else:
         LOGGER.info(f"Collecting data starting from '{date}'")
         try:
@@ -38,4 +39,4 @@ def download_data(date, **kwargs):
         df = df[df.Volume != 0].tail(1)
         df.index.name = "Date"
         LOGGER.info(f"Collection start date is '{start_date}'")
-        return dict(df=df, start_date=start_date)
+        return dict(dataset=Dataset(df))

@@ -2,10 +2,12 @@ import numpy as np
 import pandas as pd
 import bisect
 
-def add_best_decision(df: pd.DataFrame, deviation):
-    next_long = np.nan_to_num(find_next_time_with_diff_price(df, deviation, direction=1), nan=np.inf)
-    next_short = np.nan_to_num(find_next_time_with_diff_price(df, deviation, direction=-1), nan=np.inf)
-    df[f'Best_decision_{deviation}'] = np.argmax(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1)
+from commons.dataset import Dataset
+
+def add_best_decision(dataset: Dataset, deviation):
+    next_long = np.nan_to_num(find_next_time_with_diff_price(dataset.df, deviation, direction=1), nan=np.inf)
+    next_short = np.nan_to_num(find_next_time_with_diff_price(dataset.df, deviation, direction=-1), nan=np.inf)
+    dataset.add_label(f'Best_decision_{deviation}', np.argmax(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
 
 def find_next_time_with_diff_price(df_: pd.DataFrame, deviation, direction):
     df = df_.copy()

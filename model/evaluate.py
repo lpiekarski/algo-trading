@@ -1,7 +1,7 @@
 import click
 
-from commons.steps.get_labeled_dataset import get_labeled_dataset
 from commons.steps.conditional import conditional
+from commons.steps.get_dataset import get_dataset
 from commons.steps.process_parameter import process_parameter
 from commons.steps.rename_parameters import rename_parameters
 from commons.timing import subcommand
@@ -34,12 +34,12 @@ def evaluate_group(): pass
     process_parameter("test_label"),
     conditional(rename_parameters({"train_dataset": "dataset", "train_label": "label"}, keep_old=True), "train"),
     get_model_module,
-    conditional(get_labeled_dataset, "train"),
+    conditional(get_dataset, "train"),
     conditional(run_training, "train"),
     conditional(conditional(save_model, "skip_save", negation=True), "train"),
     conditional(download_model, "train", negation=True),
     rename_parameters({"test_dataset": "dataset", "test_label": "label"}, keep_old=True),
-    get_labeled_dataset,
+    get_dataset,
     generate_predictions,
     evaluate_predictions,
     submit_to_drive
