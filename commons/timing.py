@@ -28,7 +28,6 @@ def step(step_func):
         except Exception as e:
             steps[step_name]['end'] = time.time()
             steps[step_name]['result'] = 'FAILURE'
-            LOGGER.error(e, exc_info=e)
             if not isinstance(e, NotInterruptingError):
                 raise e
     return wrap

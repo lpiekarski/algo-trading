@@ -1,13 +1,17 @@
 import numpy as np
 import pandas as pd
 import bisect
-
 from commons.dataset import Dataset
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 def add_best_decision(dataset: Dataset, deviation):
     next_long = np.nan_to_num(find_next_time_with_diff_price(dataset.df, deviation, direction=1), nan=np.inf)
     next_short = np.nan_to_num(find_next_time_with_diff_price(dataset.df, deviation, direction=-1), nan=np.inf)
-    dataset.add_label(f'Best_decision_{deviation}', np.argmax(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
+    LOGGER.debug(f'next_long:\n{next_long}')
+    LOGGER.debug(f'next_short:\n{next_short}')
+    dataset.add_label(f'Best_decision_{deviation}', np.argmin(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
 
 def find_next_time_with_diff_price(df_: pd.DataFrame, deviation, direction):
     df = df_.copy()
@@ -17,7 +21,9 @@ def find_next_time_with_diff_price(df_: pd.DataFrame, deviation, direction):
     next_long = np.full(len(df), np.nan)
     ohlc = {
         'Open': 'first',
-        'time': 'first'
+        'High': 'max',
+        'Low': 'min',
+        'Close': 'last',
     }
     df_year = df.resample('1y').apply(ohlc)  # 5min #30min #1h #1d #1w #1m
     df_year_multiply = df_year.copy()
