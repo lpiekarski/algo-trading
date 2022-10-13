@@ -22,4 +22,4 @@ def test_add_best_decision():
 
     labels.add_best_decision(dataset, 1)
     print(dataset.df['Best_decision_1'])
-    assert dataset.df['Best_decision_1'].equals([1, 1, 1, 1, 1, 1, 0])
+    assert list(dataset.df['Best_decision_1']) == [1, 1, 1, 1, 1, 1, 0]

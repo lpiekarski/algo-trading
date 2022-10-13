@@ -31,7 +31,7 @@ def find_next_time_with_diff_price(df_: pd.DataFrame, deviation, direction):
     col = 'High' if direction == 1 else 'Low'
     for i in range(len(df)):
         year = df.iloc[i].name.year
-        while stack and df[col].iloc[i] > stack[0][1]:
+        while stack and df[col].iloc[i] >= stack[0][1]:
             stack_time_index, stack_price = stack.pop(0)
             next_long[stack_time_index] = i
         year_val = df_year_multiply[df_year_multiply.index.year == year]
