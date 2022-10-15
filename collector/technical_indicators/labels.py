@@ -6,38 +6,29 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
-def add_best_decision(dataset: Dataset, deviation):
-    next_long = np.nan_to_num(find_next_time_with_diff_price(dataset.df, deviation, direction=1), nan=np.inf)
-    next_short = np.nan_to_num(find_next_time_with_diff_price(dataset.df, deviation, direction=-1), nan=np.inf)
-    LOGGER.debug(f'next_long:\n{next_long}')
-    LOGGER.debug(f'next_short:\n{next_short}')
-    dataset.add_label(f'Best_decision_{deviation}', np.argmin(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
+def add_best_decision(dataset: Dataset, pct_change):
+    next_long = find_indexes_with_price_percentage_change(dataset.df, pct_change, direction=1)
+    next_short = find_indexes_with_price_percentage_change(dataset.df, pct_change, direction=-1)
+    next_long = next_long.apply(lambda x: x.value if x is not None else np.inf)
+    next_short = next_short.apply(lambda x: x.value if x is not None else np.inf)
+    dataset.add_label(f'Best_decision_{pct_change}', np.argmin(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
 
-def find_next_time_with_diff_price(df_: pd.DataFrame, deviation, direction):
-    df = df_.copy()
-    df['Close'] *= direction
-    df['Low'] *= direction
-    stack = []
-    next_long = np.full(len(df), np.nan)
-    ohlc = {
-        'Open': 'first',
-        'High': 'max',
-        'Low': 'min',
-        'Close': 'last',
-    }
-    df_year = df.resample('1y').apply(ohlc)  # 5min #30min #1h #1d #1w #1m
-    df_year_multiply = df_year.copy()
-    df_year_multiply['Open'] = df_year_multiply['Open'] * deviation * direction  #TODO: assumes that df contains the  first 'Open' of the year, this is not correct
-    col = 'High' if direction == 1 else 'Low'
-    for i in range(len(df)):
-        year = df.iloc[i].name.year
-        while stack and df[col].iloc[i] >= stack[0][1]:
-            stack_time_index, stack_price = stack.pop(0)
-            next_long[stack_time_index] = i
-        year_val = df_year_multiply[df_year_multiply.index.year == year]
-        val = df['Close'].iloc[i] + direction * year_val['Open'].iloc[0]
-        _, snd = zip(*stack) if stack else ([], [])
-        idx = bisect.bisect(snd, val)
-        stack.insert(idx, (i, val))
+def find_indexes_with_price_percentage_change(df: pd.DataFrame, pct_change, direction):
+    result = {}
+    hanging = []
+    furthest_col = 'High' if direction == 1 else 'Low'
+    for index, row in df.iterrows():
+        while hanging and direction * row[furthest_col] >= direction * hanging[0]['price'] * (1 + direction * pct_change):
+            top = hanging.pop(0)
+            result[top['index']] = index
+        insert(hanging, {'index': index, 'price': row['Close']}, direction)
+    result_df = pd.DataFrame(index=df.index.copy())
+    result_df['result'] = None
+    for k, v in result.items():
+        result_df['result'][k] = v
+    return result_df['result']
 
-    return next_long
+def insert(s, element, direction):
+    prices = [direction * entry['price'] for entry in s]
+    idx = bisect.bisect(prices, element['price'])
+    s.insert(idx, element)
