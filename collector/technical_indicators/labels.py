@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import pandas as pd
 import bisect
@@ -30,5 +32,23 @@ def find_indexes_with_price_percentage_change(df: pd.DataFrame, pct_change, dire
 
 def insert(s, element, direction):
     prices = [direction * entry['price'] for entry in s]
-    idx = bisect.bisect(prices, element['price'])
+    idx = bisect.bisect(prices, direction * element['price'])
     s.insert(idx, element)
+
+LABELS = dict(
+    add_best_decision=[0.01, 0.025],
+)
+
+def add_labels(dataset: Dataset):
+    for label, params in LABELS.items():
+        label_func = getattr(sys.modules[__name__], label)
+        if params is None:
+            label_func(dataset)
+        else:
+            for param in params:
+                if isinstance(param, list):
+                    label_func(dataset, *param)
+                elif isinstance(param, dict):
+                    label_func(dataset, **param)
+                else:
+                    label_func(dataset, param)

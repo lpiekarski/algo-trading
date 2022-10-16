@@ -4,21 +4,21 @@ from commons.dataset import Dataset
 import pandas as pd
 
 def test_add_best_decision():
-    sequence_test([117, 141, 108, 149, 116, 171, 188, 193, 148, 134], 0.1)
+    sequence_test(np.array([117, 141, 108, 149, 116, 171, 188, 193, 148, 134]), 0.1)
 
 def test_add_best_decision_on_random_sequences():
-    n_tries = 100
-    for _ in range(n_tries):
+    n_tries = 1000
+    for i in range(n_tries):
         sequence = np.random.randint(100, 201, 10)
         pct_change = np.random.uniform(0, 0.5)
         sequence_test(sequence, pct_change)
 
 def sequence_test(sequence, pct_change):
         dataset = Dataset(pd.DataFrame({
-            'Open': sequence,
-            'High': sequence,
-            "Low": sequence,
-            'Close': sequence
+            'Open': sequence + 0.25 + 0.1 * np.random.randn(sequence.shape[0]),
+            'High': sequence + 0.5 + 0.1 * np.random.randn(sequence.shape[0]),
+            "Low": sequence+ 0.1 + 0.1 * np.random.randn(sequence.shape[0]),
+            'Close': sequence + 0.25 + 0.1 * np.random.randn(sequence.shape[0])
         }, index=pd.DatetimeIndex([pd.Timestamp('2010-01-01 00:00') + pd.Timedelta(minutes=i) for i in range(len(sequence))])))
         labels.add_best_decision(dataset, pct_change)
         real = list(dataset.df[f'Best_decision_{pct_change}'])
