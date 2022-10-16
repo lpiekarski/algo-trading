@@ -10,7 +10,11 @@ __all__ = ["download_prediction", "upload_prediction"]
 LOGGER = logging.getLogger(__name__)
 
 def download_prediction(name: str):
-    drive = get_drive_module()
+    if ':' in name:
+        drive_type, name = name.split(':', maxsplit=2)
+        drive = get_drive_module(drive_type)
+    else:
+        drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, name)
     if not os.path.exists(local_path):
@@ -19,7 +23,11 @@ def download_prediction(name: str):
     return pd.read_csv(local_path)
 
 def upload_prediction(name: str, df: pd.DataFrame):
-    drive = get_drive_module()
+    if ':' in name:
+        drive_type, name = name.split(':', maxsplit=2)
+        drive = get_drive_module(drive_type)
+    else:
+        drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, name)
     LOGGER.debug(f"Saving prediction '{name}' to local file '{local_path}'")

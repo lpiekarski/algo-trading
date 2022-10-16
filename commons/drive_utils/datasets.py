@@ -14,7 +14,11 @@ LOGGER = logging.getLogger(__name__)
 
 def download_dataset(name: str):
     LOGGER.debug(f"Download dataset '{name}'")
-    drive = get_drive_module()
+    if ':' in name:
+        drive_type, name = name.split(':', maxsplit=2)
+        drive = get_drive_module(drive_type)
+    else:
+        drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, 'datasets', name)
     if not os.path.exists(local_path):
@@ -25,7 +29,11 @@ def download_dataset(name: str):
 
 def upload_dataset(name: str, dataset: Dataset, append: bool=False):
     LOGGER.debug(f'Upload dataset "{name}", append={append}')
-    drive = get_drive_module()
+    if ':' in name:
+        drive_type, name = name.split(':', maxsplit=2)
+        drive = get_drive_module(drive_type)
+    else:
+        drive = get_drive_module()
     cache_dir = getenv("CACHE_DIR")
     local_path = os.path.join(cache_dir, 'datasets', name)
     if append:

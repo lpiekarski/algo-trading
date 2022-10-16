@@ -13,7 +13,11 @@ def get_model_cache_path(name: str):
     return os.path.join(cache_dir, name)
 
 def download_model_data(name: str):
-    drive = get_drive_module()
+    if ':' in name:
+        drive_type, name = name.split(':', maxsplit=2)
+        drive = get_drive_module(drive_type)
+    else:
+        drive = get_drive_module()
     local_path = get_model_cache_path(name)
     if not os.path.exists(local_path):
         LOGGER.debug(f"Model data '{name}' is not cached, downloading using drive '{drive.__name__}'")
@@ -21,7 +25,11 @@ def download_model_data(name: str):
     return os.path.abspath(os.path.normpath(local_path))
 
 def upload_model_data(name: str):
-    drive = get_drive_module()
+    if ':' in name:
+        drive_type, name = name.split(':', maxsplit=2)
+        drive = get_drive_module(drive_type)
+    else:
+        drive = get_drive_module()
     local_path = get_model_cache_path(name)
     if os.path.exists(local_path):
         drive.upload(local_path, os.path.join('models', name))

@@ -6,6 +6,8 @@ import bisect
 from commons.dataset import Dataset
 import logging
 
+from commons.progress_bar import ProgressBar
+
 LOGGER = logging.getLogger(__name__)
 
 def add_best_decision(dataset: Dataset, pct_change):
@@ -19,11 +21,14 @@ def find_indexes_with_price_percentage_change(df: pd.DataFrame, pct_change, dire
     result = {}
     hanging = []
     furthest_col = 'High' if direction == 1 else 'Low'
+    LOGGER.info(f"Finding indexes with price percentage change for pct_change={pct_change} and direction={direction}")
+    progress_bar = ProgressBar(df.shape[0])
     for index, row in df.iterrows():
         while hanging and direction * row[furthest_col] >= direction * hanging[0]['price'] * (1 + direction * pct_change):
             top = hanging.pop(0)
             result[top['index']] = index
         insert(hanging, {'index': index, 'price': row['Close']}, direction)
+        progress_bar.update()
     result_df = pd.DataFrame(index=df.index.copy())
     result_df['result'] = None
     for k, v in result.items():
