@@ -31,8 +31,7 @@ class Dataset:
             self.df.to_csv(df_file, index_label='Date')
             with open(config_file, "w") as fp:
                 json.dump(dict(
-                    labels=self.labels,
-                    interval=self.interval
+                    labels=self.labels
                 ), fp)
             with zipfile.ZipFile(file=path, mode='w') as zf:
                 zf.write(df_file, 'dataframe.csv')
@@ -54,10 +53,20 @@ class Dataset:
             return result
 
     def concat(self, other, **kwargs):
-        if self.interval != other.interval:
+        if isinstance(other, pd.DataFrame):
+            other_interval = infer_interval(other)
+            other_df = other
+            other_labels = []
+        elif isinstance(other, Dataset):
+            other_interval = other.interval
+            other_df = other.df
+            other_labels = other.labels
+        else:
+            raise BotError(f"Cannot concatenate dataset with {type(other)}")
+        if self.interval != other_interval:
             raise BotError("Cannot concatenate datasets with different intervals")
-        self.df = pd.concat([self.df, other.df], **kwargs)
-        self.labels = list(dict.fromkeys(self.labels + other.labels))
+        self.df = pd.concat([self.df, other_df], **kwargs)
+        self.labels = list(dict.fromkeys(self.labels + other_labels))
         self.interval = infer_interval(self.df)
 
     def copy(self):
@@ -74,4 +83,4 @@ class Dataset:
         self.df[name] = series
 
 def infer_interval(df: pd.DataFrame):
-    return pd.Series(df.index[1:] - df.index[:-1]).mode()
+    return pd.Series(df.index[1:] - df.index[:-1]).mode()[0]

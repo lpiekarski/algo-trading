@@ -138,6 +138,13 @@ def add_cyclical_datetime(df, time_tag):
     df[f'DayOfWeek_sin_{time_tag}'] = timefunc('dayofweek', np.sin, 7)
     df[f'DayOfWeek_cos_{time_tag}'] = timefunc('dayofweek', np.cos, 7)
 
+def add_us_time(df, time_tag):
+    df[f'US_time_{time_tag}'] = np.logical_or(np.logical_and(16 > df.index.hour, df.index.hour >= 10), np.logical_and(df.index.hour == 9, df.index.minute >= 30)).astype(int)
+
+# TODO: add log(df['Open'][t] / df['Open'][t - 1]) etc
+def add_log_change(df, time_tag):
+    pass
+
 INDICATORS = dict(
     add_sma=[10, 20, 50, 100, 200],
     add_ema=[10, 20, 50, 100, 200],
@@ -164,7 +171,9 @@ INDICATORS = dict(
     add_bop=None,
     add_uo=None,
     add_accbands=None,
-    add_cyclical_datetime=None
+    add_cyclical_datetime=None,
+    add_us_time=None,
+    add_log_change=None
 )
 
 def add_technical_indicators(dataset, time_tag):
