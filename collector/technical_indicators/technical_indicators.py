@@ -18,7 +18,8 @@ def KELCH(df, n):
     return df
 
 def add_sma(df, time_tag, length):
-    df[f'SMA_{length}_{time_tag}'] = pta.sma(df["Close"], length=length)
+    sma = pta.sma(df["Close"], length=length)
+    df[f'SMA_log_change_{length}_{time_tag}'] = log_change(sma)
 
 def add_ema(df, time_tag, length):
     df[f'EMA_{length}_{time_tag}'] = pta.ema(df["Close"], length=length)
@@ -141,9 +142,17 @@ def add_cyclical_datetime(df, time_tag):
 def add_us_time(df, time_tag):
     df[f'US_time_{time_tag}'] = np.logical_or(np.logical_and(16 > df.index.hour, df.index.hour >= 10), np.logical_and(df.index.hour == 9, df.index.minute >= 30)).astype(int)
 
-# TODO: add log(df['Open'][t] / df['Open'][t - 1]) etc
 def add_log_change(df, time_tag):
-    pass
+    for col in [
+        "Open",
+        "High",
+        "Low",
+        "Close"
+    ]:
+        df[f'{col}_log_change_{time_tag}'] = log_change(df[col])
+
+def log_change(series):
+    return np.log(series / series.shift(1))
 
 INDICATORS = dict(
     add_sma=[10, 20, 50, 100, 200],

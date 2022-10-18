@@ -14,4 +14,4 @@ LOGGER = logging.getLogger(__name__)
 
 @step
 def add_indicators(dataset, **kwargs):
-    add_technical_indicators(dataset, time_tag="") #TODO: is this time_tag correct?
+    add_technical_indicators(dataset, time_tag=f"{dataset.interval.total_seconds():.0f}s")

@@ -11,7 +11,7 @@ class Dataset:
     def __init__(self, df: pd.DataFrame, labels=None, interval=None):
         if not isinstance(df.index, pd.DatetimeIndex):
             raise BotError("Dataframe is required to have DatetimeIndex")
-        self.df = df
+        self.df = df.dropna(axis=0, subset=["Open", "High", "Low", "Close", "Volume"])
         if labels is not None:
             self.labels = labels
         else:
