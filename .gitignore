@@ -2,7 +2,7 @@
 /.idea/
 /logs/
 __pycache__/
-/cache/
+/.cache/
 /data/
 .neptune/
 .git-drive/

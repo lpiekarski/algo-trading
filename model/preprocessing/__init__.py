@@ -10,11 +10,12 @@ class Preprocessor:
         self.standardized_columns = None
         self.normalized_columns = None
 
-    def fit(self, X):
+    def fit(self, X, standardization=None):
         X_ = X.copy()
-        standardization = [
-            ".*log_change.*"
-        ]
+        if standardization is None:
+            standardization = [
+                ".*log_change.*"
+            ]
         self.normalized_columns = []
         self.standardized_columns = []
         for col in X_:

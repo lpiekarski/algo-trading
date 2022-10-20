@@ -24,7 +24,7 @@ class DefaultEnv:
     dataset = None
     model = None
     LOCAL_DRIVE_STORE = './data'
-    CACHE_DIR = './cache'
+    CACHE_DIR = './.cache'
     TEMP_DIR = './.tmp'
     drive = 'local'
     LOG_LEVEL = None
