@@ -55,8 +55,8 @@ def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_d
             "eval/accuracy": [accuracy]
         }
         run = pd.DataFrame(params, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
-        task.connect(params)
         LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")
+        task.connect(run.iloc[0].to_dict())
         pd.concat([results, run]).to_csv(local_path)
     finally:
         task.close()
