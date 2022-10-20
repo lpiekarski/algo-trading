@@ -1,7 +1,7 @@
 import logging
 import os
 import datetime
-from subprocess import CalledProcessError
+from clearml import Task
 
 import pandas as pd
 import commons.git as git
@@ -13,7 +13,7 @@ from commons.timing import step
 LOGGER = logging.getLogger(__name__)
 
 @step
-def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_dataset, test_label, train_label, **kwargs):
+def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_dataset, test_label, train_label, task, **kwargs):
     LOGGER.info("Storing the results")
 
     cache_dir = getenv("CACHE_DIR")
@@ -44,7 +44,7 @@ def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_d
                 raise BotError('Submitting results from non-master branch is prohibited.')
             if version.endswith("-dirty"):
                 raise BotError('Submitting results from a dirty predictor file is prohibited. Commit or revert the changes.')
-        run = pd.DataFrame({
+        params = {
             "parameters/model": [str(model)],
             "parameters/version": [version],
             "parameters/train_dataset": [str(train_dataset)],
@@ -53,8 +53,11 @@ def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_d
             "parameters/test_label": [str(test_label)],
             "eval/binary_cross_entropy": [binary_cross_entropy],
             "eval/accuracy": [accuracy]
-        }, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
+        }
+        run = pd.DataFrame(params, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
+        task.connect(params)
         LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")
         pd.concat([results, run]).to_csv(local_path)
     finally:
+        task.close()
         drive.upload(local_path, cloud_path)

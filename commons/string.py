@@ -1,4 +1,5 @@
 from commons.env import getenv
+import os
 
 TAB = '\t'
 ENDLINE = '\n'
@@ -35,3 +36,6 @@ def padded(text: str, pad_symbol: str, length: int) -> str:
         result = pad_symbol + result + pad_symbol
         l += 2 * len(pad_symbol)
     return f'{BOLD}{result[:length]}{ENDC}'
+
+def formpath(path):
+    return os.path.abspath(os.path.normpath(path))

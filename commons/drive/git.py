@@ -11,6 +11,7 @@ from commons.env import getenv
 __all__ = ["upload", "download"]
 
 from commons.exceptions import CloudFileNotFoundError
+from commons.string import formpath
 
 LOGGER = logging.getLogger(__name__)
 REPO_PATH = "./.git-drive"
@@ -76,7 +77,7 @@ def download(cloud_path: str, local_path: str) -> None:
     os.makedirs(local_dirname, exist_ok=True)
     with SplitFileReader(list(split_filenames(checked_out_path))) as sfr:
         with zipfile.ZipFile(file=sfr, mode='r') as zf:
-            LOGGER.debug(f"Extracting to {local_dirname}")
+            LOGGER.debug(f"Extracting to {formpath(local_dirname)}")
             zf.extractall(local_dirname)
     LOGGER.debug(f"Directory after extraction: {os.listdir(local_dirname)}")
     shutil.move(os.path.join(local_dirname, os.path.basename(cloud_path)), local_path)

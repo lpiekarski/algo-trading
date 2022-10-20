@@ -2,6 +2,7 @@ import logging
 import os
 
 from commons.import_utils import module_from_file
+from commons.string import formpath
 from commons.timing import step
 from commons.testing.validate_module import validate_shape
 
@@ -20,7 +21,7 @@ def shape_tests(*args, **kwargs):
                     path = os.path.join(root, file)
                     basename = os.path.basename(path)
                     if not basename.startswith("__"):
-                        LOGGER.info(f"Testing module constraints for: {os.path.abspath(path)}")
+                        LOGGER.info(f"Testing module constraints for: {formpath(path)}")
                         module = module_from_file(path)
                         validate_shape(module, interface)
                         LOGGER.info(f"\tModule '{os.path.abspath(module.__name__)}' is valid")

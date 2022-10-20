@@ -9,6 +9,7 @@ import pandas as pd
 __all__ = ["download_dataset", "upload_dataset"]
 
 from commons.exceptions import CloudFileNotFoundError
+from commons.string import formpath
 
 LOGGER = logging.getLogger(__name__)
 
@@ -24,7 +25,7 @@ def download_dataset(name: str):
     if not os.path.exists(local_path):
         LOGGER.debug(f"Dataset '{name}' is not cached, downloading using drive '{drive.__name__}'")
         drive.download(os.path.join('datasets', name), local_path)
-    LOGGER.debug(f"Loading dataset from '{local_path}'")
+    LOGGER.debug(f"Loading dataset from '{formpath(local_path)}'")
     return Dataset.load(local_path)
 
 def upload_dataset(name: str, dataset: Dataset, append: bool=False):
@@ -47,7 +48,7 @@ def upload_dataset(name: str, dataset: Dataset, append: bool=False):
             result_dataset = dataset
     else:
         result_dataset = dataset
-    LOGGER.debug(f"Saving dataset '{name}' to local file '{local_path}'")
+    LOGGER.debug(f"Saving dataset '{name}' to local file '{formpath(local_path)}'")
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
     result_dataset.save(local_path)
     drive.upload(local_path, os.path.join('datasets', name))
