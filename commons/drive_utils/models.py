@@ -10,7 +10,7 @@ LOGGER = logging.getLogger(__name__)
 
 def get_model_cache_path(name: str):
     cache_dir = getenv("CACHE_DIR")
-    return os.path.join(cache_dir, name)
+    return os.path.join(cache_dir, 'models', name)
 
 def download_model_data(name: str):
     if ':' in name:

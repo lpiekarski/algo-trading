@@ -75,8 +75,11 @@ class Dataset:
     def get_X(self):
         return self.df.drop(self.labels, axis=1)
 
-    def get_y(self):
-        return self.df[self.labels]
+    def get_y(self, label):
+        if label in self.labels:
+            return self.df[label]
+        else:
+            raise BotError(f"'{label}' is not a valid label for the dataset")
 
     def add_label(self, name, series):
         self.labels.append(name)
