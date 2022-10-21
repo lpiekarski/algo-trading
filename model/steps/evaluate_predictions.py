@@ -8,7 +8,8 @@ LOGGER = logging.getLogger(__name__)
 @step
 def evaluate_predictions(dataset, y_pred, label, **kwargs):
     LOGGER.info("Comparing predictions to labels")
-    y = dataset.get_y(label)
-    binary_cross_entropy = log_loss(y, y_pred)
-    accuracy = accuracy_score(y, np.round(y_pred))
+    y_true = dataset.get_y(label).to_numpy().astype(np.float32)
+    y_pred = np.array(y_pred).astype(np.float32)
+    binary_cross_entropy = log_loss(y_true, y_pred)
+    accuracy = accuracy_score(y_true, np.round(y_pred))
     return dict(binary_cross_entropy=binary_cross_entropy, accuracy=accuracy)
