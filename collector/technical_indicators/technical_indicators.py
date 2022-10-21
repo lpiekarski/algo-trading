@@ -4,7 +4,7 @@ import pandas as pd
 import pandas_ta as pta
 import numpy as np
 
-from commons.dataset import Dataset
+from commons.data.dataset import Dataset
 
 def KELCH(df, n):
     KelChM = pd.Series(((df['High'] + df['Low'] + df['Close']) / 3), name='KelChM_' + str(n)).rolling(window=n).mean()

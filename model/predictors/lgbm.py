@@ -7,14 +7,14 @@ import os
 model: lgbm.Booster = None
 preprocessor: Preprocessor = None
 
-def predict(X: pd.DataFrame) -> np.ndarray:
-    return model.predict(preprocessor.apply(X), predict_disable_shape_check=True)
+def predict(x: pd.DataFrame) -> np.ndarray:
+    return model.predict(preprocessor.apply(x), predict_disable_shape_check=True)
 
-def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
+def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
     if model is None or preprocessor is None:
         preprocessor = Preprocessor()
-        preprocessor.fit(X)
+        preprocessor.fit(x)
         cls = lgbm.LGBMClassifier(
             n_estimators=1000,
             reg_alpha=0.3,
@@ -25,11 +25,11 @@ def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
             subsample_for_bin=200000,
             min_child_samples=20
         )
-        cls.fit(preprocessor.apply(X), y)
+        cls.fit(preprocessor.apply(x), y)
         model = cls.booster_
     else:
-        preprocessor.fit(X)
-        model.refit(preprocessor.apply(X), y)
+        preprocessor.fit(x)
+        model.refit(preprocessor.apply(x), y)
 
 def save(path: str) -> None:
     model.save_model(os.path.join(path, 'model'))

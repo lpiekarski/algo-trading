@@ -10,34 +10,34 @@ class Preprocessor:
         self.standardized_columns = None
         self.normalized_columns = None
 
-    def fit(self, X, standardization=None):
-        X_ = X.copy()
+    def fit(self, x, standardization=None):
+        x_ = x.copy()
         if standardization is None:
             standardization = [
                 ".*log_change.*"
             ]
         self.normalized_columns = []
         self.standardized_columns = []
-        for col in X_:
+        for col in x_:
             if all([not bool(re.match(r, col)) for r in standardization]):
                 self.normalized_columns.append(col)
             else:
                 self.standardized_columns.append(col)
-        Xstd = X_[self.standardized_columns]
-        self.mean = Xstd.mean()
-        self.std = Xstd.std()
-        Xnorm = X_[self.normalized_columns]
-        self.range_min = Xnorm.min()
-        self.range_max = Xnorm.max()
+        xstd = x_[self.standardized_columns]
+        self.mean = xstd.mean()
+        self.std = xstd.std()
+        xnorm = x_[self.normalized_columns]
+        self.range_min = xnorm.min()
+        self.range_max = xnorm.max()
 
-    def apply(self, X):
-        X_ = X.copy()
-        Xstd = X_[self.standardized_columns]
-        Xnorm = X_[self.normalized_columns]
-        X_.update((Xstd - self.mean) / self.std)
-        X_.update((Xnorm - self.range_min) / (self.range_max - self.range_min + 1e-8))
-        X_ = X_.fillna(0)
-        return X_
+    def apply(self, x):
+        x_ = x.copy()
+        xstd = x_[self.standardized_columns]
+        xnorm = x_[self.normalized_columns]
+        x_.update((xstd - self.mean) / self.std)
+        x_.update((xnorm - self.range_min) / (self.range_max - self.range_min + 1e-8))
+        x_ = x_.fillna(0)
+        return x_
 
     def save(self, filepath):
         with open(filepath, 'wb') as file:

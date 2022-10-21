@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 
-def predict(X: pd.DataFrame) -> np.ndarray:
-    return np.random.random(X.shape[0])
+def predict(x: pd.DataFrame) -> np.ndarray:
+    return np.random.random(x.shape[0])
 
-def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
+def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     pass
 
 def save(path: str) -> None:

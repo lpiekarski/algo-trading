@@ -1,6 +1,6 @@
 import numpy as np
 import collector.technical_indicators.labels as labels
-from commons.dataset import Dataset
+from commons.data.dataset import Dataset
 import pandas as pd
 
 def test_add_best_decision():

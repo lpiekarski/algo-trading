@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from commons.dataset import Dataset
+from commons.data.dataset import Dataset
 from commons.timing import step
 import yfinance as yf
 from dateutil import parser

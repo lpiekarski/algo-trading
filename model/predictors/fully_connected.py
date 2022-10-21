@@ -3,13 +3,10 @@ import torch
 from torch import nn
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
 import logging
 import os
-
-import commons
 from commons import pytorch
-from model.preprocessing import Preprocessor
+from commons.data.preprocessor import Preprocessor
 
 LOGGER = logging.getLogger(__name__)
 
@@ -17,16 +14,16 @@ model: nn.Module = None
 preprocessor: Preprocessor = None
 n_epochs = 1000
 
-def predict(X: pd.DataFrame) -> np.ndarray:
-    return model.forward(torch.tensor(preprocessor.apply(X).to_numpy().astype(np.float32))).detach().numpy()
+def predict(x: pd.DataFrame) -> np.ndarray:
+    return model.forward(torch.tensor(preprocessor.apply(x).to_numpy().astype(np.float32))).detach().numpy()
 
-def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
+def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
     if model is None or preprocessor is None:
         preprocessor = Preprocessor()
-        preprocessor.fit(X)
+        preprocessor.fit(x)
         model = nn.Sequential(
-            nn.Linear(X.shape[1], 1),
+            nn.Linear(x.shape[1], 1),
             nn.ReLU(),
             nn.Linear(1, 32),
             nn.BatchNorm1d(32),
@@ -60,7 +57,7 @@ def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
         )
         pytorch.train(
             model,
-            preprocessor.apply(X).to_numpy().astype(np.float32),
+            preprocessor.apply(x).to_numpy().astype(np.float32),
             y.to_numpy().astype(np.float32),
             nn.BCELoss(),
             optim.Adam(model.parameters()),
@@ -71,8 +68,8 @@ def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
             }
         )
     else:
-        preprocessor.fit(X)
-        model.refit(preprocessor.apply(X), y)
+        preprocessor.fit(x)
+        model.refit(preprocessor.apply(x), y)
 
 def save(path: str) -> None:
     torch.save(model.state_dict(), os.path.join(path, 'model'))

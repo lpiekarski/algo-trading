@@ -1,4 +1,4 @@
-from commons.dataset import Dataset
+from commons.data.dataset import Dataset
 from commons.drive_utils.datasets import upload_dataset
 from commons.timing import step
 import logging

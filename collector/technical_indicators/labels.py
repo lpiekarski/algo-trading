@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import pandas as pd
 import bisect
-from commons.dataset import Dataset
+from commons.data.dataset import Dataset
 import logging
 from tqdm import tqdm
 

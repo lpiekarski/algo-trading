@@ -8,19 +8,19 @@ import pickle
 model: GaussianNB = None
 preprocessor: Preprocessor = None
 
-def predict(X: pd.DataFrame) -> np.ndarray:
-    return model.predict_proba(preprocessor.apply(X))[:, 1]
+def predict(x: pd.DataFrame) -> np.ndarray:
+    return model.predict_proba(preprocessor.apply(x))[:, 1]
 
-def train(X: pd.DataFrame, y: pd.DataFrame) -> None:
+def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
     if model is None or preprocessor is None:
         preprocessor = Preprocessor()
-        preprocessor.fit(X)
+        preprocessor.fit(x)
         model = GaussianNB()
-        model.fit(preprocessor.apply(X), y)
+        model.fit(preprocessor.apply(x), y)
     else:
-        preprocessor.fit(X)
-        model.fit(preprocessor.apply(X), y)
+        preprocessor.fit(x)
+        model.fit(preprocessor.apply(x), y)
 
 def save(path: str) -> None:
     with open(os.path.join(path, 'model'), 'wb') as file:

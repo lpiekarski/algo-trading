@@ -72,7 +72,7 @@ class Dataset:
     def copy(self):
         return Dataset(self.df.copy(), self.labels.copy(), self.interval.copy())
 
-    def get_X(self):
+    def get_x(self):
         return self.df.drop(self.labels, axis=1)
 
     def get_y(self, label):
