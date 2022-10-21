@@ -12,64 +12,73 @@ LOGGER = logging.getLogger(__name__)
 
 model: nn.Module = None
 preprocessor: Preprocessor = None
-n_epochs = 1000
 
 def predict(x: pd.DataFrame) -> np.ndarray:
     return model.forward(torch.tensor(preprocessor.apply(x).to_numpy().astype(np.float32))).detach().numpy()
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
-    if model is None or preprocessor is None:
-        preprocessor = Preprocessor()
-        preprocessor.fit(x)
-        model = nn.Sequential(
-            nn.Linear(x.shape[1], 1),
-            nn.ReLU(),
-            nn.Linear(1, 32),
-            nn.BatchNorm1d(32),
-            nn.ReLU(),
-            nn.Linear(32, 64),
-            nn.BatchNorm1d(64),
-            nn.ReLU(),
-            nn.Linear(64, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-            nn.Linear(128, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-            nn.Linear(128, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-            nn.Linear(128, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-            nn.Linear(128, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-            nn.Linear(128, 64),
-            nn.BatchNorm1d(64),
-            nn.ReLU(),
-            nn.Linear(64, 32),
-            nn.BatchNorm1d(32),
-            nn.ReLU(),
-            nn.Linear(32, 1),
-            nn.Sigmoid()
-        )
-        pytorch.train(
-            model,
-            preprocessor.apply(x).to_numpy().astype(np.float32),
-            y.to_numpy().astype(np.float32),
-            nn.BCELoss(),
-            optim.Adam(model.parameters()),
-            n_epochs=100,
-            batch_size=256,
-            metrics={
-                'accuracy': lambda y_pred, y_true: (np.round(y_pred) == y_true).sum() / len(y_true)
-            }
-        )
-    else:
-        preprocessor.fit(x)
-        model.refit(preprocessor.apply(x), y)
+    #if model is None or preprocessor is None:
+    preprocessor = Preprocessor()
+    preprocessor.fit(x)
+    model = nn.Sequential(
+        nn.Linear(x.shape[1], 1),
+        nn.ReLU(),
+        nn.Linear(1, 32),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(32),
+        nn.ReLU(),
+        nn.Linear(32, 64),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(64),
+        nn.ReLU(),
+        nn.Linear(64, 128),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(128),
+        nn.ReLU(),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(128),
+        nn.ReLU(),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(128),
+        nn.ReLU(),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(128),
+        nn.ReLU(),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(128),
+        nn.ReLU(),
+        nn.Linear(128, 64),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(64),
+        nn.ReLU(),
+        nn.Linear(64, 32),
+        nn.Dropout(0.5),
+        nn.BatchNorm1d(32),
+        nn.ReLU(),
+        nn.Linear(32, 1),
+        nn.Sigmoid()
+    )
+    pytorch.train(
+        model,
+        preprocessor.apply(x).to_numpy().astype(np.float32),
+        y.to_numpy().astype(np.float32),
+        nn.BCELoss(),
+        optim.Adam(model.parameters()),
+        n_epochs=1000,
+        batch_size=256,
+        metrics={
+            'accuracy': lambda y_pred, y_true: (np.round(y_pred) == y_true).sum() / len(y_true)
+        }
+    )
+    model.eval()
+    #else:
+    #    preprocessor.fit(x)
+    #    model.refit(preprocessor.apply(x), y)
 
 def save(path: str) -> None:
     torch.save(model.state_dict(), os.path.join(path, 'model'))
