@@ -18,7 +18,6 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
-    #if model is None or preprocessor is None:
     preprocessor = Preprocessor()
     preprocessor.fit(x)
     model = nn.Sequential(
@@ -68,17 +67,15 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
         preprocessor.apply(x).to_numpy().astype(np.float32),
         y.to_numpy().astype(np.float32),
         nn.BCELoss(),
-        optim.Adam(model.parameters()),
-        n_epochs=1000,
+        optim.Adam(model.parameters(), weight_decay=0.1, ),
+        n_epochs=50,
         batch_size=256,
         metrics={
             'accuracy': lambda y_pred, y_true: (np.round(y_pred) == y_true).sum() / len(y_true)
-        }
+        },
+        lambda_1=0.1,
     )
     model.eval()
-    #else:
-    #    preprocessor.fit(x)
-    #    model.refit(preprocessor.apply(x), y)
 
 def save(path: str) -> None:
     torch.save(model.state_dict(), os.path.join(path, 'model'))

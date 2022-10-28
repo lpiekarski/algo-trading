@@ -12,10 +12,10 @@ __all__ = ["test_group"]
 def test_group(): pass
 
 @test_group.command()
-@option("--skip-shapes", "-s", is_flag=True)
-@option("--skip-unit", "-u", is_flag=True)
+@option("--skip-shape-tests", "-s", is_flag=True)
+@option("--skip-unit-tests", "-u", is_flag=True)
 @subcommand([
-    conditional(shape_tests, "skip-shapes", negation=True),
-    conditional(unit_tests, "skip-unit", negation=True),
+    conditional(shape_tests, "skip-shape-tests", negation=True),
+    conditional(unit_tests, "skip-unit-tests", negation=True),
 ])
 def test(*args, **kwargs): pass

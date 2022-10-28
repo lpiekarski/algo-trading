@@ -13,14 +13,10 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
-    if model is None or preprocessor is None:
-        preprocessor = Preprocessor()
-        preprocessor.fit(x)
-        model = GaussianNB()
-        model.fit(preprocessor.apply(x), y)
-    else:
-        preprocessor.fit(x)
-        model.fit(preprocessor.apply(x), y)
+    preprocessor = Preprocessor()
+    preprocessor.fit(x)
+    model = GaussianNB()
+    model.fit(preprocessor.apply(x), y)
 
 def save(path: str) -> None:
     with open(os.path.join(path, 'model'), 'wb') as file:

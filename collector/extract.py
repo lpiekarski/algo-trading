@@ -19,7 +19,7 @@ def extract_group(): pass
 
 @extract_group.command()
 @option("--name", "-n", help="Name of the output dataset")
-@option("--time_tag", "-t", default='1h', help="Rescale data to hours, days, month")
+@option("--time-tag", "-t", default='1h', help="Rescale data to hours, days, month")
 @option("--dataset", "-d", help="Dataset to extract features from")
 @option("--append", "-a", default=True, help="Whether to overwrite or append to an existing dataset with the same name", is_flag=True)
 @subcommand([

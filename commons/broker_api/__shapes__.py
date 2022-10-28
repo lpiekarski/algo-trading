@@ -1,10 +1,8 @@
+import numpy as np
+
 interface = {
-    'buy': {
-        'parameter_types': [float, float, float],  # volume, stop_loss, take_profit
+    'execute_decision': {
+        'parameter_types': [np.ndarray, float, float],  # array of decisions, volume, stop loss/take profit percent
         'return_type': None
     },
-    'sell': {
-        'parameter_types': [float, float, float],  # volume, stop_loss, take_profit
-        'return_type': None
-    }
 }
