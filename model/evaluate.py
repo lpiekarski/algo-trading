@@ -30,6 +30,7 @@ def evaluate_group(): pass
 @click.option("--clearml-access-key", help="ClearML access key")
 @click.option("--clearml-secret-key", help="ClearML secret key")
 @click.option("--clearml-project", help="ClearML project name")
+@click.option("--skip-backtest", help="Skip backtesting", is_flag=True, default=False)
 @click.option("--backtest-threshold", help="Minimum confidence to make a decision during backtesting", default=0.05)
 @click.option("--backtest-volume", help="Backtest trade volume", default=0.01)
 @click.option("--backtest-tpsl-pct", help="Backtest take profit/stop loss price change percentage", default=0.01)
@@ -52,6 +53,7 @@ def evaluate_group(): pass
     process_parameter("backtest_commission"),
     process_parameter("backtest_margin"),
     process_parameter("backtest_cash"),
+    process_parameter("skip_backtest"),
     conditional(rename_parameters({"train_dataset": "dataset", "train_label": "label"}, keep_old=True), "train_dataset"),
     initialize_clearml,
     get_model_module,
@@ -63,7 +65,7 @@ def evaluate_group(): pass
     get_dataset,
     generate_predictions,
     evaluate_predictions,
-    backtest_predictions,
+    conditional(backtest_predictions, "skip_backtest", negation=True),
     submit_to_drive
 ])
 def evaluate(*args, **kwargs): pass
