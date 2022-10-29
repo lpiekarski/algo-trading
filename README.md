@@ -20,30 +20,18 @@
    ./venv/bin/python3 -m pip install -r docker/files/requirements.txt
    ```
 
-## Creating and Evaluating Models
-1. Create a new `[model_name].py` file inside `/model/predictors` directory.
-2. Copy the content of `/model/predictors/template.py` into your file.
-3. Implement `train(x, y)` and `predict(x)` methods for your model.
-4. Method `train(x, y)` should fit the model to the given dataset and store the result using `commons.drive`
-5. Method `predict(x)` should return the model's prediction for a given input `x`
-6. After finishing the implementation run the following command to evaluate and submit the evaluation results to neptune: 
-    ```bash
-    python3 bot.py evaluate --model=[model_name] --dataset=validate.csv --NEPTUNE_API_KEY=[neptune api token]
-    ```
+## Testing
+1. Run tests
+   ```bash
+   bot.py test
+   ```
 
-## Examples
-1. Run tests:
-   ```bash
-   python3 bot.py test
-   ```
-2. Evaluate [model] using [dataset] (without saving results to neptune):
-   ```bash
-   python3 bot.py evaluate --model=[model] --dataset=[dataset]
-   ```
-3. Generate the output using [model] for given input [dataset] and save the results in [output] file:
-    ```bash
-    python3 bot.py predict --model=[model] --dataset=[dataset] --output=[output] 
-    ```
+## Creating a New Model
+1. Create a new `[model_name].py` file inside `/model/predictors` directory.
+2. This module has to implement 4 methods: `train(x, y)`, `predict(x)`, `save(path)`, `load(path)`.
+3. Methods `save(path)` and `load(path)` should implement storing and restoring the model's state from a directory given by `path`.
+4. Method `train(x, y)` should fit the model to the given dataset (`x` - features, `y` - label)
+5. Method `predict(x)` should return the model's prediction for a given input `x`.
 
 ## Repository Contents
 - Github configuration (in `/.github`)
