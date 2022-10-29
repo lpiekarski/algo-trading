@@ -33,6 +33,28 @@
 4. Method `train(x, y)` should fit the model to the given dataset (`x` - features, `y` - label)
 5. Method `predict(x)` should return the model's prediction for a given input `x`.
 
+## Evaluating a Model
+1. Evaluate using command below:
+   ```bash
+   bot.py evaluate --train-dataset=git:train/M30_H1 --train-label=Best_decision_0.01 --test-dataset=git:test/M30_H1 --test-label=Best_decision_0.01 --model=uniform_random
+   ```
+
+## Training and Saving a Model
+
+## Obtaining Model Predictions for a Given Dataset
+
+## Collecting OHLC Data
+1. Run
+   ```bash
+   bot.py collect 
+   ```
+
+## Creating Dataset from OHLC Data
+1. Run
+   ```bash
+   bot.py extract 
+   ```
+
 ## Repository Contents
 - Github configuration (in `/.github`)
   - Contains directory `/.github/workflows` with github actions definition
