@@ -40,19 +40,30 @@
    ```
 
 ## Training and Saving a Model
+```bash
+bot.py train
+```
 
 ## Obtaining Model Predictions for a Given Dataset
+```bash
+bot.py predict
+```
+
+## Downloading Data from Drive
+```bash
+bot.py -Ddrive=git download train/M30_H1 M30_H1.zip
+```
 
 ## Collecting OHLC Data
 1. Run
    ```bash
-   bot.py collect 
+   bot.py collect --name=local:raw/H1
    ```
 
 ## Creating Dataset from OHLC Data
 1. Run
    ```bash
-   bot.py extract 
+   bot.py extract --dataset=local:raw/M1 --time-tag=1h
    ```
 
 ## Repository Contents
