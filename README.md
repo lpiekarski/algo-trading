@@ -34,37 +34,55 @@
 5. Method `predict(x)` should return the model's prediction for a given input `x`.
 
 ## Evaluating a Model
-1. Evaluate using command below:
+1. Evaluate using command below (you can also run `bot.py evaluate --help` to see additional options)
    ```bash
    bot.py evaluate --train-dataset=git:train/M30_H1 --train-label=Best_decision_0.01 --test-dataset=git:test/M30_H1 --test-label=Best_decision_0.01 --model=uniform_random
    ```
 
 ## Training and Saving a Model
-```bash
-bot.py train
-```
+1. Train model using command below (you can also run `bot.py train --help`)
+    ```bash
+    bot.py train --model=naive_bayes --dataset=git:train/M30_H1 --label=Best_decision_0.01
+    ```
 
 ## Obtaining Model Predictions for a Given Dataset
-```bash
-bot.py predict
-```
+1. Generate predictions file for a model using command below (you can also run `bot.py predict --help` to see additional options)
+    ```bash
+    bot.py predict --model=naive_bayes --dataset=git:test/M30_H1
+    ```
 
 ## Downloading Data from Drive
-```bash
-bot.py -Ddrive=git download train/M30_H1 M30_H1.zip
-```
+1. Download a file from drive using command below (you can also run `bot.py download --help` to see additional options)
+    ```bash
+    bot.py -Ddrive=git download datasets/train/M30_H1 M30_H1.zip
+    ```
+
+## Uploading Data to Drive
+1. Upload a file to drive using command below (you can also run `bot.py upload --help` to see additional options)
+   ```bash
+   bot.py -Ddrive=git upload M30_H1.zip datasets/train/M30_H1
+   ```
+
+## Deleting Data from Drive
+1. Delete a file from drive using command below (you can also run `bot.py delete --help` to see additional options)
+    ```bash
+    bot.py -Ddrive=git delete datasets/raw/dataset_to_delete.zip
+    ```
 
 ## Collecting OHLC Data
-1. Run
+1. You can collect the ohcl S&P 500 data from yfinance using command below (you can also run `bot.py collect --help` to see additional options)
    ```bash
-   bot.py collect --name=local:raw/H1
+   bot.py collect --name=local:raw/latest
    ```
 
 ## Creating Dataset from OHLC Data
-1. Run
+1. Extract features from a raw OHLC data using command below (you can also run `bot.py extract --help` to see additional options)
    ```bash
-   bot.py extract --dataset=local:raw/M1 --time-tag=1h
+   bot.py extract --dataset=local:raw/M1 --time-tag=1h --name=local:resampled_M1_H1.zip
    ```
+
+## Trading Using Model's Predictions
+
 
 ## Repository Contents
 - Github configuration (in `/.github`)

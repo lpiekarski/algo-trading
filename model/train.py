@@ -18,11 +18,12 @@ def train_group(): pass
 @click.option("--model", "-m", help="Name of the model")
 @click.option("--dataset", "-d", help="Train dataset")
 @click.option("--skip-save", "-s", help="Do not save the results of the training", is_flag=True)
-@click.option("--label", "-l", help="Name of the label column within the dataset", default="y")
+@click.option("--label", "-l", help="Name of the label column within the dataset")
 @subcommand([
     process_parameter('model'),
     process_parameter('dataset'),
     process_parameter('skip_save'),
+    process_parameter('label', optional=True),
     get_model_module,
     get_dataset,
     run_training,

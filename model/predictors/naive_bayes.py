@@ -1,9 +1,9 @@
 from sklearn.naive_bayes import GaussianNB
 import pandas as pd
 import numpy as np
-from model.preprocessing import Preprocessor
 import os
 import pickle
+from commons.data.preprocessor import Preprocessor
 
 model: GaussianNB = None
 preprocessor: Preprocessor = None
