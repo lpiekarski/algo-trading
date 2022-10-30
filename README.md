@@ -20,69 +20,73 @@
    ./venv/bin/python3 -m pip install -r docker/files/requirements.txt
    ```
 
-## Testing
+## Example Usages
+
+### Testing
 1. Run tests
    ```bash
    bot.py test
    ```
 
-## Creating a New Model
+### Creating a New Model
 1. Create a new `[model_name].py` file inside `/model/predictors` directory.
 2. This module has to implement 4 methods: `train(x, y)`, `predict(x)`, `save(path)`, `load(path)`.
 3. Methods `save(path)` and `load(path)` should implement storing and restoring the model's state from a directory given by `path`.
 4. Method `train(x, y)` should fit the model to the given dataset (`x` - features, `y` - label)
 5. Method `predict(x)` should return the model's prediction for a given input `x`.
 
-## Evaluating a Model
+### Evaluating a Model
 1. Evaluate using command below (you can also run `bot.py evaluate --help` to see additional options)
    ```bash
    bot.py evaluate --train-dataset=git:train/M30_H1 --train-label=Best_decision_0.01 --test-dataset=git:test/M30_H1 --test-label=Best_decision_0.01 --model=uniform_random
    ```
 
-## Training and Saving a Model
-1. Train model using command below (you can also run `bot.py train --help`)
+### Training and Saving a Model
+1. Train model using command below (you can also run `bot.py train --help` to see additional options)
     ```bash
     bot.py train --model=naive_bayes --dataset=git:train/M30_H1 --label=Best_decision_0.01
     ```
 
-## Obtaining Model Predictions for a Given Dataset
+### Obtaining Model Predictions for a Given Dataset
 1. Generate predictions file for a model using command below (you can also run `bot.py predict --help` to see additional options)
     ```bash
     bot.py predict --model=naive_bayes --dataset=git:test/M30_H1
     ```
 
-## Downloading Data from Drive
+### Downloading Data from Drive
 1. Download a file from drive using command below (you can also run `bot.py download --help` to see additional options)
     ```bash
     bot.py -Ddrive=git download datasets/train/M30_H1 M30_H1.zip
     ```
 
-## Uploading Data to Drive
+### Uploading Data to Drive
 1. Upload a file to drive using command below (you can also run `bot.py upload --help` to see additional options)
    ```bash
    bot.py -Ddrive=git upload M30_H1.zip datasets/train/M30_H1
    ```
 
-## Deleting Data from Drive
+### Deleting Data from Drive
 1. Delete a file from drive using command below (you can also run `bot.py delete --help` to see additional options)
     ```bash
     bot.py -Ddrive=git delete datasets/raw/dataset_to_delete.zip
     ```
 
-## Collecting OHLC Data
+### Collecting OHLC Data
 1. You can collect the ohcl S&P 500 data from yfinance using command below (you can also run `bot.py collect --help` to see additional options)
    ```bash
    bot.py collect --name=local:raw/latest
    ```
 
-## Creating Dataset from OHLC Data
+### Creating Dataset from OHLC Data
 1. Extract features from a raw OHLC data using command below (you can also run `bot.py extract --help` to see additional options)
    ```bash
    bot.py extract --dataset=local:raw/M1 --time-tag=1h --name=local:resampled_M1_H1.zip
    ```
 
-## Trading Using Model's Predictions
-
+### Trading Using Model's Predictions
+   ```bash
+   bot.py trade
+   ```
 
 ## Repository Contents
 - Github configuration (in `/.github`)
