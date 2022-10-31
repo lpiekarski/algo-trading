@@ -45,5 +45,5 @@ class Preprocessor:
 
     @classmethod
     def load(cls, filepath):
-        with open(filepath, 'r') as file:
+        with open(filepath, 'rb') as file:
             return pickle.load(file)

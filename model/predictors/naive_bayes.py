@@ -25,6 +25,6 @@ def save(path: str) -> None:
 
 def load(path: str) -> None:
     global model, preprocessor
-    with open(os.path.join(path, 'model'), 'r') as file:
+    with open(os.path.join(path, 'model'), 'rb') as file:
         model = pickle.load(file)
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
