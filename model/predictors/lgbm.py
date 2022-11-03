@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import lightgbm as lgbm
-from model.preprocessing import Preprocessor
 import os
+
+from commons.data.preprocessor import Preprocessor
 
 model: lgbm.Booster = None
 preprocessor: Preprocessor = None

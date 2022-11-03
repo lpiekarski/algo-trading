@@ -9,9 +9,11 @@ class Preprocessor:
         self.range_max = None
         self.standardized_columns = None
         self.normalized_columns = None
+        self.num_features = None
 
     def fit(self, x, standardization=None):
         x_ = x.copy()
+        self.num_features = x_.shape[1]
         if standardization is None:
             standardization = [
                 ".*log_change.*"

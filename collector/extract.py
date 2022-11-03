@@ -1,14 +1,12 @@
-from click import group, option, argument, Path
-import pandas as pd
+from click import group, option
 
-from collector.steps.add_resample_indicators import add_resample_indicators
+from collector.steps.add_indicators import add_indicators
 from collector.steps.add_labels import add_labels
+from collector.steps.add_resample_indicators import add_resample_indicators
 from collector.steps.save_dataset import save_dataset
 from commons.steps.get_dataset import get_dataset
 from commons.steps.process_parameter import process_parameter
-from commons.steps.rename_parameters import rename_parameters
 from commons.timing import subcommand
-from collector.steps.add_indicators import add_indicators
 
 __all__ = ["extract_group"]
 

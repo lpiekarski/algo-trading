@@ -31,12 +31,12 @@ def evaluate_group(): pass
 @click.option("--clearml-secret-key", "-csk", help="ClearML secret key")
 @click.option("--clearml-project", "-cp", help="ClearML project name")
 @click.option("--skip-backtest", "-sb", help="Skip backtesting", is_flag=True, default=False)
-@click.option("--backtest-threshold", "-bt", help="Minimum confidence to make a decision during backtesting", default=0.05)
-@click.option("--backtest-volume", "-bv", help="Backtest trade volume", default=0.01)
+@click.option("--backtest-threshold", "-bt", help="Minimum confidence to make a decision during backtesting", default=0.01)
+@click.option("--backtest-volume", "-bv", help="Backtest trade volume", default=1)
 @click.option("--backtest-tpsl-pct", "-btpsl", help="Backtest take profit/stop loss price change percentage", default=0.01)
 @click.option("--backtest-commission", "-bcm", help="Backtest comission fee percentage for each transaction", default=0.0002)
-@click.option("--backtest-margin", "-bm", help="Backtest leverage", default=30)
-@click.option("--backtest-cash", "-bcs", help="Backtest starting cash amount", default=10000)
+@click.option("--backtest-leverage", "-bm", help="Backtest leverage", default=30)
+@click.option("--backtest-cash", "-bcs", help="Backtest starting cash amount", default=200000)
 @subcommand([
     process_parameter("model"),
     process_parameter("train_dataset", optional=True),
@@ -44,14 +44,14 @@ def evaluate_group(): pass
     process_parameter("test_dataset"),
     process_parameter("test_label", optional=True),
     process_parameter("skip_save"),
-    process_parameter("clearml_access_key"),
-    process_parameter("clearml_secret_key"),
-    process_parameter("clearml_project"),
+    process_parameter("clearml_access_key", optional=True),
+    process_parameter("clearml_secret_key", optional=True),
+    process_parameter("clearml_project", optional=True),
     process_parameter("backtest_threshold"),
     process_parameter("backtest_volume"),
     process_parameter("backtest_tpsl_pct"),
     process_parameter("backtest_commission"),
-    process_parameter("backtest_margin"),
+    process_parameter("backtest_leverage"),
     process_parameter("backtest_cash"),
     process_parameter("skip_backtest"),
     conditional(rename_parameters({"train_dataset": "dataset", "train_label": "label"}, keep_old=True), "train_dataset"),
