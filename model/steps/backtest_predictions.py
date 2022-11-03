@@ -3,8 +3,6 @@ import logging
 from backtesting import Backtest, Strategy
 
 from commons.timing import step
-import numpy as np
-from sklearn.metrics import accuracy_score, log_loss
 
 LOGGER = logging.getLogger(__name__)
 
@@ -19,9 +17,9 @@ def backtest_predictions(dataset, y_pred, backtest_threshold, backtest_volume, b
         def next(self):
             pred = y_pred[self.id]
             close = self.data.Close[-1]
-            if pred > 0.5 + backtest_threshold and self.position != 'buy':
+            if pred > 0.5 + backtest_threshold:
                 self.buy(size=backtest_volume, tp=close * (1 + backtest_tpsl_pct), sl=close * (1 - backtest_tpsl_pct))
-            elif pred < 0.5 - backtest_threshold and self.position != 'sell':
+            elif pred < 0.5 - backtest_threshold:
                 self.sell(size=backtest_volume, tp=close * (1 - backtest_tpsl_pct), sl=close * (1 + backtest_tpsl_pct))
             self.id += 1
 
@@ -34,6 +32,7 @@ def backtest_predictions(dataset, y_pred, backtest_threshold, backtest_volume, b
         cash=backtest_cash,
         trade_on_close=True)
 
-    LOGGER.info(bt.run())
+    backtest_results = bt.run()
+    LOGGER.info(backtest_results)
     bt.plot(resample=False)
-    return dict(backtest=bt)
+    return dict(backtest=bt, backtest_results=backtest_results)

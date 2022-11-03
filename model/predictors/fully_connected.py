@@ -13,15 +13,9 @@ LOGGER = logging.getLogger(__name__)
 model: nn.Module = None
 preprocessor: Preprocessor = None
 
-def predict(x: pd.DataFrame) -> np.ndarray:
-    return model.forward(torch.tensor(preprocessor.apply(x).to_numpy().astype(np.float32))).detach().numpy()
-
-def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
-    global model, preprocessor
-    preprocessor = Preprocessor()
-    preprocessor.fit(x)
-    model = nn.Sequential(
-        nn.Linear(x.shape[1], 1),
+def model_definition(preprocessor):
+    return nn.Sequential(
+        nn.Linear(preprocessor.num_features, 1),
         nn.ReLU(),
         nn.Linear(1, 32),
         nn.Dropout(0.5),
@@ -62,13 +56,22 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
         nn.Linear(32, 1),
         nn.Sigmoid()
     )
+
+def predict(x: pd.DataFrame) -> np.ndarray:
+    return model.forward(torch.tensor(preprocessor.apply(x).to_numpy().astype(np.float32))).detach().numpy()
+
+def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
+    global model, preprocessor
+    preprocessor = Preprocessor()
+    preprocessor.fit(x)
+    model = model_definition(preprocessor)
     pytorch.train(
         model,
         preprocessor.apply(x).to_numpy().astype(np.float32),
         y.to_numpy().astype(np.float32),
         nn.BCELoss(),
         optim.Adam(model.parameters(), weight_decay=0.1, ),
-        n_epochs=50,
+        n_epochs=1000,
         batch_size=256,
         metrics={
             'accuracy': lambda y_pred, y_true: (np.round(y_pred) == y_true).sum() / len(y_true)
@@ -83,7 +86,7 @@ def save(path: str) -> None:
 
 def load(path: str) -> None:
     global model, preprocessor
-    model = nn.Module()
+    preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
+    model = model_definition(preprocessor)
     model.load_state_dict(torch.load(os.path.join(path, 'model')))
     model.eval()
-    preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))

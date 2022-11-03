@@ -1,9 +1,9 @@
+import datetime
 import logging
 import os
-import datetime
-from clearml import Task
 
 import pandas as pd
+
 import commons.git as git
 from commons.drive import get_drive_module
 from commons.env import getenv
