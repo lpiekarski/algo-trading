@@ -59,6 +59,11 @@
     bot.py -Ddrive=git download datasets/train/M30_H1 M30_H1.zip
     ```
 
+### Converting Dataset to CSV
+```bash
+bot.py dataset2csv git:datasets/train/M30_H1 M30_H1.csv
+```
+
 ### Uploading Data to Drive
 1. Upload a file to drive using command below (you can also run `bot.py upload --help` to see additional options)
    ```bash

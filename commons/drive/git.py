@@ -54,8 +54,8 @@ def download(cloud_path: str, local_path: str) -> None:
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
         checked_out_path = os.path.join(tempdir, f"{os.path.basename(cloud_path)}.zip.")
         git.reset_hard("main", cwd=tempdir)
-        git.checkout(cloud_path, cwd=tempdir)
         try:
+            git.checkout(cloud_path, cwd=tempdir)
             git.fetch(cloud_path, cwd=tempdir)
         except CalledProcessError as e:
             raise CloudFileNotFoundError(f"File not found in the repository. {e}")
