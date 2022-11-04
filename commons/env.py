@@ -21,11 +21,7 @@ def require_env(name):
     return value
 
 class DefaultEnv:
-    dataset = None
-    model = None
-    LOCAL_DRIVE_STORE = './data'
     CACHE_DIR = './.cache'
     TEMP_DIR = './.tmp'
     drive = 'local'
-    LOG_LEVEL = None
     GIT_DRIVE_MAX_FILE_SIZE = '100000000'

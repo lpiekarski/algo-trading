@@ -1,30 +1,18 @@
 import logging
 import os
+from typing import Union
 
-from commons.drive import get_drive_module
-from commons.drive_utils import split_pathname
-from commons.env import getenv
+from commons.drive_utils import get_cache_dir
+from commons.drivepath import Drivepath, cache, copy, from_string
 
-__all__ = ["download_model_data", "upload_model_data", "get_model_cache_path"]
+__all__ = ["download_model_data", "upload_model_data"]
 
 LOGGER = logging.getLogger(__name__)
 
-def get_model_cache_path(name: str):
-    cache_dir = getenv("CACHE_DIR")
-    return os.path.join(cache_dir, 'models', name)
+def download_model_data(drivepath: Union[Drivepath, str]):
+    file, _ = cache(drivepath)
+    return os.path.abspath(os.path.normpath(file))
 
-def download_model_data(name: str):
-    drive_type, name = split_pathname(name)
-    drive = get_drive_module(drive_type)
-    local_path = get_model_cache_path(name)
-    if not os.path.exists(local_path):
-        LOGGER.debug(f"Model data '{name}' is not cached, downloading using drive '{drive.__name__}'")
-        drive.download(os.path.join('models', name), local_path)
-    return os.path.abspath(os.path.normpath(local_path))
-
-def upload_model_data(name: str):
-    drive_type, name = split_pathname(name)
-    drive = get_drive_module(drive_type)
-    local_path = get_model_cache_path(name)
+def upload_model_data(local_path: str, drivepath: Union[Drivepath, str]):
     if os.path.exists(local_path):
-        drive.upload(local_path, os.path.join('models', name))
+        copy(local_path, drivepath)
