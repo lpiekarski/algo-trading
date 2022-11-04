@@ -9,6 +9,8 @@ def init_logging():
     rootLogger = logging.getLogger()
     rootLogger.setLevel(logging.NOTSET)
 
+    logging.getLogger("split_file_reader").setLevel(logging.INFO)
+
     LOG_LEVEL = getenv("LOG_LEVEL")
     if LOG_LEVEL is None:
         LOG_LEVEL = logging.INFO

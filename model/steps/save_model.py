@@ -15,6 +15,7 @@ def save_model(model, model_module, **kwargs):
     LOGGER.info(f"Saving model '{model}' in location: '{formpath(model_data_path)}'")
     with TempDir() as td:
         model_module.save(td)
+        os.makedirs(os.path.dirname(model_data_path), exist_ok=True)
         with zipfile.ZipFile(file=model_data_path, mode='w') as zf:
             for root, _, files in os.walk(td):
                 for file in files:

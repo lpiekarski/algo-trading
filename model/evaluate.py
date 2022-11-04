@@ -55,7 +55,7 @@ def evaluate_group(): pass
     process_parameter("backtest_cash"),
     process_parameter("skip_backtest"),
     conditional(rename_parameters({"train_dataset": "dataset", "train_label": "label"}, keep_old=True), "train_dataset"),
-    initialize_clearml,
+    conditional(initialize_clearml, "clearml_access_key"),
     get_model_module,
     conditional(get_dataset, "train_dataset"),
     conditional(run_training, "train_dataset"),

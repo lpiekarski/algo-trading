@@ -5,5 +5,8 @@ __pycache__/
 /.cache/
 /data/
 .neptune/
-.git-drive/
 .tmp/
+/datasets/
+/evaluation/
+/models/
+/predictions/
