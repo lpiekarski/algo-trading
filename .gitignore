@@ -6,3 +6,7 @@ __pycache__/
 /data/
 .neptune/
 .tmp/
+/datasets/
+/evaluation/
+/models/
+/predictions/

@@ -4,11 +4,14 @@ import sys
 import logging
 
 from collector.collect import collect_group
+from collector.csv2dataset import csv2dataset_group
+from collector.dataset2csv import dataset2csv_group
 from collector.extract import extract_group
 from commons.logging import init_logging
 from commons.exceptions import ArgumentError, BotError
 from commons.string import ENDLINE, TAB
 from commons.timing import command_failure
+from drive.copy import copy_group
 from drive.delete import delete_group
 from drive.download import download_group
 from drive.upload import upload_group
@@ -33,6 +36,9 @@ LOGGER = logging.getLogger(__name__)
         download_group,
         upload_group,
         delete_group,
+        copy_group,
+        csv2dataset_group,
+        dataset2csv_group
     ]
 )
 @click.option("-D", "env", multiple=True, help="Set environment variable e.g. -Dvar=value")
