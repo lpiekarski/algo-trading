@@ -1,6 +1,6 @@
-from model.preprocessing import Preprocessor
 import pandas as pd
 import numpy as np
+from commons.data.preprocessor import Preprocessor
 
 def test_preprocessor_01():
     preprocessor = Preprocessor()
