@@ -22,9 +22,11 @@ class Drivepath:
 
 def cache(p: Union[Drivepath, str]):
     p = from_string(p)
+    LOGGER.debug(f"Caching file '{p}'")
     drive = get_drive_module(p.drive_type)
     cached, local_path, md5_path = is_cached(p)
     if not cached:
+        LOGGER.debug(f"File is not previously cached, downloading")
         drive.download(p.path, local_path)
         try:
             drive.download(p.path + '.md5', md5_path)
@@ -35,11 +37,13 @@ def cache(p: Union[Drivepath, str]):
 
 def is_cached(p: Union[Drivepath, str]):
     p = from_string(p)
+    LOGGER.debug(f"Checking if '{p}' is cached")
     drive = get_drive_module(p.drive_type)
     cache_dir, md5_dir = get_cache_dir(p.drive_type)
     local_path = os.path.join(cache_dir, p.path)
     md5_path = os.path.join(md5_dir, p.path)
     if not os.path.exists(local_path) or not os.path.exists(md5_path):
+        LOGGER.debug(f"File is not cached: file or md5 is not present in cache directory")
         return False, local_path, md5_path
     else:
         with TempDir() as tempdir:
@@ -49,12 +53,15 @@ def is_cached(p: Union[Drivepath, str]):
             except CloudFileNotFoundError:
                 LOGGER.warning(f'There is no checksum file for "{p}"')
             if not os.path.exists(new_checksum_path):
+                LOGGER.debug("File is not cached: cannot download md5 file for source")
                 return False, local_path, md5_path
             else:
                 old_checksum = read_md5(md5_path)
                 new_checksum = read_md5(new_checksum_path)
                 if new_checksum != old_checksum:
+                    LOGGER.debug(f"File is not cached: checksums differ")
                     return False, local_path, md5_path
+    LOGGER.debug("File is cached")
     return True, local_path, md5_path
 
 def copy(p1: Union[Drivepath, str], p2: Union[Drivepath, str]):

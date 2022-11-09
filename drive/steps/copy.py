@@ -1,6 +1,6 @@
-from commons import drive_utils
+import commons.drivepath as dp
 from commons.timing import step
 
 @step
-def copy(source_path, target_path, **kwargs):
-    drive_utils.copy_file(source_path, target_path)
+def copy(source, target, **kwargs):
+    dp.copy(source, target)

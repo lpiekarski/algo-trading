@@ -9,7 +9,7 @@ __all__ = ["delete_group"]
 def delete_group(): pass
 
 @delete_group.command()
-@click.argument("remote_path")
+@click.argument("path")
 @subcommand([
     delete
 ])
