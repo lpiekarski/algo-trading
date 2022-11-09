@@ -21,10 +21,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup
-        run: cd docker && docker build -t sp2137 . && cd ..
+        run: docker build . -t sp2137 -f docker/linux/Dockerfile
 
       - name: Run tests
-        run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/bot.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=project/logs/test.log -DFILE_LOG_LEVEL=DEBUG -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache test
+        run: docker run --rm -v $(pwd):/ sp2137 ./venv/bin/python3 ./bot.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test
 
       - name: Archive
         if: always()
