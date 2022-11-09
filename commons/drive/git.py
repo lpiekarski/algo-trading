@@ -87,7 +87,10 @@ def delete(cloud_path: str) -> None:
     with TempDir() as tempdir:
         initialize(tempdir)
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
-        git.delete_branch(cloud_path, cwd=tempdir)
+        try:
+            git.delete_branch(cloud_path, cwd=tempdir)
+        except CalledProcessError as e:
+            raise CloudFileNotFoundError(e)
 
 def split_filenames(path: str):
     i = 0

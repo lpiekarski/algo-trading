@@ -89,18 +89,17 @@ def clear_cache(p: Union[Drivepath, str]):
     md5 = os.path.join(md5_dir, p.path)
     if os.path.exists(file):
         os.remove(file)
-        os.removedirs(os.path.dirname(file))
+        try:
+            os.removedirs(os.path.dirname(file))
+        except OSError:
+            pass
     if os.path.exists(md5):
         os.remove(md5)
-        os.removedirs(os.path.dirname(md5))
+        try:
+            os.removedirs(os.path.dirname(md5))
+        except OSError:
+            pass
 
-def remove_with_empty_dirs(path: str):
-    if not os.path.exists(path):
-        return
-    if os.path.isdir(path) and len(os.listdir(path)) > 0:
-        return
-    os.remove(path)
-    remove_with_empty_dirs(os.path.dirname(path))
 
 def split(p: str):
     if ':' in p:
