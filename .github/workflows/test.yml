@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup
+      - name: Build image
         run: docker build . -t sp2137 -f docker/linux/Dockerfile
 
       - name: Run tests
