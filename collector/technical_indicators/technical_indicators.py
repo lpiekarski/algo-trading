@@ -55,6 +55,9 @@ def add_parabolic_sar(df, time_tag):
 def add_stdev(df, time_tag, length):
     df[f'Standard_deviation_{length}_{time_tag}'] = pta.stdev(df['Close'], length=length)
 
+def add_stdev_percentage(df, time_tag, length):
+    df[f'Standard_deviation_Percentage_{length}_{time_tag}'] = pta.stdev(df['Close'], length=length) / df['Close'] * 100
+
 def add_linreg(df, time_tag, length):
     df[f'Linear_Regression_{length}_{time_tag}'] = pta.linreg(df['Close'], length=length)
 
@@ -154,6 +157,42 @@ def add_log_change(df, time_tag):
 def log_change(series):
     return np.log(series / series.shift(1))
 
+# Volume indicators
+# OBV (on-Balance Volume)
+def add_on_balance_volume(df, time_tag):
+    df[f'Volume_On_Balance_Volume_{time_tag}'] = pta.obv(df['Close'], df['Volume'])
+
+# CMF (Chaikin Money Flow)
+def add_chaikin_money_flow(df, time_tag):
+    df[f'Volume_Chaikin_Money_Flow_{time_tag}'] = pta.cmf(df['High'], df['Low'], df['Close'], df['Volume'])
+
+# Klinger Volume Oscillator
+def add_klinger_oscillator(df, time_tag):
+    kvo = pta.kvo(df['High'], df['Low'], df['Close'], df['Volume'])
+    df[f'Volume_Chaikin_Money_Flow_{time_tag}'] = kvo['KVO_34_55_13']
+    df[f'Volume_Chaikin_Money_Flow_s_{time_tag}'] = kvo['KVOs_34_55_13']
+
+# Money Flow index
+def add_money_flow_index(df, time_tag):
+    df[f'Volume_Money_Flow_index_{time_tag}'] = pta.mfi(df['High'], df['Low'], df['Close'], df['Volume'])
+
+# Negative Volume Index
+def add_negative_volume_index(df, time_tag):
+    df[f'Volume_Negative_Volume_index_{time_tag}'] = pta.nvi(df['Close'], df['Volume'])
+
+# Price Volume
+def add_price_volume(df, time_tag):
+    df[f'Volume_Price_Volume_{time_tag}'] = pta.pvol(df['Close'], df['Volume'])
+
+# A/D Oscillator
+def add_ad_oscillator(df, time_tag):
+    df[f'Volume_AD_Oscillator_{time_tag}'] = pta.adosc(df['High'], df['Low'], df['Close'], df['Volume'])
+
+# Ease of movement
+def add_ease_of_movement(df, time_tag):
+    df[f'Volume_Ease_of_movement_{time_tag}'] = pta.eom(df['High'], df['Low'], df['Close'], df['Volume'])
+
+
 INDICATORS = dict(
     add_sma=[10, 20, 50, 100, 200],
     add_ema=[10, 20, 50, 100, 200],
@@ -163,6 +202,7 @@ INDICATORS = dict(
     add_ichimoku=None,
     add_parabolic_sar=None,
     add_stdev=[10, 20, 50, 100, 200],
+    add_stdev_percentage=[10, 20, 50, 100, 200],
     add_linreg=[10, 20, 50, 100, 200],
     add_atr=[14],
     add_rsi=[14, 26],
@@ -182,8 +222,17 @@ INDICATORS = dict(
     add_accbands=None,
     add_cyclical_datetime=None,
     add_us_time=None,
-    add_log_change=None
+    add_log_change=None,
+    add_on_balance_volume=None,
+    add_chaikin_money_flow=None,
+    add_klinger_oscillator=None,
+    add_money_flow_index=None,
+    add_negative_volume_index=None,
+    add_price_volume=None,
+    add_ad_oscillator=None,
+    add_ease_of_movement=None
 )
+
 
 def add_technical_indicators(dataset, time_tag):
     df = dataset.df if isinstance(dataset, Dataset) else dataset
