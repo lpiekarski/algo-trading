@@ -1,6 +1,7 @@
 FROM ubuntu:latest
 
 COPY docker/linux/dependencies.txt dependencies.txt
+COPY requirements.txt requirements.txt
 
 RUN apt-get update
 RUN apt-get install -y $(cat dependencies.txt)
