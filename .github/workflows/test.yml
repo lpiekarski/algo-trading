@@ -24,7 +24,7 @@ jobs:
         run: docker build . -t sp2137 -f docker/linux/Dockerfile
 
       - name: Run tests
-        run: docker run --rm -v $(pwd):/ sp2137 ./venv/bin/python3 ./bot.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test
+        run: docker run --rm sp2137 ./venv/bin/python3 ./bot.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test
 
       - name: Archive
         if: always()
