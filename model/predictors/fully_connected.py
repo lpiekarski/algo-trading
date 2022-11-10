@@ -15,49 +15,51 @@ preprocessor: Preprocessor = None
 
 def model_definition(preprocessor):
     return nn.Sequential(
-        nn.Linear(preprocessor.num_features, 1),
-        nn.ReLU(),
-        nn.Linear(1, 32),
-        nn.Dropout(0.5),
-        nn.BatchNorm1d(32),
-        nn.ReLU(),
-        nn.Linear(32, 64),
-        nn.Dropout(0.5),
-        nn.BatchNorm1d(64),
-        nn.ReLU(),
-        nn.Linear(64, 128),
-        nn.Dropout(0.5),
+        nn.Linear(preprocessor.num_features, 128),
+        nn.Sigmoid(),
         nn.BatchNorm1d(128),
-        nn.ReLU(),
         nn.Linear(128, 128),
         nn.Dropout(0.5),
+        nn.Sigmoid(),
         nn.BatchNorm1d(128),
-        nn.ReLU(),
         nn.Linear(128, 128),
         nn.Dropout(0.5),
+        nn.Sigmoid(),
         nn.BatchNorm1d(128),
-        nn.ReLU(),
         nn.Linear(128, 128),
         nn.Dropout(0.5),
+        nn.Sigmoid(),
         nn.BatchNorm1d(128),
-        nn.ReLU(),
         nn.Linear(128, 128),
         nn.Dropout(0.5),
+        nn.Sigmoid(),
         nn.BatchNorm1d(128),
-        nn.ReLU(),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.Sigmoid(),
+        nn.BatchNorm1d(128),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.Sigmoid(),
+        nn.BatchNorm1d(128),
+        nn.Linear(128, 128),
+        nn.Dropout(0.5),
+        nn.Sigmoid(),
+        nn.BatchNorm1d(128),
         nn.Linear(128, 64),
         nn.Dropout(0.5),
+        nn.Sigmoid(),
         nn.BatchNorm1d(64),
-        nn.ReLU(),
         nn.Linear(64, 32),
         nn.Dropout(0.5),
+        nn.Sigmoid(),
         nn.BatchNorm1d(32),
-        nn.ReLU(),
         nn.Linear(32, 1),
         nn.Sigmoid()
     )
 
 def predict(x: pd.DataFrame) -> np.ndarray:
+    model.eval()
     return model.forward(torch.tensor(preprocessor.apply(x).to_numpy().astype(np.float32))).detach().numpy()
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
@@ -70,15 +72,13 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
         preprocessor.apply(x).to_numpy().astype(np.float32),
         y.to_numpy().astype(np.float32),
         nn.BCELoss(),
-        optim.Adam(model.parameters(), weight_decay=0.1, ),
-        n_epochs=1000,
+        optim.Adam(model.parameters(), weight_decay=0.1),
+        n_epochs=100,
         batch_size=256,
         metrics={
             'accuracy': lambda y_pred, y_true: (np.round(y_pred) == y_true).sum() / len(y_true)
-        },
-        lambda_1=0.1,
+        }
     )
-    model.eval()
 
 def save(path: str) -> None:
     torch.save(model.state_dict(), os.path.join(path, 'model'))
