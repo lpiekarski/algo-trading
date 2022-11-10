@@ -103,7 +103,7 @@ def clear_cache(p: Union[Drivepath, str]):
 
 def split(p: str):
     if ':' in p:
-        drive, name = p.split(':', maxsplit=2)
+        drive, name = p.split(':', maxsplit=1)
         if name.startswith('/'):
             name = name[1:]
         return drive, name
