@@ -14,7 +14,9 @@ def add_best_decision(dataset: Dataset, pct_change):
     next_short = find_indexes_with_price_percentage_change(dataset.df, pct_change, direction=-1)
     next_long = next_long.apply(lambda x: x.value if x is not None else np.inf)
     next_short = next_short.apply(lambda x: x.value if x is not None else np.inf)
-    dataset.add_label(f'Best_decision_{pct_change}', np.argmin(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
+    dataset.add_label(f'Best_decision_s_{pct_change}', np.argmin(np.concatenate([np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
+    dataset.add_label(f'Best_decision_l_{pct_change}', np.argmin(np.concatenate([np.expand_dims(next_long, 1), np.expand_dims(next_short, 1)], axis=1), axis=1))
+    dataset.add_label(f'Best_decision_error_{pct_change}', dataset[f'Best_decision_s_{pct_change}'] - dataset[f'Best_decision_l_{pct_change}'])
 
 def find_indexes_with_price_percentage_change(df: pd.DataFrame, pct_change, direction):
     result = {}
