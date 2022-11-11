@@ -16,6 +16,5 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
 def save(path: str) -> None:
     return
 
-
 def load(path: str) -> None:
     return
