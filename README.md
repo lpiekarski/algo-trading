@@ -40,7 +40,11 @@
    ```bash
    bot.py evaluate --train-dataset=git:datasets/train/M30_H1 --test-dataset=git:datasets/test/M30_H1 --train-label=Best_decision_0.01 --test-label=Best_decision_0.01 --model=local:models/fully_connected
    ```
-
+if it isn't working try to add python before bot.py (for other commands as well)
+   ```bash
+   python bot.py evaluate --train-dataset=git:datasets/train/M30_H1 --test-dataset=git:datasets/test/M30_H1 --train-label=Best_decision_0.01 --test-label=Best_decision_0.01 --model=local:models/fully_connected
+   ```
+   
 ### Training and Saving a Model
 1. Train model using command below (you can also run `bot.py train --help` to see additional options)
     ```bash
