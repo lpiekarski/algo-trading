@@ -16,6 +16,7 @@ from commons.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
 
+
 def initialize(tempdir):
     git_password = getenv('GIT_PASSWORD')
     if git_password is not None:
@@ -23,6 +24,7 @@ def initialize(tempdir):
     else:
         REPO_URL = f"https://github.com/S-P-2137/Data"
     git.clone_no_checkout(REPO_URL, tempdir)
+
 
 def upload(local_path: str, cloud_path: str) -> None:
     with TempDir() as tempdir:
@@ -48,17 +50,20 @@ def upload(local_path: str, cloud_path: str) -> None:
             git.commit(f"Automated: add '{file}' to the storage", cwd=tempdir)
             git.push(cloud_path, cwd=tempdir)
 
+
 def download(cloud_path: str, local_path: str) -> None:
     with TempDir() as tempdir:
         initialize(tempdir)
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
-        checked_out_path = os.path.join(tempdir, f"{os.path.basename(cloud_path)}.zip.")
+        checked_out_path = os.path.join(
+            tempdir, f"{os.path.basename(cloud_path)}.zip.")
         git.reset_hard("main", cwd=tempdir)
         try:
             git.checkout(cloud_path, cwd=tempdir)
             git.fetch(cloud_path, cwd=tempdir)
         except CalledProcessError as e:
-            raise CloudFileNotFoundError(f"File not found in the repository. {e}")
+            raise CloudFileNotFoundError(
+                f"File not found in the repository. {e}")
         git.reset_soft(cloud_path, cwd=tempdir)
         try:
             git.restore_staged('.', cwd=tempdir)
@@ -67,11 +72,15 @@ def download(cloud_path: str, local_path: str) -> None:
         i = 0
         while True:
             try:
-                git.checkout_file(f"{os.path.basename(cloud_path)}.zip.{i:03}", branch=cloud_path, cwd=tempdir)
+                git.checkout_file(
+                    f"{os.path.basename(cloud_path)}.zip.{i:03}",
+                    branch=cloud_path,
+                    cwd=tempdir)
                 i += 1
             except CalledProcessError as e:
                 if i == 0:
-                    raise CloudFileNotFoundError(f"File not found in the repository. {e}")
+                    raise CloudFileNotFoundError(
+                        f"File not found in the repository. {e}")
                 else:
                     break
         local_dirname = os.path.dirname(os.path.abspath(local_path))
@@ -80,14 +89,21 @@ def download(cloud_path: str, local_path: str) -> None:
             with zipfile.ZipFile(file=sfr, mode='r') as zf:
                 LOGGER.debug(f"Extracting to {formpath(local_dirname)}")
                 zf.extractall(local_dirname)
-        LOGGER.debug(f"Directory after extraction: {os.listdir(local_dirname)}")
-        shutil.move(os.path.join(local_dirname, os.path.basename(cloud_path)), local_path)
+        LOGGER.debug(
+            f"Directory after extraction: {os.listdir(local_dirname)}")
+        shutil.move(os.path.join(local_dirname,
+                    os.path.basename(cloud_path)), local_path)
+
 
 def delete(cloud_path: str) -> None:
     with TempDir() as tempdir:
         initialize(tempdir)
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
-        git.delete_branch(cloud_path, cwd=tempdir)
+        try:
+            git.delete_branch(cloud_path, cwd=tempdir)
+        except CalledProcessError as e:
+            raise CloudFileNotFoundError(e)
+
 
 def split_filenames(path: str):
     i = 0

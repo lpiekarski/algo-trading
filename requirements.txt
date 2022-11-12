@@ -12,3 +12,4 @@ lightgbm==3.3.3
 yfinance==0.1.84
 pandas-ta==0.3.14b0
 split-file-reader==0.1.0
+autopep8==2.0.0

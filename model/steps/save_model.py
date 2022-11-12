@@ -11,13 +11,15 @@ from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
+
 @step
 def save_model(model, model_module, **kwargs):
     model = from_string(model)
     with TempDir() as td1:
         with TempDir() as td2:
             model_data_path = os.path.join(td2, 'model')
-            LOGGER.info(f"Saving model '{model}' in location: '{formpath(model_data_path)}'")
+            LOGGER.info(
+                f"Saving model '{model}' in location: '{formpath(model_data_path)}'")
             model_module.save(td1)
             os.makedirs(os.path.dirname(model_data_path), exist_ok=True)
             with zipfile.ZipFile(file=model_data_path, mode='w') as zf:

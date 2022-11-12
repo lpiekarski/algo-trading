@@ -9,15 +9,27 @@ from commons.timing import subcommand
 
 __all__ = ["collect_group"]
 
+
 @group()
-def collect_group(): pass
+def collect_group():
+    pass
+
 
 @collect_group.command()
-@option("--date", "-d", default="latest", help="Date for which to collect the data (can be 'latest' for last available hour)")
-@option("--output", "-n", help="Path of the created dataset. If none is provided defaults to the YYYY-mm-dd-HH-MM date")
-@option("--wait", "-w", help="Wait for the next full hour to download the data", is_flag=True)
-@option("--append", "-a", default=False, help="Whether to overwrite or append to an existing dataset with the same "
-                                              "name", is_flag=True)
+@option("--date", "-d", default="latest",
+        help="Date for which to collect the data (can be 'latest' for last available hour)")
+@option("--output", "-n",
+        help="Path of the created dataset. If none is provided defaults to the YYYY-mm-dd-HH-MM date")
+@option("--wait",
+        "-w",
+        help="Wait for the next full hour to download the data",
+        is_flag=True)
+@option("--append",
+        "-a",
+        default=False,
+        help="Whether to overwrite or append to an existing dataset with the same "
+        "name",
+        is_flag=True)
 @subcommand([
     process_parameter("date"),
     process_parameter("output"),
@@ -27,4 +39,5 @@ def collect_group(): pass
     create_dataset,
     save_dataset
 ])
-def collect(*args, **kwargs): pass
+def collect(*args, **kwargs):
+    pass

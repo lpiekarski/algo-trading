@@ -1,6 +1,7 @@
 import pickle
 import re
 
+
 class Preprocessor:
     def __init__(self):
         self.std = None
@@ -37,7 +38,8 @@ class Preprocessor:
         xstd = x_[self.standardized_columns]
         xnorm = x_[self.normalized_columns]
         x_.update((xstd - self.mean) / self.std)
-        x_.update((xnorm - self.range_min) / (self.range_max - self.range_min + 1e-8))
+        x_.update((xnorm - self.range_min) /
+                  (self.range_max - self.range_min + 1e-8))
         x_ = x_.fillna(0)
         return x_
 

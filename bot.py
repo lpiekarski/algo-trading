@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import click
 import os
 import sys
@@ -23,6 +25,7 @@ from trader.trade import trade_group
 
 LOGGER = logging.getLogger(__name__)
 
+
 @click.command(
     cls=click.CommandCollection,
     sources=[
@@ -41,7 +44,8 @@ LOGGER = logging.getLogger(__name__)
         dataset2csv_group
     ]
 )
-@click.option("-D", "env", multiple=True, help="Set environment variable e.g. -Dvar=value")
+@click.option("-D", "env", multiple=True,
+              help="Set environment variable e.g. -Dvar=value")
 def bot(env):
     for entry in env:
         entry_split = entry.split("=", 1)
@@ -51,6 +55,7 @@ def bot(env):
         os.environ[var] = value
     init_logging()
     LOGGER.debug(f"env:\n\t{(ENDLINE + TAB).join(env)}")
+
 
 if __name__ == '__main__':
     try:

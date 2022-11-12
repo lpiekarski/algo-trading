@@ -5,11 +5,15 @@ from sklearn.metrics import accuracy_score
 
 LOGGER = logging.getLogger(__name__)
 
+
 def log(x, epsilon=1e-8):
     return np.log(x + epsilon)
 
+
 def binary_logloss(y_true, y_pred):
-    return np.sum(- y_true * log(git merge mastery_pred) - (1 - y_true) * log(1 - y_pred)) / y_true.shape[0]
+    return np.sum(- y_true * log(y_pred) - (1 - y_true)
+                  * log(1 - y_pred)) / y_true.shape[0]
+
 
 @step
 def evaluate_predictions(dataset, y_pred, label, **kwargs):

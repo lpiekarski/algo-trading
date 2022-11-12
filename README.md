@@ -38,25 +38,29 @@
 ### Evaluating a Model
 1. Evaluate using command below (you can also run `bot.py evaluate --help` to see additional options)
    ```bash
-   bot.py evaluate --train-dataset=git:train/M30_H1 --train-label=Best_decision_0.01 --test-dataset=git:test/M30_H1 --test-label=Best_decision_0.01 --model=uniform_random
+   bot.py evaluate --train-dataset=git:datasets/train/M30_H1 --test-dataset=git:datasets/test/M30_H1 --train-label=Best_decision_0.01 --test-label=Best_decision_0.01 --model=local:models/fully_connected
    ```
-
+if it isn't working try to add python before bot.py (for other commands as well)
+   ```bash
+   python bot.py evaluate --train-dataset=git:datasets/train/M30_H1 --test-dataset=git:datasets/test/M30_H1 --train-label=Best_decision_0.01 --test-label=Best_decision_0.01 --model=local:models/fully_connected
+   ```
+   
 ### Training and Saving a Model
 1. Train model using command below (you can also run `bot.py train --help` to see additional options)
     ```bash
-    bot.py train --model=naive_bayes --dataset=git:train/M30_H1 --label=Best_decision_0.01
+    bot.py train --model=local:models/naive_bayes --dataset=git:datasets/train/M30_H1 --label=Best_decision_0.01
     ```
 
 ### Obtaining Model Predictions for a Given Dataset
 1. Generate predictions file for a model using command below (you can also run `bot.py predict --help` to see additional options)
     ```bash
-    bot.py predict --model=naive_bayes --dataset=git:test/M30_H1
+    bot.py predict --model=local:models/naive_bayes --dataset=git:datasets/test/M30_H1
     ```
 
 ### Downloading Data from Drive
 1. Download a file from drive using command below (you can also run `bot.py download --help` to see additional options)
     ```bash
-    bot.py -Ddrive=git download datasets/train/M30_H1 M30_H1.zip
+    bot.py copy git:datasets/train/M30_H1 M30_H1.zip
     ```
 
 ### Converting Dataset to CSV
@@ -64,16 +68,21 @@
 bot.py dataset2csv git:datasets/train/M30_H1 M30_H1.csv
 ```
 
+### Converting CSV to dataset
+```bash
+bot.py csv2dataset M30_H1.csv local:datasets/M30_H1
+```
+
 ### Uploading Data to Drive
 1. Upload a file to drive using command below (you can also run `bot.py upload --help` to see additional options)
    ```bash
-   bot.py -Ddrive=git upload M30_H1.zip datasets/train/M30_H1
+   bot.py copy M30_H1.zip git:datasets/train/M30_H1
    ```
 
 ### Deleting Data from Drive
 1. Delete a file from drive using command below (you can also run `bot.py delete --help` to see additional options)
     ```bash
-    bot.py -Ddrive=git delete datasets/raw/dataset_to_delete.zip
+    bot.py delete git:datasets/raw/dataset_to_delete.zip
     ```
 
 ### Collecting OHLC Data

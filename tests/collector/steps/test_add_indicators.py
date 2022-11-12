@@ -1,5 +1,6 @@
 from collector.steps.add_indicators import add_indicators
-import testing.mocks as mocks
+import commons.testing.mocks as mocks
+
 
 def test_add_indicators():
     dataset = mocks.dataset()

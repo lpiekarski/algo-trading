@@ -12,20 +12,27 @@ __all__ = ["extract_group"]
 
 
 @group()
-def extract_group(): pass
+def extract_group():
+    pass
 
 
 @extract_group.command()
-@option("--name", "-n", help="Name of the output dataset")
-@option("--time-tag", "-t", default='1h', help="Rescale data to hours, days, month")
-@option("--dataset", "-d", help="Dataset to extract features from")
-@option("--append", "-a", default=True, help="Whether to overwrite or append to an existing dataset with the same name", is_flag=True)
-@option("--indicators", "-i", help="Path to the indicators configuration json file")
+@option("--name", "-n",
+        help="Name of the output dataset")
+@option("--time-tag", "-t",
+        default='1h',
+        help="Rescale data to hours, days, month")
+@option("--dataset", "-d",
+        help="Dataset to extract features from")
+@option("--append",
+        "-a",
+        default=True,
+        help="Whether to overwrite or append to an existing dataset with the same name",
+        is_flag=True)
 @subcommand([
     process_parameter("time_tag"),
     process_parameter("name", optional=True),
     process_parameter("dataset"),
-    process_parameter("indicators", optional=True),
     get_dataset,
     add_indicators,
     add_labels,
@@ -34,9 +41,3 @@ def extract_group(): pass
 ])
 def extract(*args, **kwargs):
     """Add technical indicators to dataset from FILE_PATH."""
-
-
-
-
-
-

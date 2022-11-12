@@ -8,6 +8,7 @@ from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
+
 @step
 def convert_dataset_to_csv(source, target, **kwargs):
     with TempDir() as tempdir:

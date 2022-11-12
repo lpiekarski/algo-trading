@@ -13,8 +13,18 @@ from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
+
 @step
-def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_dataset, test_label, train_label, task=None, **kwargs):
+def submit_to_drive(
+        binary_cross_entropy,
+        accuracy,
+        model,
+        test_dataset,
+        train_dataset,
+        test_label,
+        train_label,
+        task=None,
+        **kwargs):
     LOGGER.info("Storing the results")
 
     with TempDir() as tempdir:
@@ -25,10 +35,12 @@ def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_d
         drivepath = f"{drive_type}:{cloud_path}"
         try:
             copy(drivepath, local_path)
-            results = pd.read_csv(local_path, parse_dates=True, index_col="date")
+            results = pd.read_csv(
+                local_path, parse_dates=True, index_col="date")
             delete(drivepath)
         except CloudFileNotFoundError:
-            LOGGER.warning(f"Evaluation results file doesn't exist on drive '{drive_type}', creating one")
+            LOGGER.warning(
+                f"Evaluation results file doesn't exist on drive '{drive_type}', creating one")
             results = pd.DataFrame({
                 "parameters/model": [],
                 "parameters/version": [],
@@ -43,9 +55,11 @@ def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_d
             version = git.file_version(f"model/predictors/{model}.py")
             if getenv('drive') == 'git':
                 if git.get_branch() != 'master':
-                    raise BotError('Submitting results from non-master branch is prohibited.')
+                    raise BotError(
+                        'Submitting results from non-master branch is prohibited.')
                 if version.endswith("-dirty"):
-                    raise BotError('Submitting results from a dirty predictor file is prohibited. Commit or revert the changes.')
+                    raise BotError(
+                        'Submitting results from a dirty predictor file is prohibited. Commit or revert the changes.')
             params = {
                 "parameters/model": [str(model)],
                 "parameters/version": [version],
@@ -56,7 +70,8 @@ def submit_to_drive(binary_cross_entropy, accuracy, model, test_dataset, train_d
                 "eval/binary_cross_entropy": [binary_cross_entropy],
                 "eval/accuracy": [accuracy]
             }
-            run = pd.DataFrame(params, index=pd.DatetimeIndex([datetime.datetime.now()], name='date'))
+            run = pd.DataFrame(params, index=pd.DatetimeIndex(
+                [datetime.datetime.now()], name='date'))
             LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")
             if task is not None:
                 task.connect(run.iloc[0].to_dict())

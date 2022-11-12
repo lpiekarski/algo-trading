@@ -5,8 +5,11 @@ from drive.steps.upload import upload
 
 __all__ = ["upload_group"]
 
+
 @click.group()
-def upload_group(): pass
+def upload_group():
+    pass
+
 
 @upload_group.command()
 @click.argument("local_path")
@@ -14,4 +17,5 @@ def upload_group(): pass
 @subcommand([
     upload
 ])
-def upload(*args, **kwargs): pass
+def upload(*args, **kwargs):
+    pass
