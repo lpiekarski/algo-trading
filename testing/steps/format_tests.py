@@ -20,7 +20,7 @@ def format_tests(*args, **kwargs):
             diff=True,
             ignore_local_config=True,
             jobs=1,
-            verbose=1,
+            verbose=2,
             in_place=False,
             max_line_length=120,
             line_range=None,
