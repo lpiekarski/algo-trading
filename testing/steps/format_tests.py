@@ -1,37 +1,40 @@
 import logging
+from types import SimpleNamespace
 
 from commons.exceptions import NotInterruptingError
 from commons.timing import step
-import subprocess
 import os
+import autopep8
 
 LOGGER = logging.getLogger(__name__)
 
 
 @step
 def format_tests(*args, **kwargs):
-    sp = subprocess.run(['python',
-                         '-m',
-                         'autopep8',
-                         '--ignore-local-config',
-                         '--aggressive',
-                         '--aggressive',
-                         '--aggressive',
-                         '--diff',
-                         '--exit-code',
-                         '--recursive',
-                         '--exclude',
-                         '**/venv',
-                         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))],
-                        capture_output=True,
-                        encoding='utf-8')
-    if sp.stdout != "":
-        LOGGER.info('autopep8 stdout output:\n' + sp.stdout)
-    if sp.stderr != "":
-        LOGGER.warning('autopep8 stderr output:\n' + sp.stderr)
-    if sp.returncode == 2:
+    diffs = autopep8.fix_multiple_files(
+        [os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))],
+        options=SimpleNamespace(
+            recursive=True,
+            exclude=['**/venv'],
+            aggressive=3,
+            diff=True,
+            ignore_local_config=True,
+            jobs=1,
+            verbose=0,
+            in_place=False,
+            max_line_length=120,
+            line_range=None,
+            ignore=None,
+            select=None,
+            hang_closing=False,
+            indent_size=4,
+            pep8_passes=-1,
+            experimental=False
+        )
+    )
+    if len(diffs) > 0:
+        LOGGER.error(f"Diffs from autopep8:\n{''.join(diffs)}")
         raise NotInterruptingError(
             "Code is not formatted properly, run 'python -m autopep8 .' to fix")
-    elif sp.returncode != 0:
-        raise NotInterruptingError(
-            f"autopep8 finished with code: {sp.returncode}")
+    else:
+        LOGGER.info("Code is formatted properly")
