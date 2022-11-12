@@ -12,7 +12,8 @@ __all__ = ["predict_group"]
 
 
 @click.group()
-def predict_group(): pass
+def predict_group():
+    pass
 
 
 @predict_group.command()
@@ -29,4 +30,5 @@ def predict_group(): pass
     generate_predictions,
     save_prediction_result
 ])
-def predict(*args, **kwargs): pass
+def predict(*args, **kwargs):
+    pass

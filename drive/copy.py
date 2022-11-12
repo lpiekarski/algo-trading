@@ -7,7 +7,8 @@ __all__ = ["copy_group"]
 
 
 @click.group()
-def copy_group(): pass
+def copy_group():
+    pass
 
 
 @copy_group.command()
@@ -16,4 +17,5 @@ def copy_group(): pass
 @subcommand([
     copy
 ])
-def copy(*args, **kwargs): pass
+def copy(*args, **kwargs):
+    pass

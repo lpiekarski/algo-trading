@@ -7,7 +7,8 @@ __all__ = ["delete_group"]
 
 
 @click.group()
-def delete_group(): pass
+def delete_group():
+    pass
 
 
 @delete_group.command()
@@ -15,4 +16,5 @@ def delete_group(): pass
 @subcommand([
     delete
 ])
-def delete(*args, **kwargs): pass
+def delete(*args, **kwargs):
+    pass

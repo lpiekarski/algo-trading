@@ -19,7 +19,8 @@ __all__ = ["evaluate_group"]
 
 
 @click.group()
-def evaluate_group(): pass
+def evaluate_group():
+    pass
 
 
 @evaluate_group.command()
@@ -98,4 +99,5 @@ def evaluate_group(): pass
     conditional(backtest_predictions, "skip_backtest", negation=True),
     submit_to_drive
 ])
-def evaluate(*args, **kwargs): pass
+def evaluate(*args, **kwargs):
+    pass

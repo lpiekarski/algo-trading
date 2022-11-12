@@ -11,7 +11,8 @@ __all__ = ["collect_group"]
 
 
 @group()
-def collect_group(): pass
+def collect_group():
+    pass
 
 
 @collect_group.command()
@@ -38,4 +39,5 @@ def collect_group(): pass
     create_dataset,
     save_dataset
 ])
-def collect(*args, **kwargs): pass
+def collect(*args, **kwargs):
+    pass

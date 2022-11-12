@@ -10,7 +10,8 @@ __all__ = ["test_group"]
 
 
 @group()
-def test_group(): pass
+def test_group():
+    pass
 
 
 @test_group.command()
@@ -22,4 +23,5 @@ def test_group(): pass
     conditional(unit_tests, "skip_unit_tests", negation=True),
     conditional(format_tests, "skip_format_tests", negation=True),
 ])
-def test(*args, **kwargs): pass
+def test(*args, **kwargs):
+    pass

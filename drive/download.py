@@ -7,7 +7,8 @@ __all__ = ["download_group"]
 
 
 @click.group()
-def download_group(): pass
+def download_group():
+    pass
 
 
 @download_group.command()
@@ -16,4 +17,5 @@ def download_group(): pass
 @subcommand([
     download
 ])
-def download(*args, **kwargs): pass
+def download(*args, **kwargs):
+    pass

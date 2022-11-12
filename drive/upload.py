@@ -7,7 +7,8 @@ __all__ = ["upload_group"]
 
 
 @click.group()
-def upload_group(): pass
+def upload_group():
+    pass
 
 
 @upload_group.command()
@@ -16,4 +17,5 @@ def upload_group(): pass
 @subcommand([
     upload
 ])
-def upload(*args, **kwargs): pass
+def upload(*args, **kwargs):
+    pass
