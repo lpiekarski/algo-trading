@@ -4,9 +4,12 @@ from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
+
 def conditional(step_func, if_true, negation=False):
     def conditional_step(*args, **kwargs):
-        if if_true not in kwargs or (if_true in kwargs and negation != bool(kwargs[if_true])):
+        if if_true not in kwargs or (
+            if_true in kwargs and negation != bool(
+                kwargs[if_true])):
             if hasattr(step_func, 'pure'):
                 return getattr(step_func, 'pure')(*args, **kwargs)
             else:

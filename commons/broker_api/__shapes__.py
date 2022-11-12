@@ -2,7 +2,8 @@ import numpy as np
 
 interface = {
     'execute_decision': {
-        'parameter_types': [np.ndarray, float, float],  # array of decisions, volume, stop loss/take profit percent
+        # array of decisions, volume, stop loss/take profit percent
+        'parameter_types': [np.ndarray, float, float],
         'return_type': None
     },
 }

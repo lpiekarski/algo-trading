@@ -10,11 +10,13 @@ from commons.exceptions import BotError, DataDownloadError
 
 LOGGER = logging.getLogger(__name__)
 
+
 @step
 def create_dataset(date, **kwargs):
     if date == "latest":
         LOGGER.info(f"Collecting latest data")
-        df = yf.download(tickers='^GSPC', period='2h', interval='1h', prepost=True)
+        df = yf.download(tickers='^GSPC', period='2h',
+                         interval='1h', prepost=True)
         if df.empty:
             raise DataDownloadError("Failed to collect data")
         LOGGER.debug(f"Downloaded yfinance data: {df.head()}")
@@ -32,8 +34,10 @@ def create_dataset(date, **kwargs):
         end_date = start_date + datetime.timedelta(hours=1)
         start_date = start_date.replace(minute=0, second=0, microsecond=0)
         end_date = end_date.replace(minute=0, second=0, microsecond=0)
-        LOGGER.info(f"Collecting data for period '{start_date}' - '{end_date}'")
-        df = yf.download(tickers='^GSPC', start=start_date, end=end_date, prepost=True)
+        LOGGER.info(
+            f"Collecting data for period '{start_date}' - '{end_date}'")
+        df = yf.download(tickers='^GSPC', start=start_date,
+                         end=end_date, prepost=True)
         if df.empty:
             raise DataDownloadError("Failed to collect data")
         df = df[df.Volume != 0].tail(1)

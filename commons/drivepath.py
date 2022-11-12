@@ -11,6 +11,7 @@ from commons.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
 
+
 class Drivepath:
     def __init__(self, drivepath: str):
         drive_type, path = split(drivepath)
@@ -19,6 +20,7 @@ class Drivepath:
 
     def __str__(self):
         return f"{self.drive_type}:{self.path}"
+
 
 def cache(p: Union[Drivepath, str]):
     p = from_string(p)
@@ -31,9 +33,11 @@ def cache(p: Union[Drivepath, str]):
         try:
             drive.download(p.path + '.md5', md5_path)
         except CloudFileNotFoundError:
-            LOGGER.warning(f'Cannot download md5 for "{p.path}", generating checksum')
+            LOGGER.warning(
+                f'Cannot download md5 for "{p.path}", generating checksum')
             save_md5(local_path, md5_path)
     return local_path, md5_path
+
 
 def is_cached(p: Union[Drivepath, str]):
     p = from_string(p)
@@ -43,7 +47,8 @@ def is_cached(p: Union[Drivepath, str]):
     local_path = os.path.join(cache_dir, p.path)
     md5_path = os.path.join(md5_dir, p.path)
     if not os.path.exists(local_path) or not os.path.exists(md5_path):
-        LOGGER.debug(f"File is not cached: file or md5 is not present in cache directory")
+        LOGGER.debug(
+            f"File is not cached: file or md5 is not present in cache directory")
         return False, local_path, md5_path
     else:
         with TempDir() as tempdir:
@@ -53,7 +58,8 @@ def is_cached(p: Union[Drivepath, str]):
             except CloudFileNotFoundError:
                 LOGGER.warning(f'There is no checksum file for "{p}"')
             if not os.path.exists(new_checksum_path):
-                LOGGER.debug("File is not cached: cannot download md5 file for source")
+                LOGGER.debug(
+                    "File is not cached: cannot download md5 file for source")
                 return False, local_path, md5_path
             else:
                 old_checksum = read_md5(md5_path)
@@ -64,6 +70,7 @@ def is_cached(p: Union[Drivepath, str]):
     LOGGER.debug("File is cached")
     return True, local_path, md5_path
 
+
 def copy(p1: Union[Drivepath, str], p2: Union[Drivepath, str]):
     p1 = from_string(p1)
     p2 = from_string(p2)
@@ -71,6 +78,7 @@ def copy(p1: Union[Drivepath, str], p2: Union[Drivepath, str]):
     target_drive = get_drive_module(p2.drive_type)
     target_drive.upload(p1_file, p2.path)
     target_drive.upload(p1_md5, p2.path + '.md5')
+
 
 def delete(p: Union[Drivepath, str]):
     p = from_string(p)
@@ -81,6 +89,7 @@ def delete(p: Union[Drivepath, str]):
     except CloudFileNotFoundError:
         LOGGER.warning(f"Couldn't delete file")
     clear_cache(p)
+
 
 def clear_cache(p: Union[Drivepath, str]):
     p = from_string(p)
@@ -110,15 +119,18 @@ def split(p: str):
     else:
         return require_env('drive'), p
 
+
 def from_string(drivepath):
     if isinstance(drivepath, str):
         return Drivepath(drivepath)
     else:
         return drivepath
 
+
 def join(path: Union[os.PathLike, str], drivepath: Union[Drivepath, str]):
     drivepath = from_string(drivepath)
     return f"{drivepath.drive_type}:{os.path.join(path, drivepath.path)}"
+
 
 def save_md5(path_to_hash, target):
     hash_md5 = hashlib.md5()
@@ -128,6 +140,7 @@ def save_md5(path_to_hash, target):
     os.makedirs(os.path.dirname(target), exist_ok=True)
     with open(target, 'wb') as f:
         f.write(hash_md5.digest())
+
 
 def read_md5(path):
     with open(path, 'rb') as f:

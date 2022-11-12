@@ -4,8 +4,10 @@ from commons.timing import subcommand
 
 __all__ = ["trade_group"]
 
+
 @click.group()
 def trade_group(): pass
+
 
 @trade_group.command()
 @click.option("--broker", "-b", help="Broker backend name")

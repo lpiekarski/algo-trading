@@ -13,12 +13,15 @@ from commons.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
 
+
 def download_dataset(drivepath: Union[Drivepath, str]):
     LOGGER.debug(f"Download dataset '{drivepath}'")
     file, _ = cache(drivepath)
     return Dataset.load(file)
 
-def upload_dataset(drivepath: Union[Drivepath, str], dataset: Dataset, append: bool=False):
+
+def upload_dataset(
+        drivepath: Union[Drivepath, str], dataset: Dataset, append: bool = False):
     LOGGER.debug(f'Upload dataset "{drivepath}", append={append}')
     drivepath = from_string(drivepath)
     with TempDir() as tempdir:
@@ -30,11 +33,13 @@ def upload_dataset(drivepath: Union[Drivepath, str], dataset: Dataset, append: b
                 result_dataset.concat(dataset)
                 delete(drivepath)
             except CloudFileNotFoundError:
-                LOGGER.debug(f"Dataset not found on the drive, creating (append=True)")
+                LOGGER.debug(
+                    f"Dataset not found on the drive, creating (append=True)")
                 result_dataset = dataset
         else:
             result_dataset = dataset
-        LOGGER.debug(f"Saving dataset '{drivepath}' to local file '{formpath(tempfile)}'")
+        LOGGER.debug(
+            f"Saving dataset '{drivepath}' to local file '{formpath(tempfile)}'")
         result_dataset.save(tempfile)
         copy(tempfile, drivepath)
         clear_cache(tempfile)

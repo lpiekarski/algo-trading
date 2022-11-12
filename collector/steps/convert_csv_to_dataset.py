@@ -9,6 +9,7 @@ import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
 
+
 @step
 def convert_csv_to_dataset(source, target, **kwargs):
     with TempDir() as tempdir:

@@ -5,8 +5,10 @@ from drive.steps.delete import delete
 
 __all__ = ["delete_group"]
 
+
 @click.group()
 def delete_group(): pass
+
 
 @delete_group.command()
 @click.argument("path")

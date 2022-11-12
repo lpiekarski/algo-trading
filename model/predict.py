@@ -10,8 +10,10 @@ from model.steps.save_prediction_result import save_prediction_result
 
 __all__ = ["predict_group"]
 
+
 @click.group()
 def predict_group(): pass
+
 
 @predict_group.command()
 @click.option("--model", "-m", help="Name of the model")

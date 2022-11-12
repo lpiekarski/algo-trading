@@ -5,6 +5,7 @@ __all__ = ["init_logging"]
 
 from commons.env import getenv
 
+
 def init_logging():
     rootLogger = logging.getLogger()
     rootLogger.setLevel(logging.NOTSET)
@@ -36,7 +37,8 @@ def init_logging():
         else:
             FILE_LOG_LEVEL = LOG_LEVEL
         os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
-        fileFormatter = logging.Formatter("%(asctime)s [%(process)d:%(thread)d] %(pathname)s:%(funcName)s:%(lineno)d [%(levelname)s] %(message)s")
+        fileFormatter = logging.Formatter(
+            "%(asctime)s [%(process)d:%(thread)d] %(pathname)s:%(funcName)s:%(lineno)d [%(levelname)s] %(message)s")
         fileHandler = logging.FileHandler(LOG_FILE)
         fileHandler.setFormatter(fileFormatter)
         fileHandler.setLevel(FILE_LOG_LEVEL)

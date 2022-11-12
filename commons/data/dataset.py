@@ -7,11 +7,13 @@ from commons.env import getenv
 from commons.exceptions import BotError
 from commons.tempdir import TempDir
 
+
 class Dataset:
     def __init__(self, df: pd.DataFrame, labels=None, interval=None):
         if not isinstance(df.index, pd.DatetimeIndex):
             raise BotError("Dataframe is required to have DatetimeIndex")
-        self.df = df.dropna(axis=0, subset=["Open", "High", "Low", "Close", "Volume"])
+        self.df = df.dropna(
+            axis=0, subset=["Open", "High", "Low", "Close", "Volume"])
         if labels is not None:
             self.labels = labels
         else:
@@ -27,7 +29,8 @@ class Dataset:
     def save(self, path):
         with TempDir() as td:
             df_file = os.path.join(td, os.path.basename(path) + '.tmp')
-            config_file = os.path.join(td, os.path.basename(path) + '.config.tmp')
+            config_file = os.path.join(
+                td, os.path.basename(path) + '.config.tmp')
             self.df.to_csv(df_file, index_label='Date')
             with open(config_file, "w") as fp:
                 json.dump(dict(
@@ -44,7 +47,12 @@ class Dataset:
             os.makedirs(cache_dir, exist_ok=True)
             with zipfile.ZipFile(file=path, mode='r') as zf:
                 zf.extractall(cache_dir)
-            df = pd.read_csv(os.path.join(cache_dir, 'dataframe.csv'), parse_dates=True, index_col='Date')
+            df = pd.read_csv(
+                os.path.join(
+                    cache_dir,
+                    'dataframe.csv'),
+                parse_dates=True,
+                index_col='Date')
             result = None
             with open(os.path.join(cache_dir, 'config.json'), 'r') as fp:
                 config = json.load(fp)
@@ -64,13 +72,17 @@ class Dataset:
         else:
             raise BotError(f"Cannot concatenate dataset with {type(other)}")
         if self.interval != other_interval:
-            raise BotError("Cannot concatenate datasets with different intervals")
+            raise BotError(
+                "Cannot concatenate datasets with different intervals")
         self.df = pd.concat([self.df, other_df], **kwargs)
         self.labels = list(dict.fromkeys(self.labels + other_labels))
         self.interval = infer_interval(self.df)
 
     def copy(self):
-        return Dataset(self.df.copy(), self.labels.copy(), self.interval.copy())
+        return Dataset(
+            self.df.copy(),
+            self.labels.copy(),
+            self.interval.copy())
 
     def get_x(self):
         return self.df.drop(self.labels, axis=1)
@@ -85,5 +97,8 @@ class Dataset:
         self.labels.append(name)
         self.df[name] = series
 
+
 def infer_interval(df: pd.DataFrame):
+    if df.shape[0] < 2:
+        raise ValueError("Cannot infer interval of an empty dataframe")
     return pd.Series(df.index[1:] - df.index[:-1]).mode()[0]

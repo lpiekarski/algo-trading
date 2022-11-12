@@ -5,8 +5,10 @@ from drive.steps.copy import copy
 
 __all__ = ["copy_group"]
 
+
 @click.group()
 def copy_group(): pass
+
 
 @copy_group.command()
 @click.argument("source")

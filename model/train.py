@@ -14,11 +14,16 @@ __all__ = ["train_group"]
 @click.group()
 def train_group(): pass
 
+
 @train_group.command()
 @click.option("--model", "-m", help="Name of the model")
 @click.option("--dataset", "-d", help="Train dataset")
-@click.option("--skip-save", "-s", help="Do not save the results of the training", is_flag=True)
-@click.option("--label", "-l", help="Name of the label column within the dataset")
+@click.option("--skip-save",
+              "-s",
+              help="Do not save the results of the training",
+              is_flag=True)
+@click.option("--label", "-l",
+              help="Name of the label column within the dataset")
 @subcommand([
     process_parameter('model'),
     process_parameter('dataset'),
