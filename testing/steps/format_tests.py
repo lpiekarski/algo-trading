@@ -9,7 +9,9 @@ LOGGER = logging.getLogger(__name__)
 
 @step
 def format_tests(*args, **kwargs):
-    sp = subprocess.run(['autopep8',
+    sp = subprocess.run(['python',
+                         '-m',
+                         'autopep8',
                          '--ignore-local-config',
                          '--aggressive',
                          '--aggressive',
@@ -28,7 +30,7 @@ def format_tests(*args, **kwargs):
         LOGGER.warning('autopep8 stderr output:\n' + sp.stderr)
     if sp.returncode == 2:
         raise NotInterruptingError(
-            "Code is not formatted properly, run 'autopep8 .' to fix")
+            "Code is not formatted properly, run 'python -m autopep8 .' to fix")
     elif sp.returncode != 0:
         raise NotInterruptingError(
             f"autopep8 finished with code: {sp.returncode}")
