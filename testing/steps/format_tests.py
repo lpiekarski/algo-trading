@@ -3,6 +3,7 @@ import logging
 from commons.exceptions import NotInterruptingError
 from commons.timing import step
 import subprocess
+import os
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ def format_tests(*args, **kwargs):
                          '--recursive',
                          '--exclude',
                          '**/venv',
-                         '.'],
+                         os.path.join(os.path.dirname(__file__), '..', '..')],
                         capture_output=True,
                         encoding='utf-8')
     if sp.stdout != "":
