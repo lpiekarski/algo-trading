@@ -22,7 +22,7 @@ def format_tests(*args, **kwargs):
                          '--recursive',
                          '--exclude',
                          '**/venv',
-                         os.path.join(os.path.dirname(__file__), '..', '..')],
+                         os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))],
                         capture_output=True,
                         encoding='utf-8')
     if sp.stdout != "":
