@@ -20,7 +20,7 @@ def format_tests(*args, **kwargs):
                          '--exit-code',
                          '--recursive',
                          '--exclude',
-                         'venv',
+                         '**/venv',
                          '.'],
                         capture_output=True,
                         encoding='utf-8')
