@@ -1,6 +1,10 @@
 [pep8]
 max_line_length = 120
 aggressive = 3
-exclude = venv
+exclude = **/venv
 in-place = true
 recursive = true
+jobs = 1
+hang_closing = false
+indent_size = 4
+experimental = false
