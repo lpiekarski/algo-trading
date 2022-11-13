@@ -8,12 +8,14 @@ from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
+
 @step
 def download_model(model, model_module, **kwargs):
     LOGGER.info(f"Trying to get stored model '{model}'")
     try:
         model_data_path = download_model_data(model)
-        LOGGER.info(f"Model data obtained, loading the model using module '{model_module}'")
+        LOGGER.info(
+            f"Model data obtained, loading the model using module '{model_module}'")
         with TempDir() as td:
             with zipfile.ZipFile(file=model_data_path, mode='r') as zf:
                 zf.extractall(td)

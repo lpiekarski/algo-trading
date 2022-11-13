@@ -3,7 +3,8 @@ import time
 from datetime import datetime, timedelta
 from functools import wraps
 
-from commons.exceptions import NotInterruptingError
+from commons.env import getenv
+from commons.exceptions import BotError, NotInterruptingError
 from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, WARNING, break_padded
 
 LOGGER = logging.getLogger(__name__)
@@ -11,6 +12,7 @@ start_time = time.time()
 
 steps = []
 execution_id = 0
+
 
 class Step:
     def __init__(self, name, module, callback, invisible):
@@ -26,12 +28,14 @@ class Step:
         self.resolved = False
 
     def start_execution(self, execution_id):
-        LOGGER.debug(f"Starting execution of step '{self.name}', execution_id={execution_id}")
+        LOGGER.debug(
+            f"Starting execution of step '{self.name}', execution_id={execution_id}")
         self.start = time.time()
         self.execution_id = execution_id
 
     def resolve(self, status):
-        LOGGER.debug(f"Step {self.name}, execution_id={execution_id} resolved with status '{status}'")
+        LOGGER.debug(
+            f"Step {self.name}, execution_id={execution_id} resolved with status '{status}'")
         self.result = status
         self.end = time.time()
         self.resolved = True
@@ -45,11 +49,15 @@ class Step:
     def log_title(self, logger):
         LOG = self.get_log_func(logger)
         LOG("")
-        LOG(f"{BOLD}---{ENDC} {OKCYAN}{self.name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{self.module}{ENDC} [{self.id}] {BOLD}---{ENDC}")
+        LOG(
+            f"{BOLD}---{ENDC} {OKCYAN}{self.name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{self.module}{ENDC} [{self.id}] {BOLD}---{ENDC}")
+
 
 def step(step_func):
     @wraps(step_func)
     def wrap(*args, **kwargs):
+        if getenv("UNIT_TESTING") == "True":
+            return step_func(*args, **kwargs)
         global execution_id
         s = steps[execution_id]
         try:
@@ -67,6 +75,7 @@ def step(step_func):
     wrap.pure = step_func
     return wrap
 
+
 def initialize_steps(step_list):
     for step_func in step_list:
         s = Step(
@@ -77,6 +86,7 @@ def initialize_steps(step_list):
         )
         steps.append(s)
 
+
 def log_execution_plan(LOGGER, module, name):
     LOGGER.info(BOLD + OKBLUE + break_padded(f"{module}:{name}") + ENDC)
     LOGGER.info("")
@@ -85,6 +95,7 @@ def log_execution_plan(LOGGER, module, name):
     LOGGER.info("")
     for s in steps:
         s.get_log_func(LOGGER)(f"\t\t{s.name} @ {s.module}")
+
 
 def set_step_ids(LOGGER):
     visible_step_count = len([s for s in steps if not s.invisible])
@@ -97,14 +108,17 @@ def set_step_ids(LOGGER):
             current_step_id += 1
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
 
+
 def execute_steps(LOGGER, args, kwargs):
     previous_step_result = dict()
     for s in steps:
-        if previous_step_result is not None and isinstance(previous_step_result, dict):
+        if previous_step_result is not None and isinstance(
+                previous_step_result, dict):
             kwargs.update(**previous_step_result)
         previous_step_result = s.callback(*args, **kwargs)
         LOGGER.debug(f"Step completed, kwargs:")
         LOGGER.debug(f"\t{kwargs}")
+
 
 def subcommand(step_list):
     def inner(subcommand_func):
@@ -112,7 +126,8 @@ def subcommand(step_list):
         def wrapper(*args, **kwargs):
             LOGGER = logging.getLogger(subcommand_func.__module__)
             initialize_steps(step_list)
-            log_execution_plan(LOGGER, subcommand_func.__module__, subcommand_func.__name__)
+            log_execution_plan(
+                LOGGER, subcommand_func.__module__, subcommand_func.__name__)
             set_step_ids(LOGGER)
             execute_steps(LOGGER, args, kwargs)
             subcommand_func(*args, **kwargs)
@@ -124,8 +139,10 @@ def subcommand(step_list):
 def command_success(LOGGER):
     log_command_resolution(LOGGER, "SUCCESS")
 
+
 def command_failure(LOGGER):
     log_command_resolution(LOGGER, "FAILURE")
+
 
 def log_command_resolution(LOGGER, status):
     end_time = time.time()
@@ -138,13 +155,18 @@ def log_command_resolution(LOGGER, status):
         if not s.resolved:
             log_func(f"{s.name + ' ' :.<52} SKIPPED")
         else:
-            log_func(f"{s.name + ' ' :.<52} {color_status(s.result)} [{s.end - s.start :.5f} s]")
+            log_func(
+                f"{s.name + ' ' :.<52} {color_status(s.result)} [{s.end - s.start :.5f} s]")
+            if s.result == 'FAILURE':
+                status = 'FAILURE'
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
     LOGGER.info(f"COMMAND {color_status(status)}")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
     LOGGER.info(f"Total time: {end_time - start_time :.5f} s")
-    LOGGER.info(f"Finished at: {datetime.fromtimestamp(end_time).strftime('%Y-%m-%dT%H:%M:%S')}")
+    LOGGER.info(
+        f"Finished at: {datetime.fromtimestamp(end_time).strftime('%Y-%m-%dT%H:%M:%S')}")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
+
 
 def color_status(status):
     if status == 'SUCCESS':

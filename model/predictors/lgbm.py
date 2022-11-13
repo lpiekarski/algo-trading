@@ -8,8 +8,12 @@ from commons.data.preprocessor import Preprocessor
 model: lgbm.Booster = None
 preprocessor: Preprocessor = None
 
+
 def predict(x: pd.DataFrame) -> np.ndarray:
-    return model.predict(preprocessor.apply(x), predict_disable_shape_check=True)
+    return model.predict(
+        preprocessor.apply(x),
+        predict_disable_shape_check=True)
+
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model, preprocessor
@@ -28,9 +32,11 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     cls.fit(preprocessor.apply(x), y)
     model = cls.booster_
 
+
 def save(path: str) -> None:
     model.save_model(os.path.join(path, 'model'))
     preprocessor.save(os.path.join(path, 'preprocessor'))
+
 
 def load(path: str) -> None:
     global model, preprocessor

@@ -13,6 +13,7 @@ OHLC_RESAMPLE_MAP = {
     'Volume': 'sum'
 }
 
+
 def resample_technical_indicators(dataset, time_tag="1h"):
     result_rows = []
     max_lookback = get_max_lookback()
@@ -24,14 +25,16 @@ def resample_technical_indicators(dataset, time_tag="1h"):
             continue
         resampled_df = resampled_df.tail(max_lookback).copy()
 
-        ti.add_technical_indicators(resampled_df, time_tag)
+        resampled_df = ti.add_technical_indicators(resampled_df, time_tag)
 
         last_record = resampled_df.iloc[-1].copy()
         last_record.name = index
-        last_record.drop(['Open', 'High', 'Low', 'Close', 'Volume'], inplace=True)
+        last_record.drop(
+            ['Open', 'High', 'Low', 'Close', 'Volume'], inplace=True)
         result_rows.append(last_record)
 
-    return pd.DataFrame(result_rows)
+    return pd.concat(result_rows, axis=1).transpose()
+
 
 class Resampler:
     def __init__(self):
@@ -43,12 +46,16 @@ class Resampler:
         if self.bucket_time != current_time:
             self.bucket_time = current_time
             past_supp_df = df.loc[df.index <= self.bucket_time]
-            self.past_resampled_df = past_supp_df.resample(time_tag).apply(OHLC_RESAMPLE_MAP).dropna(axis=0)
-        current_bucket_df = df.loc[(df.index > self.bucket_time) & (df.index <= index)]
-        current_bucket_df = current_bucket_df.resample(time_tag, label='right').apply(OHLC_RESAMPLE_MAP)
+            self.past_resampled_df = past_supp_df.resample(
+                time_tag).apply(OHLC_RESAMPLE_MAP).dropna(axis=0)
+        current_bucket_df = df.loc[(
+            df.index > self.bucket_time) & (df.index <= index)]
+        current_bucket_df = current_bucket_df.resample(
+            time_tag, label='right').apply(OHLC_RESAMPLE_MAP)
         if current_bucket_df.empty:
             return self.past_resampled_df
         return pd.concat([self.past_resampled_df, current_bucket_df.tail(1)])
+
 
 def get_max_lookback():
     result = 0

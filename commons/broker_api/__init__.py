@@ -5,6 +5,7 @@ from commons.env import require_env
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_broker_module(name=None):
     if name is None:
         name = require_env('broker')

@@ -1,8 +1,14 @@
 from clearml import Task
 from commons.timing import step
 
+
 @step
-def initialize_clearml(model, clearml_project, clearml_access_key, clearml_secret_key, **kwargs):
+def initialize_clearml(
+        model,
+        clearml_project,
+        clearml_access_key,
+        clearml_secret_key,
+        **kwargs):
     web_server = 'https://app.clear.ml'
     api_server = 'https://api.clear.ml'
     files_server = 'https://files.clear.ml'

@@ -8,7 +8,8 @@ __all__ = ["csv2dataset_group"]
 
 
 @group()
-def csv2dataset_group(): pass
+def csv2dataset_group():
+    pass
 
 
 @csv2dataset_group.command()
@@ -19,10 +20,5 @@ def csv2dataset_group(): pass
     process_parameter("target"),
     convert_csv_to_dataset
 ])
-def csv2dataset(*args, **kwargs): pass
-
-
-
-
-
-
+def csv2dataset(*args, **kwargs):
+    pass
