@@ -484,6 +484,14 @@ def ease_of_movement(df, time_tag):
         data=pta.eom(df['High'], df['Low'], df['Close'], df['Volume'])
     )]
 
+# rsi volume
+
+
+def rsi_volume(df, time_tag, length):
+    return [pd.Series(
+        name=f'rsi_volume_{length}_{time_tag}',
+        data=pta.rsi(df['Volume'], length=length)
+    )]
 
 INDICATORS = dict(
     sma=[10, 20, 50, 100, 200],
@@ -522,7 +530,8 @@ INDICATORS = dict(
     negative_volume_index=None,
     price_volume=None,
     ad_oscillator=None,
-    ease_of_movement=None
+    ease_of_movement=None,
+    rsi_volume=[5, 14, 26]
 )
 
 
