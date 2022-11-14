@@ -10,6 +10,7 @@ from model.steps.evaluate_predictions import evaluate_predictions
 from model.steps.backtest_predictions import backtest_predictions
 from commons.steps.generate_predictions import generate_predictions
 from model.steps.get_model_module import get_model_module
+from model.steps.get_strategy_module import get_strategy_module
 from model.steps.initialize_clearml import initialize_clearml
 from model.steps.run_training import run_training
 from model.steps.save_model import save_model
@@ -64,8 +65,12 @@ def evaluate_group():
               "-bcs",
               help="Backtest starting cash amount",
               default=200000)
+@click.option("--strategy",
+              "-s",
+              help="Strategy used in backtesting")
 @subcommand([
     process_parameter("model"),
+    process_parameter("strategy", optional=True),
     process_parameter("train_dataset", optional=True),
     conditional(process_parameter("train_label",
                 optional=True), "train_dataset"),
@@ -81,7 +86,6 @@ def evaluate_group():
     process_parameter("backtest_commission"),
     process_parameter("backtest_leverage"),
     process_parameter("backtest_cash"),
-    process_parameter("skip_backtest"),
     conditional(rename_parameters(
         {"train_dataset": "dataset", "train_label": "label"}, keep_old=True), "train_dataset"),
     conditional(initialize_clearml, "clearml_access_key"),
@@ -96,7 +100,8 @@ def evaluate_group():
     get_dataset,
     generate_predictions,
     evaluate_predictions,
-    conditional(backtest_predictions, "skip_backtest", negation=True),
+    conditional(get_strategy_module, 'strategy'),
+    conditional(backtest_predictions, "strategy"),
     submit_to_drive
 ])
 def evaluate(*args, **kwargs):

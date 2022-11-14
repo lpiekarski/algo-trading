@@ -38,7 +38,7 @@
 ### Evaluating a Model
 1. Evaluate using command below (you can also run `bot.py evaluate --help` to see additional options)
    ```bash
-   bot.py evaluate --train-dataset=git:datasets/train/M30_H1 --test-dataset=git:datasets/test/M30_H1 --train-label=Best_decision_0.01 --test-label=Best_decision_0.01 --model=local:models/fully_connected
+   bot.py evaluate --train-dataset=git:datasets/train/M30_H1 --test-dataset=git:datasets/test/M30_H1 --train-label=Best_decision_0.01 --test-label=Best_decision_0.01 --model=local:models/fully_connected --strategy=local:strategies/backtest_predictions.py 
    ```
 if it isn't working try to add python before bot.py (for other commands as well)
    ```bash
