@@ -7,7 +7,7 @@ from commons.steps.rename_parameters import rename_parameters
 from commons.timing import subcommand
 from model.steps.download_model import download_model
 from model.steps.evaluate_predictions import evaluate_predictions
-from model.strategies.backtest_predictions import backtest_predictions
+from model.steps.backtest_predictions import backtest_predictions
 from commons.steps.generate_predictions import generate_predictions
 from model.steps.get_model_module import get_model_module
 from model.steps.initialize_clearml import initialize_clearml
@@ -25,7 +25,7 @@ def evaluate_group():
 
 @evaluate_group.command()
 @click.option("--model", "-m", help="Name of the model to evaluate")
-@click.option("--strategy", "-s", help="Name of strategy to evaluate")
+@click.option("--strategy", "-s", help="Name of the strategy to evaluate")
 @click.option("--train-dataset", "-trd", help="Dataset to use for training")
 @click.option("--train-label", "-trl",
               help="Name of the label column within the train dataset")
@@ -67,7 +67,7 @@ def evaluate_group():
               default=200000)
 @subcommand([
     process_parameter("model"),
-    process_parameter("strategy"),
+    process_parameter("strategy", optional=True),
     process_parameter("train_dataset", optional=True),
     conditional(process_parameter("train_label",
                 optional=True), "train_dataset"),

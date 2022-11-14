@@ -8,4 +8,4 @@ LOGGER = logging.getLogger(__name__)
 @step
 def get_strategy_module(strategy, **kwargs):
     strategy_module = strategies.get_strategy_module(strategy)
-    return dict(strategies_module=strategy_module)
+    return dict(strategy_module=strategy_module)
