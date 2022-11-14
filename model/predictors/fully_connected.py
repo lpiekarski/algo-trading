@@ -1,3 +1,5 @@
+from typing import Any
+
 import torch.optim as optim
 import torch
 from torch import nn
@@ -14,7 +16,7 @@ model: nn.Module = None
 preprocessor: Preprocessor = None
 
 
-def initialize(config_path: str) -> None:
+def initialize(config_json: Any) -> None:
     pass
 
 

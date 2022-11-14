@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from typing import Union
@@ -22,4 +23,4 @@ def upload_model_weights(local_path: str, drivepath: Union[Drivepath, str]):
 
 def download_model_config(drivepath: Union[Drivepath, str]):
     file, _ = cache(drivepath)
-    return os.path.abspath(os.path.normpath(file))
+    return json.load(file)

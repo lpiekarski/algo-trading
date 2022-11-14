@@ -1,3 +1,5 @@
+from typing import Any
+
 from sklearn.neighbors import KNeighborsClassifier
 import pandas as pd
 import numpy as np
@@ -9,7 +11,7 @@ model: KNeighborsClassifier = None
 preprocessor: Preprocessor = None
 
 
-def initialize(config_path: str) -> None:
+def initialize(config_json: Any) -> None:
     pass
 
 

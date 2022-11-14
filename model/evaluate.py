@@ -26,7 +26,7 @@ def evaluate_group():
 
 @evaluate_group.command()
 @click.option("--model", "-m", help="Name of the model to evaluate")
-@click.option("--model-config", "-c", help="Model config file")
+@click.option("--model-config", "-mc", help="Drivepath of the model's configuration file (in JSON format)")
 @click.option("--dataset", "-d",
               help="Labelled dataset to use for evaluation")
 @click.option("--label", "-l",

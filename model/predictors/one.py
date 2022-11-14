@@ -1,8 +1,10 @@
+from typing import Any
+
 import pandas as pd
 import numpy as np
 
 
-def initialize(config_path: str) -> None:
+def initialize(config_json: Any) -> None:
     pass
 
 

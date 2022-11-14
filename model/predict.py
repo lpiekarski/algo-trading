@@ -19,6 +19,7 @@ def predict_group():
 
 @predict_group.command()
 @click.option("--model", "-m", help="Name of the model")
+@click.option("--model-config", "-mc", help="Drivepath of the model's configuration file (in JSON format)")
 @click.option("--dataset", "-d", help="Dataset to generate a prediction for")
 @click.option("--output", "-o", help="Name of the results file")
 @subcommand([

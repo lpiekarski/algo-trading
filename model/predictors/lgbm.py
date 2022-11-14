@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 import numpy as np
 import lightgbm as lgbm
@@ -9,7 +11,7 @@ model: lgbm.Booster = None
 preprocessor: Preprocessor = None
 
 
-def initialize(config_path: str) -> None:
+def initialize(config_json: Any) -> None:
     pass
 
 
