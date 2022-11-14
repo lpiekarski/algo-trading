@@ -17,16 +17,14 @@ def backtest_predictions(
         backtest_commission,
         backtest_leverage,
         backtest_cash,
-        BacktestStrategy,
         strategy_module,
         **kwargs):
+    strategy = strategy_module.get_strategy(locals())
     LOGGER.info("Backtesting predictions")
-
-    getattr(strategy_module, to_camel_case(strategy_module.__name__))
 
     bt = Backtest(
         dataset.get_x()[['Open', 'High', 'Low', 'Close', 'Volume']],
-        BacktestStrategy,
+        strategy,
         commission=backtest_commission,
         margin=(1. / backtest_leverage),
         exclusive_orders=False,
