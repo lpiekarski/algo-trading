@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 
 
+def initialize(config_path: str) -> None:
+    pass
+
+
 def predict(x: pd.DataFrame) -> np.ndarray:
     return np.zeros_like(x["Close"])
 

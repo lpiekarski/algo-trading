@@ -8,7 +8,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 @step
-def backtest_predictions(
+def run_backtesting(
         dataset,
         y_pred,
         backtest_threshold,

@@ -17,6 +17,7 @@ from drive.copy import copy_group
 from drive.delete import delete_group
 from drive.download import download_group
 from drive.upload import upload_group
+from model.backtest import backtest_group
 from model.evaluate import evaluate_group
 from model.predict import predict_group
 from model.train import train_group
@@ -41,7 +42,8 @@ LOGGER = logging.getLogger(__name__)
         delete_group,
         copy_group,
         csv2dataset_group,
-        dataset2csv_group
+        dataset2csv_group,
+        backtest_group
     ]
 )
 @click.option("-D", "env", multiple=True,

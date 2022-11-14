@@ -14,6 +14,10 @@ model: nn.Module = None
 preprocessor: Preprocessor = None
 
 
+def initialize(config_path: str) -> None:
+    pass
+
+
 def model_definition(preprocessor):
     return nn.Sequential(
         nn.Linear(preprocessor.num_features, 128),
@@ -82,12 +86,12 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
                         np.round(y_pred) == y_true).sum() / len(y_true)})
 
 
-def save(path: str) -> None:
+def save_weights(path: str) -> None:
     torch.save(model.state_dict(), os.path.join(path, 'model'))
     preprocessor.save(os.path.join(path, 'preprocessor'))
 
 
-def load(path: str) -> None:
+def load_weights(path: str) -> None:
     global model, preprocessor
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
     model = model_definition(preprocessor)
