@@ -48,7 +48,7 @@ LOGGER = logging.getLogger(__name__)
 )
 @click.option("-D", "env", multiple=True,
               help="Set environment variable e.g. -Dvar=value")
-def bot(env):
+def atf(env):
     for entry in env:
         entry_split = entry.split("=", 1)
         if len(entry_split) != 2:
@@ -61,7 +61,7 @@ def bot(env):
 
 if __name__ == '__main__':
     try:
-        bot()
+        atf()
     except BotError as e:
         LOGGER.error(f"Error during command execution: {e}")
         command_failure(LOGGER)
