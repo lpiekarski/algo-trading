@@ -3,11 +3,11 @@ import numpy as np
 import pandas as pd
 
 
-def dataset(size=1000):
+def dataset(size=1500):
     return Dataset(ohlc_dataframe(size))
 
 
-def ohlc_dataframe(size=1000):
+def ohlc_dataframe(size=1500):
     sequence = np.random.randint(100, 201, size)
     return pd.DataFrame({
         'Open': sequence + 0.25 + 0.1 * np.random.randn(sequence.shape[0]),

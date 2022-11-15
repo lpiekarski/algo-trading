@@ -1,9 +1,11 @@
+from typing import Any
+
 import pandas as pd
 import numpy as np
 
 interface = {
     'initialize': {
-        'parameter_types': [Any],
+        'parameter_types': [int, Any],
         'return_type': None
     },
     'predict': {

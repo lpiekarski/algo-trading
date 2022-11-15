@@ -6,7 +6,8 @@ from subprocess import CalledProcessError
 from split_file_reader import SplitFileReader
 from split_file_reader.split_file_writer.split_file_writer import SplitFileWriter
 import commons.git as git
-from commons.env import getenv
+from commons.env import getenv, require_env
+from urllib.parse import urlparse
 
 __all__ = ["upload", "download"]
 
@@ -19,11 +20,11 @@ LOGGER = logging.getLogger(__name__)
 
 def initialize(tempdir):
     git_password = getenv('GIT_PASSWORD')
+    repo_url = require_env('GIT_DRIVE_REPO_URL')
     if git_password is not None:
-        REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
-    else:
-        REPO_URL = f"https://github.com/S-P-2137/Data"
-    git.clone_no_checkout(REPO_URL, tempdir)
+        parsed = urlparse(repo_url)
+        repo_url = parsed._replace(netloc=f'{git_password}@{parsed.netloc}').geturl()
+    git.clone_no_checkout(repo_url, tempdir)
 
 
 def upload(local_path: str, cloud_path: str) -> None:

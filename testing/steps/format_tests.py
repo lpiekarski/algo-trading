@@ -20,7 +20,7 @@ def format_tests(*args, **kwargs):
             diff=True,
             ignore_local_config=True,
             jobs=1,
-            verbose=2,
+            verbose=0,
             in_place=False,
             max_line_length=120,
             line_range=None,
@@ -34,7 +34,7 @@ def format_tests(*args, **kwargs):
     )
     if len(diffs) > 0:
         LOGGER.error(f"Diffs from autopep8:\n{''.join(diffs)}")
-        raise NotInterruptingError(
+        raise AssertionError(
             "Code is not formatted properly, run 'python -m autopep8 .' to fix")
     else:
         LOGGER.info("Code is formatted properly")

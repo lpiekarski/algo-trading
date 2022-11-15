@@ -23,4 +23,5 @@ def upload_model_weights(local_path: str, drivepath: Union[Drivepath, str]):
 
 def download_model_config(drivepath: Union[Drivepath, str]):
     file, _ = cache(drivepath)
-    return json.load(file)
+    with open(file, 'r') as f:
+        return json.load(f)

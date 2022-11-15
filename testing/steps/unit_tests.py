@@ -14,4 +14,4 @@ def unit_tests(*args, **kwargs):
     exit_code = pytest.main(["--pyargs", "tests"])
     os.environ["UNIT_TESTING"] = "False"
     if exit_code != 0:
-        raise NotInterruptingError("Unit test failure")
+        raise AssertionError("Unit test failure")

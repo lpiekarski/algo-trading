@@ -21,7 +21,8 @@ def run_backtesting(
         **kwargs):
     if strategy_config is not None:
         file, _ = cache(strategy_config)
-        cfg = json.load(file)
+        with open(file, 'r') as f:
+            cfg = json.load(f)
     else:
         cfg = None
     strategy = strategy_module.get_strategy(y_pred, cfg)

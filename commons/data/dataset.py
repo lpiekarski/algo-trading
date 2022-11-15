@@ -97,6 +97,9 @@ class Dataset:
         self.labels.append(name)
         self.df[name] = series
 
+    def num_features(self) -> int:
+        return self.df.shape[1] - len(self.labels)
+
 
 def infer_interval(df: pd.DataFrame):
     if df.shape[0] < 2:
