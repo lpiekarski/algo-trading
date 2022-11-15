@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 import numpy as np
 import lightgbm as lgbm
@@ -7,6 +9,10 @@ from commons.data.preprocessor import Preprocessor
 
 model: lgbm.Booster = None
 preprocessor: Preprocessor = None
+
+
+def initialize(config_json: Any) -> None:
+    pass
 
 
 def predict(x: pd.DataFrame) -> np.ndarray:
@@ -33,12 +39,12 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     model = cls.booster_
 
 
-def save(path: str) -> None:
+def save_weights(path: str) -> None:
     model.save_model(os.path.join(path, 'model'))
     preprocessor.save(os.path.join(path, 'preprocessor'))
 
 
-def load(path: str) -> None:
+def load_weights(path: str) -> None:
     global model, preprocessor
     model = lgbm.Booster(model_file=os.path.join(path, 'model'))
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))

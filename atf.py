@@ -17,6 +17,7 @@ from drive.copy import copy_group
 from drive.delete import delete_group
 from drive.download import download_group
 from drive.upload import upload_group
+from model.backtest import backtest_group
 from model.evaluate import evaluate_group
 from model.predict import predict_group
 from model.train import train_group
@@ -41,12 +42,13 @@ LOGGER = logging.getLogger(__name__)
         delete_group,
         copy_group,
         csv2dataset_group,
-        dataset2csv_group
+        dataset2csv_group,
+        backtest_group
     ]
 )
 @click.option("-D", "env", multiple=True,
               help="Set environment variable e.g. -Dvar=value")
-def bot(env):
+def atf(env):
     for entry in env:
         entry_split = entry.split("=", 1)
         if len(entry_split) != 2:
@@ -59,7 +61,7 @@ def bot(env):
 
 if __name__ == '__main__':
     try:
-        bot()
+        atf()
     except BotError as e:
         LOGGER.error(f"Error during command execution: {e}")
         command_failure(LOGGER)

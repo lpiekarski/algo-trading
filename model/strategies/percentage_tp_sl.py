@@ -1,18 +1,20 @@
+from typing import Type, Any
+
+import numpy as np
 from backtesting import Strategy
 
 
-def get_strategy(kwargs):
-    y_pred = kwargs['y_pred']
-    backtest_threshold = kwargs['backtest_threshold']
-    backtest_volume = kwargs['backtest_volume']
-    backtest_tpsl_pct = kwargs['backtest_tpsl_pct']
+def get_strategy(predictions: np.ndarray, config_json: Any) -> Type[Strategy]:
+    backtest_threshold = config_json['backtest_threshold']
+    backtest_volume = config_json['backtest_volume']
+    backtest_tpsl_pct = config_json['backtest_tpsl_pct']
 
     class BacktestStrategy(Strategy):
         def init(self):
             self.id = 1
 
         def next(self):
-            pred = y_pred[self.id]
+            pred = predictions[self.id]
             close = self.data.Close[-1]
             if pred > 0.5 + backtest_threshold:
                 self.buy(size=backtest_volume,
