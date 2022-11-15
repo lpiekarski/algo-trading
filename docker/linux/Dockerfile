@@ -9,3 +9,4 @@ RUN git config --global user.email "workflow@github.com"
 RUN python3 -m venv venv --upgrade-deps
 RUN /venv/bin/python3 -m pip install -r requirements.txt
 ENV COLOR_OUTPUT=true
+ENV GIT_DRIVE_REPO_URL="https://github.com/S-P-2137/Data"

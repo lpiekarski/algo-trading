@@ -11,7 +11,7 @@ model: lgbm.Booster = None
 preprocessor: Preprocessor = None
 
 
-def initialize(config_json: Any) -> None:
+def initialize(num_features: int, config_json: Any) -> None:
     pass
 
 

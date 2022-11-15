@@ -14,56 +14,19 @@ LOGGER = logging.getLogger(__name__)
 
 model: nn.Module = None
 preprocessor: Preprocessor = None
+params: dict = dict()
 
 
-def initialize(config_json: Any) -> None:
-    pass
-
-
-def model_definition(preprocessor):
-    return nn.Sequential(
-        nn.Linear(preprocessor.num_features, 128),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 128),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(128),
-        nn.Linear(128, 64),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(64),
-        nn.Linear(64, 32),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(32),
-        nn.Linear(32, 1),
-        nn.Sigmoid()
-    )
+def initialize(num_features: int, config_json: Any) -> None:
+    global model, preprocessor, params
+    if config_json is not None:
+        layers = []
+        for layer_config in config_json['architecture']:
+            layer_name = layer_config.pop(0)
+            layers.append(getattr(nn, layer_name)(*list(map(lambda x: x if x is not None else num_features, layer_config))))
+        model = nn.Sequential(*layers)
+        params = config_json['hyperparams']
+    preprocessor = Preprocessor(num_features=num_features)
 
 
 def predict(x: pd.DataFrame) -> np.ndarray:
@@ -75,15 +38,12 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
-    global model, preprocessor
-    preprocessor = Preprocessor()
     preprocessor.fit(x)
-    model = model_definition(preprocessor)
     pytorch.train(
         model, preprocessor.apply(x).to_numpy().astype(
             np.float32), y.to_numpy().astype(
             np.float32), nn.BCELoss(), optim.Adam(
-                model.parameters(), weight_decay=0.1), n_epochs=100, batch_size=256, metrics={
+                model.parameters(), weight_decay=params['weight_decay']), n_epochs=params['n_epochs'], batch_size=params['batch_size'], metrics={
                     'accuracy': lambda y_pred, y_true: (
                         np.round(y_pred) == y_true).sum() / len(y_true)})
 
@@ -96,6 +56,4 @@ def save_weights(path: str) -> None:
 def load_weights(path: str) -> None:
     global model, preprocessor
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
-    model = model_definition(preprocessor)
     model.load_state_dict(torch.load(os.path.join(path, 'model')))
-    model.eval()

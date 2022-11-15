@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 
-def initialize(config_json: Any) -> None:
+def initialize(num_features: int, config_json: Any) -> None:
     pass
 
 

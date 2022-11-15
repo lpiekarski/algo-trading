@@ -1,4 +1,5 @@
 from inspect import signature
+from typing import Any
 
 
 def validate_shape(module, interface):
@@ -21,8 +22,14 @@ def validate_shape(module, interface):
 
 
 def is_subtype(t1, t2):
-    if isinstance(t1, type) and isinstance(t2, type):
-        return t1 == t2
+    if t2 is Any:
+        return True
+    elif t1 is t2:
+        return True
+    elif t1 == t2:
+        return True
+    elif isinstance(t1, type) and isinstance(t2, type):
+        return t1 is t2
     elif isinstance(t1, type) or isinstance(t2, type):
         return False
     elif t1 is None:
