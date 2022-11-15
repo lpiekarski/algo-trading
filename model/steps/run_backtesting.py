@@ -1,34 +1,39 @@
+import json
 import logging
 
 from backtesting import Backtest, Strategy
 
+from commons.drivepath import cache
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
 
 @step
-def backtest_predictions(
+def run_backtesting(
         dataset,
         y_pred,
-        backtest_threshold,
-        backtest_volume,
-        backtest_tpsl_pct,
-        backtest_commission,
-        backtest_leverage,
-        backtest_cash,
+        commission,
+        leverage,
+        starting_cash,
         strategy_module,
+        strategy_config,
         **kwargs):
-    strategy = strategy_module.get_strategy(locals())
+    if strategy_config is not None:
+        file, _ = cache(strategy_config)
+        cfg = json.load(file)
+    else:
+        cfg = None
+    strategy = strategy_module.get_strategy(y_pred, cfg)
     LOGGER.info("Backtesting predictions")
 
     bt = Backtest(
-        dataset.get_x()[['Open', 'High', 'Low', 'Close', 'Volume']],
+        dataset.get_x(),
         strategy,
-        commission=backtest_commission,
-        margin=(1. / backtest_leverage),
+        commission=commission,
+        margin=(1. / leverage),
         exclusive_orders=False,
-        cash=backtest_cash,
+        cash=starting_cash,
         trade_on_close=True)
 
     backtest_results = bt.run()

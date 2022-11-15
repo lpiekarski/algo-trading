@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 
 interface = {
+    'initialize': {
+        'parameter_types': [Any],
+        'return_type': None
+    },
     'predict': {
         'parameter_types': [pd.DataFrame],
         'return_type': np.ndarray
@@ -10,11 +14,11 @@ interface = {
         'parameter_types': [pd.DataFrame, pd.DataFrame],
         'return_type': None
     },
-    'save': {
+    'save_weights': {
         'parameter_types': [str],
         'return_type': None
     },
-    'load': {
+    'load_weights': {
         'parameter_types': [str],
         'return_type': None
     }

@@ -19,10 +19,8 @@ def submit_to_drive(
         binary_cross_entropy,
         accuracy,
         model,
-        test_dataset,
-        train_dataset,
-        test_label,
-        train_label,
+        dataset_name,
+        label,
         task=None,
         **kwargs):
     LOGGER.info("Storing the results")
@@ -44,10 +42,8 @@ def submit_to_drive(
             results = pd.DataFrame({
                 "parameters/model": [],
                 "parameters/version": [],
-                "parameters/train_dataset": [],
-                "parameters/test_dataset": [],
-                "parameters/train_label": [],
-                "parameters/test_label": [],
+                "parameters/dataset": [],
+                "parameters/label": [],
                 "eval/binary_cross_entropy": [],
                 "eval/accuracy": []
             }, index=pd.DatetimeIndex([], name='date'))
@@ -63,10 +59,8 @@ def submit_to_drive(
             params = {
                 "parameters/model": [str(model)],
                 "parameters/version": [version],
-                "parameters/train_dataset": [str(train_dataset)],
-                "parameters/test_dataset": [str(test_dataset)],
-                "parameters/train_label": [str(train_label)],
-                "parameters/test_label": [str(test_label)],
+                "parameters/dataset": [str(dataset_name)],
+                "parameters/label": [str(label)],
                 "eval/binary_cross_entropy": [binary_cross_entropy],
                 "eval/accuracy": [accuracy]
             }

@@ -1,3 +1,5 @@
+from typing import Any
+
 import torch.optim as optim
 import torch
 from torch import nn
@@ -12,6 +14,10 @@ LOGGER = logging.getLogger(__name__)
 
 model: nn.Module = None
 preprocessor: Preprocessor = None
+
+
+def initialize(config_json: Any) -> None:
+    pass
 
 
 def model_definition(preprocessor):
@@ -82,12 +88,12 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
                         np.round(y_pred) == y_true).sum() / len(y_true)})
 
 
-def save(path: str) -> None:
+def save_weights(path: str) -> None:
     torch.save(model.state_dict(), os.path.join(path, 'model'))
     preprocessor.save(os.path.join(path, 'preprocessor'))
 
 
-def load(path: str) -> None:
+def load_weights(path: str) -> None:
     global model, preprocessor
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
     model = model_definition(preprocessor)
