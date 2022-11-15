@@ -20,7 +20,12 @@ def add_best_decision(dataset: Dataset, pct_change):
         lambda x: x.value if x is not None else np.inf)
     dataset.add_label(f'Best_decision_{pct_change}', np.argmin(np.concatenate(
         [np.expand_dims(next_short, 1), np.expand_dims(next_long, 1)], axis=1), axis=1))
-
+    error = np.argmin(np.concatenate(
+        [np.expand_dims(next_long, 1), np.expand_dims(next_short, 1)], axis=1), axis=1)
+    error_2 = dataset.apply(lambda y:
+                            1 if y[f'Best_decision_{pct_change}'] == error else 0,
+                            axis=1)
+    dataset.add_label(f'Best_decision_error_{pct_change}', error_2)
 
 
 def find_indexes_with_price_percentage_change(
