@@ -1,50 +1,36 @@
 {
   "architecture": [
     ["Linear", null, 128],
+    ["Dropout", 0.5],
     ["Sigmoid"],
     ["BatchNorm1d", 128],
+
     ["Linear", 128, 128],
     ["Dropout", 0.5],
     ["Sigmoid"],
     ["BatchNorm1d", 128],
+
     ["Linear", 128, 128],
     ["Dropout", 0.5],
     ["Sigmoid"],
     ["BatchNorm1d", 128],
-    ["Linear", 128, 128],
-    ["Dropout", 0.5],
-    ["Sigmoid"],
-    ["BatchNorm1d", 128],
-    ["Linear", 128, 128],
-    ["Dropout", 0.5],
-    ["Sigmoid"],
-    ["BatchNorm1d", 128],
-    ["Linear", 128, 128],
-    ["Dropout", 0.5],
-    ["Sigmoid"],
-    ["BatchNorm1d", 128],
-    ["Linear", 128, 128],
-    ["Dropout", 0.5],
-    ["Sigmoid"],
-    ["BatchNorm1d", 128],
-    ["Linear", 128, 128],
-    ["Dropout", 0.5],
-    ["Sigmoid"],
-    ["BatchNorm1d", 128],
+
     ["Linear", 128, 64],
     ["Dropout", 0.5],
     ["Sigmoid"],
     ["BatchNorm1d", 64],
+
     ["Linear", 64, 32],
     ["Dropout", 0.5],
     ["Sigmoid"],
     ["BatchNorm1d", 32],
+
     ["Linear", 32, 1],
     ["Sigmoid"]
   ],
   "hyperparams": {
-    "weight_decay": 0.1,
-    "n_epochs": 1,
+    "weight_decay": 0.01,
+    "n_epochs": 10,
     "batch_size": 256
   }
 }

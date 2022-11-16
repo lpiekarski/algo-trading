@@ -9,6 +9,7 @@ import logging
 import os
 from commons import pytorch
 from commons.data.preprocessor import Preprocessor
+from commons.data.utils import accuracy
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,14 +39,19 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
+    sample_weights = np.flipud(np.power(0.9999, np.arange(x.shape[0]))).astype(np.float32)
     preprocessor.fit(x)
     pytorch.train(
-        model, preprocessor.apply(x).to_numpy().astype(
-            np.float32), y.to_numpy().astype(
-            np.float32), nn.BCELoss(), optim.Adam(
-                model.parameters(), weight_decay=params['weight_decay']), n_epochs=params['n_epochs'], batch_size=params['batch_size'], metrics={
-                    'accuracy': lambda y_pred, y_true: (
-                        np.round(y_pred) == y_true).sum() / len(y_true)})
+        model,
+        preprocessor.apply(x).to_numpy().astype(np.float32),
+        y.to_numpy().astype(np.float32),
+        nn.BCELoss(),
+        optim.Adam(model.parameters(), weight_decay=params['weight_decay']),
+        n_epochs=params['n_epochs'],
+        batch_size=params['batch_size'],
+        metrics={'accuracy': accuracy},
+        sample_weights=sample_weights.copy()
+    )
 
 
 def save_weights(path: str) -> None:
