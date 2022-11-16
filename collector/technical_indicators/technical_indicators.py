@@ -3,6 +3,7 @@ import sys
 import pandas as pd
 import pandas_ta as pta
 import numpy as np
+from tqdm import tqdm
 
 from commons.data.dataset import Dataset
 from commons.data.utils import log_change
@@ -86,7 +87,7 @@ def ichimoku(df, time_tag):
 
 
 def parabolic_sar(df, time_tag):
-    psar = pta.psar(df['High'], df['Low'])
+    psar = pta.psar(df['High'], df['Low'], fillna=0)
     return [
         pd.Series(
             name=f'PSAR_PSARl_0.02_0.2_{time_tag}',
@@ -536,10 +537,14 @@ INDICATORS = dict(
 )
 
 
-def add_technical_indicators(dataset, time_tag):
+def add_technical_indicators(dataset, time_tag, show_progress=True):
     df = dataset.df if isinstance(dataset, Dataset) else dataset
     collected_indicators = [df]
+    if show_progress:
+        pbar = tqdm(total=len(INDICATORS.items()))
     for indicator, params in INDICATORS.items():
+        if show_progress:
+            pbar.set_description(f'Adding {indicator}')
         indicator_func = getattr(sys.modules[__name__], indicator)
         if params is None:
             collected_indicators.extend(indicator_func(df, time_tag))
@@ -554,4 +559,8 @@ def add_technical_indicators(dataset, time_tag):
                 else:
                     collected_indicators.extend(
                         indicator_func(df, time_tag, param))
+        if show_progress:
+            pbar.update()
+    if show_progress:
+        pbar.close()
     return pd.concat(collected_indicators, axis=1)

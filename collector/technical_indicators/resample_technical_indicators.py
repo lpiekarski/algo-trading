@@ -25,7 +25,7 @@ def resample_technical_indicators(dataset, time_tag="1h"):
             continue
         resampled_df = resampled_df.tail(max_lookback).copy()
 
-        resampled_df = ti.add_technical_indicators(resampled_df, time_tag)
+        resampled_df = ti.add_technical_indicators(resampled_df, time_tag, show_progress=False)
 
         last_record = resampled_df.iloc[-1].copy()
         last_record.name = index
@@ -70,5 +70,7 @@ def get_max_lookback():
                     result = max(result, param['length'])
                 else:
                     result = max(result, param)
+    # Account for log_change resulting in 1 extra nan
+    result += 1
     LOGGER.info(f"Max lookback for indicators is {result}")
     return result
