@@ -18,14 +18,26 @@ preprocessor: Preprocessor = None
 params: dict = dict()
 
 
+def get_head(size_in, size_out):
+    return [
+        nn.Linear(size_in, size_out),
+        nn.Dropout(0.5),
+        nn.Sigmoid(),
+        nn.BatchNorm1d(size_out)
+    ]
+
+
 def initialize(num_features: int, config_json: Any) -> None:
     global model, preprocessor, params
     if config_json is not None:
-        layers = []
-        for layer_config in config_json['architecture']:
-            layer_name = layer_config.pop(0)
-            layers.append(getattr(nn, layer_name)(
-                *list(map(lambda x: x if x is not None else num_features, layer_config))))
+        arch = config_json['architecture']
+        layers = get_head(num_features, arch[0])
+        prev_size = arch[0]
+        for size in range(1, len(arch)):
+            layers.extend(get_head(prev_size, size))
+            prev_size = size
+        layers.append(nn.Linear(prev_size, 1))
+        layers.append(nn.Sigmoid())
         model = nn.Sequential(*layers)
         params = config_json['hyperparams']
     preprocessor = Preprocessor(num_features=num_features)
