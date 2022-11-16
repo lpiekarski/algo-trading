@@ -24,7 +24,8 @@ def initialize(num_features: int, config_json: Any) -> None:
         layers = []
         for layer_config in config_json['architecture']:
             layer_name = layer_config.pop(0)
-            layers.append(getattr(nn, layer_name)(*list(map(lambda x: x if x is not None else num_features, layer_config))))
+            layers.append(getattr(nn, layer_name)(
+                *list(map(lambda x: x if x is not None else num_features, layer_config))))
         model = nn.Sequential(*layers)
         params = config_json['hyperparams']
     preprocessor = Preprocessor(num_features=num_features)
