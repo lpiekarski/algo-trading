@@ -1,10 +1,14 @@
 import json
 import logging
+import pandas as pd
 
 from backtesting import Backtest, Strategy
 
 from commons.drivepath import cache
 from commons.timing import step
+from commons.validation.cagr import cagr_ratio
+from commons.validation.benchmark import benchmark
+from commons.data.utils import log_change
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +42,15 @@ def run_backtesting(
         trade_on_close=True)
 
     backtest_results = bt.run()
+    benchmark_lvl = benchmark(dataset,
+                              starting_cash,
+                              backtest_results['Equity Final [$]'])
+    cagr = cagr_ratio(starting_cash,
+                      backtest_results['Equity Final [$]'],
+                      backtest_results['Duration'].days / 365.25)
+    backtest_results = pd.DataFrame(backtest_results)
+    #backtest_results["CAGR Ratio"] = cagr
+    #backtest_results["Benchmark"] = benchmark_lvl
     LOGGER.info(backtest_results)
     bt.plot(resample=False)
     return dict(backtest=bt, backtest_results=backtest_results)
