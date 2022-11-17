@@ -43,9 +43,9 @@ def train(
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
             if sample_weights is not None:
-                outputs = model(inputs[:, 1:])
+                outputs = model.forward(inputs[:, 1:])
             else:
-                outputs = model(inputs)
+                outputs = model.forward(inputs)
             if sample_weights is not None:
                 loss = weighted_loss(loss_function, np.squeeze(outputs), labels, inputs[:, 0])
             else:

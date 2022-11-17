@@ -13,28 +13,52 @@ from commons.data.utils import accuracy
 
 LOGGER = logging.getLogger(__name__)
 
-model: nn.Module = None
+
+class Head(nn.Module):
+    def __init__(self, in_features, out_features, dropout=0.5):
+        super(Head, self).__init__()
+        self.fc = nn.Linear(in_features, out_features)
+        self.drop = nn.Dropout(dropout)
+        self.sigmoid = nn.ReLU()
+        self.bn = nn.BatchNorm1d(out_features)
+
+    def forward(self, x):
+        x = self.fc(x)
+        x = self.drop(x)
+        x = self.sigmoid(x)
+        x = self.bn(x)
+        return x
+
+
+class ResidualHead(nn.Module):
+    def __init__(self, features, dropout=0.5):
+        super(ResidualHead, self).__init__()
+        self.head = Head(features, features, dropout)
+
+    def forward(self, x):
+        return self.head(x) + x
+
+
+def head(in_features, out_features, dropout=0.5):
+    if in_features == out_features:
+        return ResidualHead(in_features, dropout)
+    else:
+        return Head(in_features, out_features, dropout)
+
+
+model: nn.Sequential = None
 preprocessor: Preprocessor = None
 params: dict = dict()
-
-
-def get_head(size_in, size_out):
-    return [
-        nn.Linear(size_in, size_out),
-        nn.Dropout(0.5),
-        nn.Sigmoid(),
-        nn.BatchNorm1d(size_out)
-    ]
 
 
 def initialize(num_features: int, config_json: Any) -> None:
     global model, preprocessor, params
     if config_json is not None:
-        arch = config_json['architecture']
-        layers = get_head(num_features, arch[0])
-        prev_size = arch[0]
-        for size in range(1, len(arch)):
-            layers.extend(get_head(prev_size, size))
+        architecture = config_json['architecture']
+        layers = [head(num_features, architecture[0])]
+        prev_size = architecture[0]
+        for size in range(1, len(architecture)):
+            layers.append(head(prev_size, size))
             prev_size = size
         layers.append(nn.Linear(prev_size, 1))
         layers.append(nn.Sigmoid())
