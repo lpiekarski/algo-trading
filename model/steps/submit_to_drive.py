@@ -7,7 +7,7 @@ import pandas as pd
 import commons.git as git
 from commons.drivepath import clear_cache, copy, delete
 from commons.env import getenv
-from commons.exceptions import BotError, CloudFileNotFoundError
+from commons.exceptions import SubmissionError, NotFoundError
 from commons.tempdir import TempDir
 from commons.timing import step
 
@@ -36,7 +36,7 @@ def submit_to_drive(
             results = pd.read_csv(
                 local_path, parse_dates=True, index_col="date")
             delete(drivepath)
-        except CloudFileNotFoundError:
+        except NotFoundError:
             LOGGER.warning(
                 f"Evaluation results file doesn't exist on drive '{drive_type}', creating one")
             results = pd.DataFrame({
@@ -51,10 +51,10 @@ def submit_to_drive(
             version = git.file_version(f"model/predictors/{model}.py")
             if getenv('drive') == 'git':
                 if git.get_branch() != 'master':
-                    raise BotError(
+                    raise SubmissionError(
                         'Submitting results from non-master branch is prohibited.')
                 if version.endswith("-dirty"):
-                    raise BotError(
+                    raise SubmissionError(
                         'Submitting results from a dirty predictor file is prohibited. Commit or revert the changes.')
             params = {
                 "parameters/model": [str(model)],

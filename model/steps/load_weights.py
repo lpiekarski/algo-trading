@@ -2,7 +2,7 @@ import logging
 import zipfile
 
 from commons.drive_utils.models import download_model_weights
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import NotFoundError
 from commons.tempdir import TempDir
 from commons.timing import step
 
@@ -20,5 +20,5 @@ def load_weights(model, model_module, **kwargs):
             with zipfile.ZipFile(file=model_weights_file, mode='r') as zf:
                 zf.extractall(td)
             model_module.load_weights(td)
-    except CloudFileNotFoundError:
+    except NotFoundError:
         LOGGER.info(f"Weights for model '{model}' weren't found.")

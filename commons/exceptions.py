@@ -1,28 +1,48 @@
-class BotError(RuntimeError):
+class AtfError(RuntimeError):
     def __init__(self, *args):
-        super(BotError, self).__init__(*args)
+        super(AtfError, self).__init__(*args)
 
 
-class NotInterruptingError(BotError):
+class NonInterruptingError(AtfError):
     def __init__(self, *args):
-        super(NotInterruptingError, self).__init__(*args)
+        super(NonInterruptingError, self).__init__(*args)
 
 
-class ArgumentError(BotError):
+class ArgumentError(AtfError):
     def __init__(self, *args):
         super(ArgumentError, self).__init__(*args)
 
 
-class CloudFileNotFoundError(BotError):
+class NotFoundError(AtfError):
     def __init__(self, *args):
-        super(CloudFileNotFoundError, self).__init__(*args)
+        super(NotFoundError, self).__init__(*args)
 
 
-class DataDownloadError(BotError):
+class DataDownloadError(AtfError):
     def __init__(self, *args):
         super(DataDownloadError, self).__init__(*args)
 
 
-class TestsFailedError(NotInterruptingError):
+class TestsFailedError(AtfError):
     def __init__(self, *args):
         super(TestsFailedError, self).__init__(*args)
+
+
+class CommandFailedError(AtfError):
+    def __init__(self, *args):
+        super(CommandFailedError, self).__init__(*args)
+
+
+class InvalidDriveTypeError(AtfError):
+    def __init__(self, *args):
+        super(InvalidDriveTypeError, self).__init__(*args)
+
+
+class IncompatibleDatasetsError(AtfError):
+    def __init__(self, *args):
+        super(IncompatibleDatasetsError, self).__init__(*args)
+
+
+class SubmissionError(AtfError):
+    def __init__(self, *args):
+        super(SubmissionError, self).__init__(*args)

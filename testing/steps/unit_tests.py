@@ -1,6 +1,6 @@
 import logging
 
-from commons.exceptions import NotInterruptingError
+from commons.exceptions import NonInterruptingError
 from commons.timing import step
 import pytest
 import os

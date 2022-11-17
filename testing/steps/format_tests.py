@@ -1,7 +1,7 @@
 import logging
 from types import SimpleNamespace
 
-from commons.exceptions import NotInterruptingError
+from commons.exceptions import NonInterruptingError
 from commons.timing import step
 import os
 import autopep8

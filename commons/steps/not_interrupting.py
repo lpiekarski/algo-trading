@@ -1,6 +1,6 @@
 import logging
 
-from commons.exceptions import NotInterruptingError
+from commons.exceptions import NonInterruptingError
 from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ def not_interrupting(step_func):
             else:
                 return step_func(*args, **kwargs)
         except Exception as e:
-            raise NotInterruptingError(e)
+            raise NonInterruptingError(e)
 
     not_interrupting_step.__name__ = step_func.__name__
     not_interrupting_step.pure = step_func

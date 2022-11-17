@@ -6,7 +6,7 @@ from typing import Union
 from commons.drive import get_drive_module
 from commons.drive_utils import get_cache_dir
 from commons.env import require_env
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import NotFoundError
 from commons.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def cache(p: Union[Drivepath, str]):
         drive.download(p.path, local_path)
         try:
             drive.download(p.path + '.md5', md5_path)
-        except CloudFileNotFoundError:
+        except NotFoundError:
             LOGGER.warning(
                 f'Cannot download md5 for "{p.path}", generating checksum')
             save_md5(local_path, md5_path)
@@ -55,7 +55,7 @@ def is_cached(p: Union[Drivepath, str]):
             new_checksum_path = os.path.join(tempdir, 'md5')
             try:
                 drive.download(p.path + '.md5', new_checksum_path)
-            except CloudFileNotFoundError:
+            except NotFoundError:
                 LOGGER.warning(f'There is no checksum file for "{p}"')
             if not os.path.exists(new_checksum_path):
                 LOGGER.debug(
@@ -86,7 +86,7 @@ def delete(p: Union[Drivepath, str]):
     try:
         drive.delete(p.path)
         drive.delete(p.path + '.md5')
-    except CloudFileNotFoundError:
+    except NotFoundError:
         LOGGER.warning(f"Couldn't delete file")
     clear_cache(p)
 

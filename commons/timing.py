@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 from commons.env import getenv
-from commons.exceptions import BotError, NotInterruptingError
+from commons.exceptions import NonInterruptingError, CommandFailedError
 from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, WARNING, break_padded
 
 LOGGER = logging.getLogger(__name__)
@@ -68,7 +68,7 @@ def step(step_func):
             return result
         except Exception as e:
             s.resolve('FAILURE')
-            if not isinstance(e, NotInterruptingError):
+            if not isinstance(e, NonInterruptingError):
                 raise e
         finally:
             execution_id += 1
@@ -141,7 +141,7 @@ def subcommand(step_list):
                 LOGGER.error('Executing steps failed with following exception:', exc_info=e)
             log_command_resolution(LOGGER, status)
             if status == 'FAILURE':
-                raise BotError('Command failed')
+                raise CommandFailedError(f"Command ended with status '{status}'")
         return wrapper
     return inner
 
