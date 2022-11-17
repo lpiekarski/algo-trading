@@ -4,7 +4,7 @@ from collector.technical_indicators.resample_technical_indicators import resampl
 
 
 def test_resample_technical_indicators():
-    dataset = mocks.dataset()
+    dataset = mocks.dataset(1010)
     pre_cols = dataset.df.shape[1]
     dataset.concat(resample_technical_indicators(
         dataset, time_tag="5min"), axis=1, join='inner')

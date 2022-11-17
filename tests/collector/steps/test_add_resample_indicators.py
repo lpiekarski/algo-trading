@@ -4,7 +4,7 @@ import commons.testing.asserts as asrt
 
 
 def test_add_resample_indicators():
-    dataset = mocks.dataset()
+    dataset = mocks.dataset(1010)
     time_tag = "5min"
     pre_shape = dataset.df.shape[1]
     add_resample_indicators(dataset, time_tag)

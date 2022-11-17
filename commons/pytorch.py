@@ -6,6 +6,10 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
+def weighted_loss(loss_fn, outputs, labels, weights):
+    return (loss_fn(outputs, labels) * weights).mean()
+
+
 def train(
         model,
         x,
@@ -14,7 +18,8 @@ def train(
         optimizer,
         n_epochs=100,
         batch_size=256,
-        metrics=None):
+        metrics=None,
+        sample_weights=None):
     use_cuda = torch.cuda.is_available()
     LOGGER.info(f"Use cuda: {use_cuda}")
     device = torch.device("cuda" if use_cuda else "cpu")
@@ -24,6 +29,10 @@ def train(
     model = model.to(device)
     if metrics is None:
         metrics = {}
+    if sample_weights is not None:
+        sample_weights = torch.tensor(sample_weights)
+        x = torch.tensor(x)
+        x = torch.cat((sample_weights.unsqueeze(1), x), dim=1)
     loader = torch.utils.data.DataLoader(
         list(zip(x, y)), batch_size=batch_size, **cuda_kwargs)
     for epoch in tqdm(range(n_epochs)):
@@ -33,8 +42,14 @@ def train(
         for batch_idx, (inputs, labels) in enumerate(loader):
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
-            outputs = model(inputs)
-            loss = loss_function(np.squeeze(outputs), labels)
+            if sample_weights is not None:
+                outputs = model(inputs[:, 1:])
+            else:
+                outputs = model(inputs)
+            if sample_weights is not None:
+                loss = weighted_loss(loss_function, np.squeeze(outputs), labels, inputs[:, 0])
+            else:
+                loss = loss_function(np.squeeze(outputs), labels)
             loss.backward()
             optimizer.step()
             losses.append(loss.item())

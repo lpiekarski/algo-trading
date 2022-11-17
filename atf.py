@@ -63,10 +63,6 @@ if __name__ == '__main__':
     try:
         atf()
     except BotError as e:
-        LOGGER.error(f"Error during command execution: {e}")
-        command_failure(LOGGER)
-        sys.exit(-1)
+        sys.exit(1)
     except Exception as e:
-        LOGGER.error(f"Error during command execution: {e}", exc_info=e)
-        command_failure(LOGGER)
         sys.exit(-1)
