@@ -14,4 +14,4 @@ yfinance==0.1.87
 pandas-ta==0.3.14b0
 split-file-reader==0.1.0
 autopep8==2.0.0
-pytest-cov=4.0.0
+pytest-cov==4.0.0
