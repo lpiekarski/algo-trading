@@ -68,6 +68,7 @@ def step(step_func):
             return result
         except Exception as e:
             s.resolve('FAILURE')
+            LOGGER.error('Step failed:', exc_info=e)
             if not isinstance(e, NonInterruptingError):
                 raise e
         finally:

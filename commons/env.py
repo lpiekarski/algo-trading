@@ -23,6 +23,24 @@ def require_env(name):
     return value
 
 
+class Env:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+        self.old_values = None
+
+    def __enter__(self):
+        self.old_values = {k: getenv(k) for k, _ in self.kwargs.items()}
+        for k, v in self.kwargs.items():
+            os.environ[k] = v
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for k, v in self.old_values.items():
+            if v is None:
+                del os.environ[k]
+            else:
+                os.environ[k] = v
+
+
 class DefaultEnv:
     CACHE_DIR = './.cache'
     TEMP_DIR = './.tmp'

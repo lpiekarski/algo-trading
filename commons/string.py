@@ -1,3 +1,5 @@
+import sys
+
 from commons.env import getenv
 import os
 
@@ -5,8 +7,22 @@ TAB = '\t'
 ENDLINE = '\n'
 BREAK_LENGTH = 72
 BREAK = '-' * BREAK_LENGTH
-if getenv('COLOR_OUTPUT') is not None and getenv(
-        'COLOR_OUTPUT').lower() == "true":
+
+
+def supports_color():
+    """
+    Returns True if the running system's terminal supports color, and False
+    otherwise.
+    """
+    plat = sys.platform
+    supported_platform = plat != 'Pocket PC' and (plat != 'win32' or
+                                                  'ANSICON' in os.environ)
+    # isatty is not always implemented, #6223.
+    is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
+    return supported_platform and is_a_tty
+
+
+if supports_color():
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'

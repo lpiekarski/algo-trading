@@ -60,15 +60,16 @@ File `atf.py` is the cli through which every subcommand can be referenced. ATF s
     ```
    
 ### Evaluating Model
-1. Evaluate model `fully_connected` with configuration under a path `examples/model_configs/fully_connected.json`, use the dataset under a path `datasets/test/M30_H1` located in git repository, test using label `Best decision_0.01` that is present within this dataset. Evaluation result will be saved in `evaluation/results.csv`. If this file is already present new evaluation result will be appended.
-   ```bash
-   python -m atf evaluate --model=local:models/fully_connected --model-config=local:examples/model_configs/fully_connected.json --dataset=git:datasets/test/M30_H1 --label=Best_decision_0.01
-   ```
+- Evaluate model `fully_connected` with configuration under a path `examples/model_configs/fully_connected.json`, use the dataset under a path `datasets/test/M30_H1` located in git repository, test using label `Best decision_0.01` that is present within this dataset. Evaluation result will be saved in `evaluation/results.csv`. If this file is already present new evaluation result will be appended.
+    ```bash
+    python -m atf evaluate --model=local:models/fully_connected --model-config=local:examples/model_configs/fully_connected.json --dataset=git:datasets/test/M30_H1 --label=Best_decision_0.01
+    ```
 
 ### Backtesting Strategy
-   ```bash
-   python -m atf backtest --dataset=git:datasets/test/M30_H1 --model=local:models/fully_connected --strategy=local:strategies/percentage_tp_sl --model-config=local:examples/model_configs/fully_connected.json --strategy-config=local:examples/strategy_configs/percentage_tp_sl.json 
-   ```
+- Backtest strategy `percentage_tp_sl`
+    ```bash
+    python -m atf backtest --dataset=git:datasets/test/M30_H1 --model=local:models/fully_connected --strategy=local:strategies/percentage_tp_sl --model-config=local:examples/model_configs/fully_connected.json --strategy-config=local:examples/strategy_configs/percentage_tp_sl.json 
+    ```
 
 
 ### Getting Predictions

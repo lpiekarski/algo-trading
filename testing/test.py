@@ -6,6 +6,7 @@ from commons.timing import subcommand
 from testing.steps.format_tests import format_tests
 from testing.steps.shape_tests import shape_tests
 from testing.steps.unit_tests import unit_tests
+import tests
 
 __all__ = ["test_group"]
 

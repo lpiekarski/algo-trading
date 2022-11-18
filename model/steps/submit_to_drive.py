@@ -32,7 +32,7 @@ def submit_to_drive(
         drive_type = getenv('drive')
         drivepath = f"{drive_type}:{cloud_path}"
         try:
-            copy(drivepath, local_path)
+            copy(drivepath, f"local:{local_path}")
             results = pd.read_csv(
                 local_path, parse_dates=True, index_col="date")
             delete(drivepath)
@@ -73,5 +73,5 @@ def submit_to_drive(
         finally:
             if task is not None:
                 task.close()
-            copy(local_path, drivepath)
-        clear_cache(local_path)
+            copy(f"local:{local_path}", drivepath)
+        clear_cache(f"local:{local_path}")
