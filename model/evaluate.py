@@ -38,7 +38,7 @@ def evaluate_group():
     process_parameter("model"),
     process_parameter("model_config", optional=True),
     process_parameter("dataset"),
-    process_parameter("label"),
+    process_parameter("label", optional=True),
     process_parameter("clearml_access_key", optional=True),
     process_parameter("clearml_secret_key", optional=True),
     process_parameter("clearml_project", optional=True),

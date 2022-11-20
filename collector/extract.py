@@ -18,7 +18,7 @@ def extract_group():
 
 
 @extract_group.command()
-@option("--name", "-n",
+@option("--output", "-o",
         help="Name of the output dataset")
 @option("--time-tag", "-t",
         help="Rescale data to hours, days, month")

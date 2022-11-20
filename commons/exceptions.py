@@ -46,3 +46,8 @@ class IncompatibleDatasetsError(AtfError):
 class SubmissionError(AtfError):
     def __init__(self, *args):
         super(SubmissionError, self).__init__(*args)
+
+
+class DatasetValidationError(AtfError):
+    def __init__(self, *args):
+        super(DatasetValidationError, self).__init__(*args)

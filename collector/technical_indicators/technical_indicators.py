@@ -25,14 +25,14 @@ def ema(df, time_tag, length):
 
 def dema(df, time_tag, length):
     return [pd.Series(
-        name=f'DEMA_{length}_{time_tag}',
+        name=f'DEMA_log_change_{length}_{time_tag}',
         data=log_change(pta.dema(df["Close"], length=length))
     )]
 
 
 def kama(df, time_tag, length):
     return [pd.Series(
-        name=f'kama_{length}_{time_tag}',
+        name=f'kama_log_change_{length}_{time_tag}',
         data=log_change(pta.kama(df["Close"], length=length))
     )]
 
@@ -42,20 +42,20 @@ def bolinger_bands(df, time_tag):
         df["Close"], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     return [
         pd.Series(
-            name=f'Upperband_{time_tag}',
-            data=bbands_result['BBL_5_2.0']
+            name=f'Upperband_log_change_{time_tag}',
+            data=log_change(bbands_result['BBL_5_2.0'])
         ),
         pd.Series(
-            name=f'Middleband_{time_tag}',
-            data=bbands_result['BBM_5_2.0']
+            name=f'Middleband_log_change_{time_tag}',
+            data=log_change(bbands_result['BBM_5_2.0'])
         ),
         pd.Series(
-            name=f'Lowerband_{time_tag}',
-            data=bbands_result['BBU_5_2.0']
+            name=f'Lowerband_log_change_{time_tag}',
+            data=log_change(bbands_result['BBU_5_2.0'])
         ),
         pd.Series(
-            name=f'Bandwidth_{time_tag}',
-            data=bbands_result['BBB_5_2.0']
+            name=f'Bandwidth_log_change_{time_tag}',
+            data=log_change(bbands_result['BBB_5_2.0'])
         ),
         pd.Series(
             name=f'Percent_Column_BBands_{time_tag}',
@@ -495,6 +495,15 @@ def rsi_volume(df, time_tag, length):
     )]
 
 
+def vwap(df, time_tag):
+    return [
+        pd.Series(
+            name=f'VWAP_log_change_{time_tag}',
+            data=pta.vwap(df['High'], df['Low'], df['Close'], df['Volume'])
+        )
+    ]
+
+
 INDICATORS = dict(
     sma=[10, 20, 50, 100, 200],
     ema=[10, 20, 50, 100, 200],
@@ -533,7 +542,8 @@ INDICATORS = dict(
     price_volume=None,
     ad_oscillator=None,
     ease_of_movement=None,
-    rsi_volume=[5, 14, 26]
+    rsi_volume=[5, 14, 26],
+    vwap=None
 )
 
 

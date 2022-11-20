@@ -49,7 +49,7 @@ def insert(s, element, direction):
 
 
 LABELS = dict(
-    add_best_decision=[0.01, 0.025],
+    add_best_decision=[0.01],
 )
 
 
