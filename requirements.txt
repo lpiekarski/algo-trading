@@ -1,4 +1,4 @@
-clearml==1.8.0
+clearml==1.8.1
 pandas==1.5.1
 numpy==1.23.5
 python-dateutil==2.8.2
