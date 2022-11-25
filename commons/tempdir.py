@@ -2,12 +2,12 @@ import shutil
 import uuid
 import os
 
-from commons.env import getenv
+from commons.configparams import Config
 
 
 class TempDir:
     def __init__(self):
-        self.dir_name = os.path.join(getenv('TEMP_DIR'), uuid.uuid4().hex)
+        self.dir_name = os.path.join(Config.get_param('TEMP_DIR'), uuid.uuid4().hex)
 
     def __enter__(self):
         os.makedirs(self.dir_name, exist_ok=True)

@@ -5,8 +5,8 @@ import os
 import pandas as pd
 
 import commons.git as git
+from commons.configparams import Config
 from commons.drivepath import clear_cache, copy, delete
-from commons.env import getenv
 from commons.exceptions import SubmissionError, NotFoundError
 from commons.tempdir import TempDir
 from commons.timing import step
@@ -29,7 +29,7 @@ def submit_to_drive(
         cloud_path = "evaluation/results.csv"
         local_path = os.path.join(tempdir, cloud_path)
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        drive_type = getenv('drive')
+        drive_type = Config.get_param('drive')
         drivepath = f"{drive_type}:{cloud_path}"
         try:
             copy(drivepath, f"local:{local_path}")
@@ -49,7 +49,7 @@ def submit_to_drive(
             }, index=pd.DatetimeIndex([], name='date'))
         try:
             version = git.file_version(f"model/predictors/{model}.py")
-            if getenv('drive') == 'git':
+            if Config.get_param('drive') == 'git':
                 if git.get_branch() != 'master':
                     raise SubmissionError(
                         'Submitting results from non-master branch is prohibited.')

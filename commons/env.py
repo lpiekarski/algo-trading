@@ -41,6 +41,7 @@ class Env:
                 os.environ[k] = v
 
 
+# TODO: Remove DefaultEnv when there is configparam...
 class DefaultEnv:
     CACHE_DIR = './.cache'
     TEMP_DIR = './.tmp'

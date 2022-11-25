@@ -3,7 +3,7 @@ import time
 from datetime import datetime, timedelta
 from functools import wraps
 
-from commons.env import getenv
+from commons.configparams import Config
 from commons.exceptions import NonInterruptingError, CommandFailedError
 from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, WARNING, break_padded
 
@@ -56,7 +56,7 @@ class Step:
 def step(step_func):
     @wraps(step_func)
     def wrap(*args, **kwargs):
-        if getenv("UNIT_TESTING") == "True":
+        if Config.get_param("UNIT_TESTING") == "True":
             return step_func(*args, **kwargs)
         global execution_id
         s = steps[execution_id]

@@ -3,7 +3,7 @@ import logging
 
 __all__ = ["init_logging"]
 
-from commons.env import getenv
+from commons.configparams import Config
 
 
 def init_logging():
@@ -12,7 +12,7 @@ def init_logging():
 
     logging.getLogger("split_file_reader").setLevel(logging.INFO)
 
-    LOG_LEVEL = getenv("LOG_LEVEL")
+    LOG_LEVEL = Config.get_param("LOG_LEVEL")
     if LOG_LEVEL is None:
         LOG_LEVEL = logging.INFO
     else:
@@ -26,10 +26,10 @@ def init_logging():
     rootLogger.addHandler(consoleHandler)
 
     # file logging
-    LOG_FILE = getenv("LOG_FILE")
+    LOG_FILE = Config.get_param("LOG_FILE")
     if LOG_FILE is not None:
-        if getenv("LOG_LEVEL") is None:
-            FILE_LOG_LEVEL = getenv("FILE_LOG_LEVEL")
+        if Config.get_param("LOG_LEVEL") is None:
+            FILE_LOG_LEVEL = Config.get_param("FILE_LOG_LEVEL")
             if FILE_LOG_LEVEL is None:
                 FILE_LOG_LEVEL = logging.INFO
             else:

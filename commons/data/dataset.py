@@ -3,7 +3,6 @@ import zipfile
 import pandas as pd
 import os
 import json
-from commons.env import getenv
 from commons.exceptions import AtfError, ArgumentError, IncompatibleDatasetsError, DatasetValidationError
 from commons.tempdir import TempDir
 

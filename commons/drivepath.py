@@ -3,9 +3,9 @@ import logging
 import os
 from typing import Union
 
+from commons.configparams import Config
 from commons.drive import get_drive_module
 from commons.drive_utils import get_cache_dir
-from commons.env import require_env
 from commons.exceptions import NotFoundError
 from commons.tempdir import TempDir
 
@@ -117,7 +117,7 @@ def split(p: str):
             name = name[1:]
         return drive, name
     else:
-        return require_env('drive'), p
+        return Config.require_param('drive'), p
 
 
 def from_string(drivepath):

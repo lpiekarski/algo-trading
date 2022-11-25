@@ -1,6 +1,5 @@
 import sys
 
-from commons.env import getenv
 import os
 
 TAB = '\t'

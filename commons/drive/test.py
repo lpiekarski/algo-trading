@@ -1,14 +1,14 @@
 import shutil
 import os
 
-from commons.env import require_env
+from commons.configparams import Config
 from commons.exceptions import NotFoundError
 
 __all__ = ["upload", "download"]
 
 
 def upload(local_path: str, cloud_path: str) -> None:
-    test_workspace = require_env('test_workspace')
+    test_workspace = Config.require_param('test_workspace')
     cloud_path = os.path.join(test_workspace, cloud_path)
     if os.path.normpath(local_path) != os.path.normpath(cloud_path):
         if os.path.dirname(cloud_path) != '':
@@ -17,7 +17,7 @@ def upload(local_path: str, cloud_path: str) -> None:
 
 
 def download(cloud_path: str, local_path: str) -> None:
-    test_workspace = require_env('test_workspace')
+    test_workspace = Config.require_param('test_workspace')
     cloud_path = os.path.join(test_workspace, cloud_path)
     if not os.path.exists(cloud_path):
         raise NotFoundError(
@@ -29,7 +29,7 @@ def download(cloud_path: str, local_path: str) -> None:
 
 
 def delete(cloud_path: str) -> None:
-    test_workspace = require_env('test_workspace')
+    test_workspace = Config.require_param('test_workspace')
     cloud_path = os.path.join(test_workspace, cloud_path)
     if not os.path.exists(cloud_path):
         raise NotFoundError(

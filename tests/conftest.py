@@ -1,7 +1,8 @@
 import pytest
-from commons.env import require_env
+
+from commons.configparams import Config
 
 
 @pytest.fixture()
 def workspace():
-    return require_env('test_workspace')
+    return Config.require_param('test_workspace')
