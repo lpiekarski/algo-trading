@@ -1,39 +1,38 @@
 import pickle
 import re
+import pandas as pd
+import numpy as np
+from commons.data.utils import log_change
 
 
 class Preprocessor:
-    def __init__(self, num_features=None, standardization_regexes=None, normalization_regexes=None):
+    def __init__(self, num_features=None, standardization_regexes=None, normalization_regexes=None, log_change_regexes=None):
         self.std = None
         self.mean = None
         self.range_min = None
         self.range_max = None
         self.standardized_columns = None
         self.normalized_columns = None
+        self.log_change_columns = None
         self.num_features = num_features
-        if standardization_regexes is not None:
-            self.standardization_regexes = standardization_regexes
-        else:
-            self.standardization_regexes = [
-                ".*log_change.*"
-            ]
-        if normalization_regexes is not None:
-            self.normalization_regexes = normalization_regexes
-        else:
-            self.normalization_regexes = [
-                ".*"
-            ]
+        self.standardization_regexes = init_list(standardization_regexes, [".*"])
+        self.normalization_regexes = init_list(normalization_regexes, [".*"])
+        self.log_change_regexes = init_list(log_change_regexes, [".*"])
 
     def fit(self, x):
         x_ = x.copy()
+        clamp(x_)
         self.num_features = x_.shape[1]
         self.normalized_columns = []
         self.standardized_columns = []
+        self.log_change_columns = []
         for col in x_:
-            if any([bool(re.match(r, col)) for r in self.standardization_regexes]):
+            if col_matches_any(col, self.standardization_regexes):
                 self.standardized_columns.append(col)
-            elif any([bool(re.match(r, col)) for r in self.normalization_regexes]):
+            elif col_matches_any(col, self.normalization_regexes):
                 self.normalized_columns.append(col)
+            elif col_matches_any(col, self.log_change_regexes):
+                self.log_change_columns.append(col)
         xstd = x_[self.standardized_columns]
         self.mean = xstd.mean()
         self.std = xstd.std()
@@ -43,11 +42,14 @@ class Preprocessor:
 
     def apply(self, x):
         x_ = x.copy()
+        clamp(x_)
         xstd = x_[self.standardized_columns]
         xnorm = x_[self.normalized_columns]
+        xlog_change = x_[self.log_change_columns]
         x_.update((xstd - self.mean) / self.std)
         x_.update((xnorm - self.range_min) /
                   (self.range_max - self.range_min + 1e-8))
+        x_.update(log_change(xlog_change))
         x_ = x_.fillna(0)
         return x_
 
@@ -59,3 +61,18 @@ class Preprocessor:
     def load(cls, filepath):
         with open(filepath, 'rb') as file:
             return pickle.load(file)
+
+
+def init_list(lst, default):
+    if lst is not None:
+        return lst
+    return default
+
+
+def col_matches_any(col, regexes):
+    return any([bool(re.match(r, col)) for r in regexes])
+
+
+def clamp(x: pd.DataFrame):
+    x.replace(np.inf, 1e12, inplace=True)
+    x.replace(-np.inf, -1e12, inplace=True)

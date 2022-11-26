@@ -6,34 +6,33 @@ import numpy as np
 from tqdm import tqdm
 
 from commons.data.dataset import Dataset
-from commons.data.utils import log_change
 
 
 def sma(df, time_tag, length):
     return [pd.Series(
-        name=f'SMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.sma(df["Close"], length=length))
+        name=f'SMA_{length}_{time_tag}',
+        data=pta.sma(df["Close"], length=length)
     )]
 
 
 def ema(df, time_tag, length):
     return [pd.Series(
-        name=f'EMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.ema(df["Close"], length=length))
+        name=f'EMA_{length}_{time_tag}',
+        data=pta.ema(df["Close"], length=length)
     )]
 
 
 def dema(df, time_tag, length):
     return [pd.Series(
-        name=f'DEMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.dema(df["Close"], length=length))
+        name=f'DEMA_{length}_{time_tag}',
+        data=pta.dema(df["Close"], length=length)
     )]
 
 
 def kama(df, time_tag, length):
     return [pd.Series(
-        name=f'kama_log_change_{length}_{time_tag}',
-        data=log_change(pta.kama(df["Close"], length=length))
+        name=f'kama_{length}_{time_tag}',
+        data=pta.kama(df["Close"], length=length)
     )]
 
 
@@ -42,20 +41,20 @@ def bolinger_bands(df, time_tag):
         df["Close"], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     return [
         pd.Series(
-            name=f'Upperband_log_change_{time_tag}',
-            data=log_change(bbands_result['BBL_5_2.0'])
+            name=f'Upperband_{time_tag}',
+            data=bbands_result['BBL_5_2.0']
         ),
         pd.Series(
-            name=f'Middleband_log_change_{time_tag}',
-            data=log_change(bbands_result['BBM_5_2.0'])
+            name=f'Middleband_{time_tag}',
+            data=bbands_result['BBM_5_2.0']
         ),
         pd.Series(
-            name=f'Lowerband_log_change_{time_tag}',
-            data=log_change(bbands_result['BBU_5_2.0'])
+            name=f'Lowerband_{time_tag}',
+            data=bbands_result['BBU_5_2.0']
         ),
         pd.Series(
-            name=f'Bandwidth_log_change_{time_tag}',
-            data=log_change(bbands_result['BBB_5_2.0'])
+            name=f'Bandwidth_{time_tag}',
+            data=bbands_result['BBB_5_2.0']
         ),
         pd.Series(
             name=f'Percent_Column_BBands_{time_tag}',
@@ -395,16 +394,6 @@ def us_time(df, time_tag):
                     df.index.minute >= 30)).astype(int),
             index=df.index)]
 
-
-def price_log_change(df, time_tag):
-    return [
-        pd.Series(
-            name=f'{col}_log_change_{time_tag}',
-            data=log_change(df[col])
-        )
-        for col in ["Open", "High", "Low", "Close"]
-    ]
-
 # Volume indicators
 # OBV (on-Balance Volume)
 
@@ -498,7 +487,7 @@ def rsi_volume(df, time_tag, length):
 def vwap(df, time_tag):
     return [
         pd.Series(
-            name=f'VWAP_log_change_{time_tag}',
+            name=f'VWAP_{time_tag}',
             data=pta.vwap(df['High'], df['Low'], df['Close'], df['Volume'])
         )
     ]
@@ -533,7 +522,6 @@ INDICATORS = dict(
     accbands=None,
     cyclical_datetime=None,
     us_time=None,
-    price_log_change=None,
     on_balance_volume=None,
     chaikin_money_flow=None,
     klinger_oscillator=None,
