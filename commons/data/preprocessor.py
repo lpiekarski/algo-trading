@@ -6,7 +6,12 @@ from commons.data.utils import log_change
 
 
 class Preprocessor:
-    def __init__(self, num_features=None, standardization_regexes=None, normalization_regexes=None, log_change_regexes=None):
+    def __init__(
+            self,
+            num_features=None,
+            standardization_regexes=None,
+            normalization_regexes=None,
+            log_change_regexes=None):
         self.std = None
         self.mean = None
         self.range_min = None
