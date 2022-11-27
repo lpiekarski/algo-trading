@@ -1,0 +1,20 @@
+architecture:
+  [
+    [-1, Linear, [~, 128]],
+    [-1, LinearResidual, [128]],
+    [-1, LinearResidual, [128]],
+    [-1, LinearResidual, [128]],
+    [-1, Linear, [128, 128]],
+    [-1, nn.Linear, [128, 1]],
+    [-1, nn.Sigmoid, []]
+  ]
+
+preprocessor:
+  log_change_regexes: ['.*log_change.*']
+  rolling_window: ~
+
+hyperparams:
+  sample_weight_ratio: 0.9999
+  n_epochs: 10
+  batch_size: 512
+  weight_decay: 0.01

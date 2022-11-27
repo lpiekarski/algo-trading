@@ -2,6 +2,8 @@ import pickle
 import re
 import pandas as pd
 import numpy as np
+
+from commons.data.series import rolling_window
 from commons.data.utils import log_change
 
 
@@ -11,7 +13,8 @@ class Preprocessor:
             num_features=None,
             standardization_regexes=None,
             normalization_regexes=None,
-            log_change_regexes=None):
+            log_change_regexes=None,
+            rolling_window=None):
         self.std = None
         self.mean = None
         self.range_min = None
@@ -23,6 +26,7 @@ class Preprocessor:
         self.standardization_regexes = init_list(standardization_regexes, [".*"])
         self.normalization_regexes = init_list(normalization_regexes, [".*"])
         self.log_change_regexes = init_list(log_change_regexes, [".*"])
+        self.rolling_window = rolling_window
 
     def fit(self, x):
         x_ = x.copy()
@@ -45,7 +49,7 @@ class Preprocessor:
         self.range_min = xnorm.min()
         self.range_max = xnorm.max()
 
-    def apply(self, x):
+    def apply(self, x, y=None):
         x_ = x.copy()
         clamp(x_)
         xstd = x_[self.standardized_columns]
@@ -56,7 +60,13 @@ class Preprocessor:
                   (self.range_max - self.range_min + 1e-8))
         x_.update(log_change(xlog_change))
         x_ = x_.fillna(0)
-        return x_
+        if y is None:
+            if self.rolling_window is not None:
+                x_ = rolling_window(self.rolling_window, x_)
+            return x_
+        if self.rolling_window is not None:
+            x_, y = rolling_window(self.rolling_window, x_, y_)
+        return x_, y
 
     def save(self, filepath):
         with open(filepath, 'wb') as file:
