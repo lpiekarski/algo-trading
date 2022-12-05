@@ -14,8 +14,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Restore Docker cache
+        uses: actions/cache@v3
+        id: docker-cache
+        with:
+          path: /var/lib/docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
       - name: Setup
+        if: steps.docker-cache.outputs.cache-hit != 'true'
         run: cd docker && docker build -t sp2137 . && cd ..
+
+      - name: Save Docker cache
+        uses: actions/cache@v3
+        if: steps.docker-cache.outputs.cache-hit != 'true'
+        with:
+          path: /var/lib/docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
 
       - name: Run collector
         run: docker run --rm -v $(pwd):/project sp2137 ./venv/bin/python3 ./project/atf.py -DLOG_FILE=project/logs/collector.log -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DFILE_LOG_LEVEL=DEBUG -Ddrive=git -DLOCAL_DRIVE_STORE=./project/data -DCACHE_DIR=./project/cache collect --date=latest
@@ -29,4 +46,4 @@ jobs:
         with:
           name: logs
           path: |
-            **/*.log
+            */.log
