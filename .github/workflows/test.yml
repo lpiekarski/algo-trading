@@ -31,7 +31,7 @@ jobs:
 
       - name: Setup
         if: steps.docker-cache.outputs.cache-hit != 'true'
-        run: cd docker/linux && docker build -t sp2137 . && cd ../..
+        run: docker build . -t sp2137 -f docker/linux/Dockerfile
 
       - name: Save Docker cache
         uses: actions/cache@v3
