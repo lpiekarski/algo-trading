@@ -3,7 +3,7 @@ The Algorithmic Trading Framework is a project that provides a set of tools for 
 
 ## Installation
 ### Prerequisites
-1. You have to have git and python 3.10 installed
+To use the framework, users must have Python 3.10 and git installed on their system.
 #### Steps On Ubuntu
 1. Clone the repository
    ```bash
