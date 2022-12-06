@@ -7,8 +7,8 @@ To use the framework, users must have Python 3.10 and git installed on their sys
 #### Steps On Ubuntu
 1. Clone the repository
    ```bash
-   git clone https://github.com/lpiekarski/SP2137.git
-   cd SP2137
+   git clone https://github.com/lpiekarski/algo-trading.git
+   cd algo-trading
    ```
 2. Create python virtual environment
    ```bash
