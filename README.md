@@ -1,4 +1,5 @@
 # Algorithmic Trading Framework
+The Algorithmic Trading Framework is a project that provides a set of tools for training and testing machine learning models for algorithmic trading. The project includes a command-line interface that allows users to manage datasets, train models, and test them on historical data. In order to use the framework, users must have Python 3.10 and git installed on their system. The project uses environmental variables to specify the location of data repositories and other settings, making it easy to customize the behavior of the framework. Overall, the Algorithmic Trading Framework offers a convenient and powerful set of tools for exploring and experimenting with algorithmic trading strategies.
 
 ## Installation
 ### Prerequisites
