@@ -30,6 +30,8 @@ There are a few environmental variables that are expected to be set by some part
 `DRIVE` - Default drive type. Can be `local` or `git` (Each file in `commons/drive` not starting with `__` corresponds to a drive type) 
 
 ## Examples
+Here are some examples of how to use the ATF CLI to perform common tasks.
+
 File `atf.py` is the cli through which every subcommand can be referenced. ATF stands for Algorithmic Trading Framework. You can always run `python -m atf --help` to get some information on available subcommands and `python -m atf <subcommand> --help` to show information about a specific subcommand. Path to every file can be prefixed with `<drive>:`, where <drive> is `local` or `git`. If there is no drive prefix default value from environmental variable `DRIVE` is assumed. In case of `local` the file is located as usual, but in case of `git` program looks for the file in the repository specified by `GIT_DRIVE_REPO_URL` environmental variable. In this repository each file must be in separate branch, name of the branch should be the same as the path of the file, and the file should be zipped and divided into 100MB parts suffixed with 3 digits starting from 000. You can see an example of a repository set up like this here: https://github.com/S-P-2137/Data
 
 Each argument can be assigned value through a environmental variable with the same name. Environmental variables can also be assigned directly in the command for example below command assigns values for environmental variables `GIT_DRIVE_REPO_URL=https://github.com/S-P-2137` and `LOG_LEVEL=DEBUG`, then proceeds with the copy subcommand:
