@@ -1,5 +1,5 @@
 architecture:
-  [
+  [  # from, module, [arguments]
     [-1, Linear, [~, 128]],
     [-1, LinearResidual, [128]],
     [-1, LinearResidual, [128]],
@@ -10,7 +10,14 @@ architecture:
   ]
 
 preprocessor:
-  log_change_regexes: ['.*log_change.*']
+  log_change_regexes: [
+    'SMA_.*',
+    'EMA_.*',
+    'Open',
+    'High',
+    'Low',
+    'Close'
+  ]
   rolling_window: ~
 
 hyperparams:
