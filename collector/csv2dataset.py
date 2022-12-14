@@ -21,4 +21,4 @@ def csv2dataset_group():
     convert_csv_to_dataset
 ])
 def csv2dataset(*args, **kwargs):
-    pass
+    """Convert file from csv to dataset format"""

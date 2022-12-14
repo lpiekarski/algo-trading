@@ -18,4 +18,4 @@ def copy_group():
     copy
 ])
 def copy(*args, **kwargs):
-    pass
+    """Copy file between local or remote locations"""

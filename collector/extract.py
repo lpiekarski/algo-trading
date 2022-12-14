@@ -48,4 +48,4 @@ def extract_group():
     save_dataset
 ])
 def extract(*args, **kwargs):
-    """Add technical indicators to dataset from FILE_PATH."""
+    """Add technical indicators and labels to the dataset"""
