@@ -25,7 +25,7 @@ jobs:
         id: docker-cache
         with:
           path: /var/lib/docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/docker/linux/**') }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-docker-
 
@@ -38,7 +38,7 @@ jobs:
         if: steps.docker-cache.outputs.cache-hit != 'true'
         with:
           path: /var/lib/docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/docker/linux/**') }}-${{ hashFiles('**/requirements.txt') }}
 
       - name: Run tests
         run: docker run -v $(pwd):/logs --rm sp2137 /bin/bash -c "source venv/bin/activate && python ./atf.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test"
