@@ -1,6 +1,7 @@
 import bisect
 import pandas as pd
 import logging
+from tqdm import tqdm
 
 
 LOGGER = logging.getLogger(__name__)

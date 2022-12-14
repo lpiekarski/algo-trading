@@ -2,6 +2,7 @@ import logging
 import yaml
 from commons.timing import step
 import sys
+import commons.data.labels as ls
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LABEL_CONFIG = dict(
@@ -10,7 +11,7 @@ DEFAULT_LABEL_CONFIG = dict(
 
 
 @step
-def add_labels(dataset, labels, **kwargs):
+def add_labels(dataset, labels=None, **kwargs):
     label_config = None
     if labels is not None:
         with open(labels, 'r') as f:
@@ -18,7 +19,7 @@ def add_labels(dataset, labels, **kwargs):
     if label_config is None:
         label_config = DEFAULT_LABEL_CONFIG
     for label, params in label_config.items():
-        label_func = getattr(sys.modules[__name__], label)
+        label_func = getattr(ls, label)
         if params is None:
             label_func(dataset)
         else:

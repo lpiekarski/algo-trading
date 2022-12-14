@@ -4,6 +4,8 @@ from tqdm import tqdm
 from commons.timing import step
 import sys
 import pandas as pd
+import commons.data.indicators as inds
+
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_INDICATOR_CONFIG = dict(
@@ -49,7 +51,7 @@ DEFAULT_INDICATOR_CONFIG = dict(
 
 
 @step
-def add_indicators(dataset, indicators, **kwargs):
+def add_indicators(dataset, indicators=None, **kwargs):
     indicator_config = None
     if indicators is not None:
         with open(indicators, 'r') as f:
@@ -62,7 +64,7 @@ def add_indicators(dataset, indicators, **kwargs):
     pbar = tqdm(total=len(indicator_config.items()))
     for indicator, params in indicator_config.items():
         pbar.set_description(f'Adding {indicator}')
-        indicator_func = getattr(sys.modules[__name__], indicator)
+        indicator_func = getattr(inds, indicator)
         if params is None:
             collected_indicators.extend(indicator_func(df, time_tag))
         else:
