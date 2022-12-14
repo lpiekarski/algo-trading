@@ -29,10 +29,18 @@ def extract_group():
         default=True,
         help="Whether to overwrite or append to an existing dataset with the same name",
         is_flag=True)
+@option("--indicators",
+        "-i",
+        help="Specify yaml file with chosen indicators")
+@option("--labels",
+        "-l",
+        help="Specify yaml file with chosen labels")
 @subcommand([
     process_parameter("time_tag", optional=True),
     process_parameter("name", optional=True),
     process_parameter("dataset"),
+    process_parameter("indicators", optional=True),
+    process_parameter("labels", optional=True),
     get_dataset,
     conditional(add_indicators, "time_tag", negation=True),
     conditional(add_resample_indicators, "time_tag"),
