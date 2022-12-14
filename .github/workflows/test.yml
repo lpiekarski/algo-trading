@@ -33,13 +33,6 @@ jobs:
         if: steps.docker-cache.outputs.cache-hit != 'true'
         run: docker build . -t sp2137 -f docker/linux/Dockerfile
 
-      - name: Save Docker cache
-        uses: actions/cache@v3
-        if: steps.docker-cache.outputs.cache-hit != 'true'
-        with:
-          path: /var/lib/docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/docker/linux/**') }}-${{ hashFiles('**/requirements.txt') }}
-
       - name: Run tests
         run: docker run -v $(pwd):/logs --rm sp2137 /bin/bash -c "source venv/bin/activate && python ./atf.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test"
 
