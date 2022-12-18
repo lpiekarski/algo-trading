@@ -3,7 +3,6 @@ import filecmp
 from commons.configparams import Config
 from commons.testing import mocks
 from drive.steps.copy import copy
-from drive.steps.upload import upload
 
 
 def test_copy_local():

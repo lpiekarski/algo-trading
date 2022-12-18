@@ -86,8 +86,8 @@ def get_branch(base: str = "git", **kwargs):
     return cmd(base, "branch", "--show-current", **kwargs).strip()
 
 
-def branch(base: str = "git", **kwargs):
-    return cmd(base, "branch", **kwargs).strip()
+def remote_branch(base: str = "git", **kwargs):
+    return cmd(base, "branch", "-r", **kwargs).strip()
 
 
 def cmd(*args, **kwargs):

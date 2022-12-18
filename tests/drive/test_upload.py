@@ -1,5 +1,5 @@
 from commons.configparams import Config
-from commons.git import branch
+import commons.git as git
 from commons.testing import mocks
 from drive.steps.upload import upload
 from drive.steps.delete import delete
@@ -14,7 +14,7 @@ def test_upload():
     end_path = "dataset/test_upload"
     df.to_csv(start_path)
     upload(start_path, end_path)
-    branches = branch(end_path, "-r")
+    branches = git.remote_branch(end_path)
     assert branches.find(f"origin/{end_path}") > -1
     delete(end_path)
 
