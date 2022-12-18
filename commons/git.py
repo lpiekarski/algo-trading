@@ -86,6 +86,10 @@ def get_branch(base: str = "git", **kwargs):
     return cmd(base, "branch", "--show-current", **kwargs).strip()
 
 
+def branch(base: str = "git", **kwargs):
+    return cmd(base, "branch", **kwargs).strip()
+
+
 def cmd(*args, **kwargs):
     LOGGER.debug(f"Running command ({kwargs}):\n{args}")
     sp = subprocess.run(args, capture_output=True, encoding='utf-8', **kwargs)

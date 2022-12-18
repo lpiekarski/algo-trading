@@ -1,4 +1,3 @@
-from commons.dotdict import DotDict
 from commons.env import getenv
 from commons.exceptions import ArgumentError
 
