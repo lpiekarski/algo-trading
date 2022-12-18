@@ -68,4 +68,4 @@ def backtest_group():
     run_backtesting
 ])
 def backtest(*args, **kwargs):
-    pass
+    """Backtest a strategy and a model"""

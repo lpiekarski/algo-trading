@@ -17,7 +17,7 @@ def validate_shape(module, interface):
         for parameter in sig.parameters.values():
             if not is_subtype(parameter.annotation, expected_param_types[i]):
                 raise AssertionError(
-                    f"Expected {func_name} from module {module.__name__} to have parameter with type '{parameter.annotation}', but it has type '{expected_param_types[i]}'")
+                    f"Expected {func_name} from module {module.__name__} to have parameter with type '{expected_param_types[i]}', but it has type '{parameter.annotation}'")
             i += 1
 
 

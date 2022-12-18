@@ -1,5 +1,5 @@
 import numpy as np
-import collector.technical_indicators.labels as labels
+import commons.data.labels as labels
 import commons.testing.mocks as mocks
 
 
@@ -12,7 +12,7 @@ def test_add_best_decision_on_random_sequences():
 
 def sequence_test(pct_change):
     dataset = mocks.dataset(size=20)
-    labels.add_best_decision(dataset, pct_change)
+    labels.best_decision(dataset, pct_change)
     real = list(dataset.df[f'Best_decision_{pct_change}'])
     brute = brute_force_best_decision(dataset, pct_change)
     assert real == brute

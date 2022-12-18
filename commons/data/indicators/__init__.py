@@ -1,39 +1,33 @@
-import sys
-
 import pandas as pd
 import pandas_ta as pta
 import numpy as np
-from tqdm import tqdm
-
-from commons.data.dataset import Dataset
-from commons.data.utils import log_change
 
 
 def sma(df, time_tag, length):
     return [pd.Series(
-        name=f'SMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.sma(df["Close"], length=length))
+        name=f'SMA_{length}_{time_tag}',
+        data=pta.sma(df["Close"], length=length)
     )]
 
 
 def ema(df, time_tag, length):
     return [pd.Series(
-        name=f'EMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.ema(df["Close"], length=length))
+        name=f'EMA_{length}_{time_tag}',
+        data=pta.ema(df["Close"], length=length)
     )]
 
 
 def dema(df, time_tag, length):
     return [pd.Series(
-        name=f'DEMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.dema(df["Close"], length=length))
+        name=f'DEMA_{length}_{time_tag}',
+        data=pta.dema(df["Close"], length=length)
     )]
 
 
 def kama(df, time_tag, length):
     return [pd.Series(
-        name=f'kama_log_change_{length}_{time_tag}',
-        data=log_change(pta.kama(df["Close"], length=length))
+        name=f'kama_{length}_{time_tag}',
+        data=pta.kama(df["Close"], length=length)
     )]
 
 
@@ -42,20 +36,20 @@ def bolinger_bands(df, time_tag):
         df["Close"], timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
     return [
         pd.Series(
-            name=f'Upperband_log_change_{time_tag}',
-            data=log_change(bbands_result['BBL_5_2.0'])
+            name=f'Upperband_{time_tag}',
+            data=bbands_result['BBL_5_2.0']
         ),
         pd.Series(
-            name=f'Middleband_log_change_{time_tag}',
-            data=log_change(bbands_result['BBM_5_2.0'])
+            name=f'Middleband_{time_tag}',
+            data=bbands_result['BBM_5_2.0']
         ),
         pd.Series(
-            name=f'Lowerband_log_change_{time_tag}',
-            data=log_change(bbands_result['BBU_5_2.0'])
+            name=f'Lowerband_{time_tag}',
+            data=bbands_result['BBU_5_2.0']
         ),
         pd.Series(
-            name=f'Bandwidth_log_change_{time_tag}',
-            data=log_change(bbands_result['BBB_5_2.0'])
+            name=f'Bandwidth_{time_tag}',
+            data=bbands_result['BBB_5_2.0']
         ),
         pd.Series(
             name=f'Percent_Column_BBands_{time_tag}',
@@ -395,16 +389,6 @@ def us_time(df, time_tag):
                     df.index.minute >= 30)).astype(int),
             index=df.index)]
 
-
-def price_log_change(df, time_tag):
-    return [
-        pd.Series(
-            name=f'{col}_log_change_{time_tag}',
-            data=log_change(df[col])
-        )
-        for col in ["Open", "High", "Low", "Close"]
-    ]
-
 # Volume indicators
 # OBV (on-Balance Volume)
 
@@ -498,79 +482,7 @@ def rsi_volume(df, time_tag, length):
 def vwap(df, time_tag):
     return [
         pd.Series(
-            name=f'VWAP_log_change_{time_tag}',
+            name=f'VWAP_{time_tag}',
             data=pta.vwap(df['High'], df['Low'], df['Close'], df['Volume'])
         )
     ]
-
-
-INDICATORS = dict(
-    sma=[10, 20, 50, 100, 200],
-    ema=[10, 20, 50, 100, 200],
-    dema=[10, 20, 50, 100, 200],
-    kama=[10, 20, 50, 100, 200],
-    bolinger_bands=None,
-    ichimoku=None,
-    parabolic_sar=None,
-    stdev=[10, 20, 50, 100, 200],
-    stdev_percentage=[10, 20, 50, 100, 200],
-    linreg=[10, 20, 50, 100, 200],
-    atr=[14],
-    rsi=[14, 26],
-    cci=[20, 50],
-    momentum=[10, 14, 21],
-    macd=None,
-    stochrsi=[14, [46, 46]],
-    stoch=None,
-    rvi=[14],
-    willr=[14],
-    ao=None,
-    ha=None,
-    donchian=None,
-    kelch=[20],
-    bop=None,
-    uo=None,
-    accbands=None,
-    cyclical_datetime=None,
-    us_time=None,
-    price_log_change=None,
-    on_balance_volume=None,
-    chaikin_money_flow=None,
-    klinger_oscillator=None,
-    money_flow_index=None,
-    negative_volume_index=None,
-    price_volume=None,
-    ad_oscillator=None,
-    ease_of_movement=None,
-    rsi_volume=[5, 14, 26],
-    vwap=None
-)
-
-
-def add_technical_indicators(dataset, time_tag, show_progress=True):
-    df = dataset.df if isinstance(dataset, Dataset) else dataset
-    collected_indicators = [df]
-    if show_progress:
-        pbar = tqdm(total=len(INDICATORS.items()))
-    for indicator, params in INDICATORS.items():
-        if show_progress:
-            pbar.set_description(f'Adding {indicator}')
-        indicator_func = getattr(sys.modules[__name__], indicator)
-        if params is None:
-            collected_indicators.extend(indicator_func(df, time_tag))
-        else:
-            for param in params:
-                if isinstance(param, list):
-                    collected_indicators.extend(
-                        indicator_func(df, time_tag, *param))
-                elif isinstance(param, dict):
-                    collected_indicators.extend(
-                        indicator_func(df, time_tag, **param))
-                else:
-                    collected_indicators.extend(
-                        indicator_func(df, time_tag, param))
-        if show_progress:
-            pbar.update()
-    if show_progress:
-        pbar.close()
-    return pd.concat(collected_indicators, axis=1)

@@ -7,5 +7,5 @@ def test_evaluate_predictions():
     label = 'label1'
     y_pred = dataset.get_y(label)
     res = evaluate_predictions(dataset, y_pred, label)
-    assert res['binary_cross_entropy'] == 0
-    assert res['accuracy'] == 1
+    assert res['eval']['binary_cross_entropy'] == 0
+    assert res['eval']['accuracy'] == 1

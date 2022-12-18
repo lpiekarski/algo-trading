@@ -52,4 +52,4 @@ def train_group():
     conditional(save_weights, "no_save", negation=True)
 ])
 def train(*args, **kwargs):
-    pass
+    """Train a model on a given dataset"""
