@@ -3,6 +3,7 @@ import filecmp
 from commons.configparams import Config
 from commons.testing import mocks
 from drive.steps.copy import copy
+from drive.steps.delete import delete
 
 
 def test_copy_local():
@@ -29,3 +30,4 @@ def test_copy_git():
     copy(f"local:{start_path}", f"git:{git_path}")
     copy(f"git:{git_path}", f"local:{end_path}")
     assert filecmp.cmp(start_path, end_path)
+    delete(f"git:{git_path}")
