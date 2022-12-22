@@ -13,5 +13,5 @@ lightgbm==3.3.3
 yfinance==0.2.3
 pandas-ta==0.3.14b0
 split-file-reader==0.1.0
-autopep8==2.0.0
+autopep8==2.0.1
 pytest-cov==4.0.0
