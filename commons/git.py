@@ -21,7 +21,7 @@ def reset_soft(branch: str = "main", base: str = "git", **kwargs):
 
 
 def reset_hard(branch: str = "main", base: str = "git", **kwargs):
-    cmd(base, "reset", "--hard", branch, **kwargs)
+    cmd(base, "reset", "--hard",  branch, **kwargs)
 
 
 def checkout_file(
@@ -86,8 +86,8 @@ def get_branch(base: str = "git", **kwargs):
     return cmd(base, "branch", "--show-current", **kwargs).strip()
 
 
-def remote_branch(base: str = "git", **kwargs):
-    return cmd(base, "branch", "-r", **kwargs).strip()
+def branch(base: str = "git", **kwargs):
+    return cmd(base, "branch", **kwargs).strip()
 
 
 def cmd(*args, **kwargs):

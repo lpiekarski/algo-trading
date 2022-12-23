@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+from time import sleep
 
 import pandas as pd
 
@@ -44,12 +45,13 @@ def submit_to_drive(
                 "parameters/dataset": [],
                 "parameters/label": []
             } | {f"eval/{metric}": [] for metric, _ in eval.items()}, index=pd.DatetimeIndex([], name='date'))
+            results.to_csv(local_path)
         try:
             version = git.file_version(f"model/predictors/{model}.py")
             if Config.get_param('drive') == 'git':
-                if git.get_branch() != 'master':
+                if git.get_branch() != 'main':
                     raise SubmissionError(
-                        'Submitting results from non-master branch is prohibited.')
+                        'Submitting results from non-main branch is prohibited.')
                 if version.endswith("-dirty"):
                     raise SubmissionError(
                         'Submitting results from a dirty predictor file is prohibited. Commit or revert the changes.')
@@ -64,7 +66,8 @@ def submit_to_drive(
             LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")
             if task is not None:
                 task.connect(run.iloc[0].to_dict())
-            pd.concat([results, run]).to_csv(local_path)
+            results = pd.concat([results, run])
+            results.to_csv(local_path)
         finally:
             if task is not None:
                 task.close()

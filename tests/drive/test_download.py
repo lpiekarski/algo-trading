@@ -5,7 +5,11 @@ import os
 
 
 def test_download_git():
-    Config.set_param("DRIVER", "git")
+    try:
+        os.makedirs(".tmp/tests/")
+    except Exception:
+        pass
+    Config.set_param("DRIVE", "git")
     Config.set_param("GIT_DRIVE_REPO_URL", "https://github.com/S-P-2137/Data")
     remote_path = "datasets/train/M30_H1"
     local_path = ".tmp/tests/test_download_git"
@@ -15,7 +19,11 @@ def test_download_git():
 
 
 def test_download_local():
-    Config.set_param("DRIVER", "local")
+    try:
+        os.makedirs(".tmp/tests/")
+    except Exception:
+        pass
+    Config.set_param("DRIVE", "local")
 
     remote_path = ".tmp/tests/test.csv"
     local_path = ".tmp/tests/test_download_git"

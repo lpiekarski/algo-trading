@@ -46,6 +46,7 @@ def upload(local_path: str, cloud_path: str) -> None:
         with SplitFileWriter(f"{add_path}.zip.", max_file_size) as sfw:
             with zipfile.ZipFile(file=sfw, mode='w') as zf:
                 zf.write(local_path, os.path.basename(cloud_path))
+        print(add_path)
         for file in split_filenames(f"{add_path}.zip."):
             git.add(os.path.abspath(file), cwd=tempdir)
             git.commit(f"Automated: add '{file}' to the storage", cwd=tempdir)
@@ -111,3 +112,14 @@ def split_filenames(path: str):
     while os.path.exists(f"{path}{i:03}"):
         yield f"{path}{i:03}"
         i += 1
+
+
+def is_branch_exist(branch: str, base: str = "git"):
+    with TempDir() as tempdir:
+        initialize(tempdir)
+        try:
+            git.checkout(branch, cwd=tempdir)
+            git.fetch(branch, cwd=tempdir)
+        except CalledProcessError as e:
+            return False
+    return True

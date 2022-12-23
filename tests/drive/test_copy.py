@@ -1,4 +1,5 @@
 import filecmp
+import os
 
 from commons.configparams import Config
 from commons.testing import mocks
@@ -7,6 +8,10 @@ from drive.steps.delete import delete
 
 
 def test_copy_local():
+    try:
+        os.makedirs(".tmp/tests/")
+    except Exception:
+        pass
     dataset = mocks.dataset(1010)
     df = dataset.df
     start_path = ".tmp/tests/test_copy_local"
@@ -17,9 +22,13 @@ def test_copy_local():
 
 
 def test_copy_git():
+    try:
+        os.makedirs(".tmp/tests/")
+    except Exception:
+        pass
     dataset = mocks.dataset(1010)
     df = dataset.df
-    Config.set_param("DRIVER", "git")
+    Config.set_param("DRIVE", "git")
     Config.set_param("GIT_DRIVE_REPO_URL", "https://github.com/S-P-2137/Data_test")
 
     start_path = ".tmp/tests/test_copy"
