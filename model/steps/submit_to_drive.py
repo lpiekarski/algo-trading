@@ -19,11 +19,15 @@ def submit_to_drive(
         dataset_name,
         label,
         task=None,
+        result_file_path=None,
         **kwargs):
     LOGGER.info("Storing the results")
 
     with TempDir() as tempdir:
-        cloud_path = "evaluation/results.csv"
+        if result_file_path is None:
+            cloud_path = "evaluation/results.csv"
+        else:
+            cloud_path = result_file_path
         local_path = os.path.join(tempdir, cloud_path)
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
         drive_type = os.getenv("drive")

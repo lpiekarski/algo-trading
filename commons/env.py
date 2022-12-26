@@ -19,9 +19,14 @@ def require_env(name: str) -> str:
     return value
 
 
-def set_env_from_file(filename: str) -> None:
-    """Read env file consisting of "var_name=value" lines. Store environmental variables present in that file
-    directly to os.environ. """
+def set_env_from_file(filename: str) -> dict:
+    """
+    Read env file consisting of "var_name=value" lines. Store environmental variables present in that file
+    directly to os.environ.
+
+    Returns a dictionary of all variables read from the file
+    """
+    result = {}
     with open(filename, "r") as f:
         lines = f.readlines()
         # Filter out empty lines and comments
@@ -34,6 +39,8 @@ def set_env_from_file(filename: str) -> None:
                 raise ArgumentError(f"Invalid argument '{entry}'")
             var, value = entry_split
             os.environ[var] = value
+            result[var] = value
+    return result
 
 
 def initialize_default_env() -> None:

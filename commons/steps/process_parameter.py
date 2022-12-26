@@ -12,7 +12,7 @@ def process_parameter(param_name: str, optional=False):
             param_value = os.getenv(param_name)
             if param_value is None:
                 if optional:
-                    LOGGER.warning(f"'{param_name}' is not set.")
+                    LOGGER.debug(f"'{param_name}' is not set.")
                 else:
                     raise ArgumentError(
                         f"Provide --{param_name} option or set it through an environment variable '{param_name}'.")

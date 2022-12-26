@@ -7,10 +7,8 @@ import commons.testing.mocks as mocks
 
 def test_convert_csv_to_dataset(tmpdir):
     df = mocks.ohlc_dataframe()
-    source = os.path.join(tmpdir, 'source')
-    target = os.path.join(tmpdir, 'target')
-    print(source)
-    print(target)
+    source = os.path.relpath(os.path.join(tmpdir, 'source'), ".")
+    target = os.path.relpath(os.path.join(tmpdir, 'target'), ".")
     df.to_csv(source, index_label="Date")
     convert_csv_to_dataset(f"local:{source}", f"local:{target}")
     dataset = Dataset.load(target)

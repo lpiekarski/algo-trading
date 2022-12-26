@@ -51,20 +51,24 @@ LOGGER = logging.getLogger(__name__)
               help="Set environment variable e.g. -Dvar=value")
 @click.option("-E", "--envfile", help="Path to the file with environmental variables' definition", default=None)
 def atf(env, envfile):
+    collected_env = {}
     if envfile is not None:
-        set_env_from_file(envfile)
-    set_env_from_options(env)
+        collected_env |= set_env_from_file(envfile)
+    collected_env |= set_env_from_options(env)
+    init_logging()
+    LOGGER.debug(f"env:\n\t{TAB.join([f'{k}={v}' for k, v in collected_env.items()])}")
 
 
 def set_env_from_options(env):
+    result = {}
     for entry in env:
         entry_split = entry.split("=", 1)
         if len(entry_split) != 2:
             raise ArgumentError(f"Invalid argument '{entry}'")
         var, value = entry_split
         os.environ[var] = value
-    init_logging()
-    LOGGER.debug(f"env:\n\t{(ENDLINE + TAB).join(env)}")
+        result[var] = value
+    return result
 
 
 if __name__ == '__main__':

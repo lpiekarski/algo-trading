@@ -91,5 +91,8 @@ def cmd(*args, **kwargs):
     sp = subprocess.run(args, capture_output=True, encoding='utf-8', **kwargs)
     output = sp.stdout
     LOGGER.debug(output)
+    if sp.returncode != 0:
+        LOGGER.warning(
+            f"command ({kwargs}):\n{args}\nFailed with\n====stderr====\n{sp.stderr}\n====stdout====\n{sp.stdout}")
     sp.check_returncode()
     return output
