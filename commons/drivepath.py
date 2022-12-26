@@ -3,9 +3,9 @@ import logging
 import os
 from typing import Union
 
-from commons.configparams import Config
 from commons.drive import get_drive_module
 from commons.drive_utils import get_cache_dir
+from commons.env import require_env
 from commons.exceptions import NotFoundError
 from commons.tempdir import TempDir
 
@@ -13,7 +13,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Drivepath:
+    """Objects representing a certain path on a specified drive."""
+
     def __init__(self, drivepath: str):
+        """Initialize drivepath object. The parameter is a concatenated drive and path in a format "drive:path" e.g.
+        "git:datasets/dataset1.zip" """
         drive_type, path = split(drivepath)
         self.drive_type = drive_type
         self.path = path
@@ -22,7 +26,12 @@ class Drivepath:
         return f"{self.drive_type}:{self.path}"
 
 
-def cache(p: Union[Drivepath, str]):
+def cache(p: Union[Drivepath, str]) -> (str, str):
+    """
+    Store file from drivepath "p" in cache directory.
+    Returns a pair of local paths. First one is the path of the actual file,
+    the second one is the path of a corresponding md5 checksum file.
+    """
     p = from_string(p)
     LOGGER.debug(f"Caching file '{p}'")
     drive = get_drive_module(p.drive_type)
@@ -117,10 +126,10 @@ def split(p: str):
             name = name[1:]
         return drive, name
     else:
-        return Config.require_param('drive'), p
+        return require_env('drive'), p
 
 
-def from_string(drivepath):
+def from_string(drivepath: Union[Drivepath, str]) -> Drivepath:
     if isinstance(drivepath, str):
         return Drivepath(drivepath)
     else:

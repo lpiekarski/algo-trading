@@ -9,6 +9,7 @@ from collector.collect import collect_group
 from collector.csv2dataset import csv2dataset_group
 from collector.dataset2csv import dataset2csv_group
 from collector.extract import extract_group
+from commons.env import set_env_from_file
 from commons.logging import init_logging
 from commons.exceptions import ArgumentError, AtfError
 from commons.string import ENDLINE, TAB
@@ -48,7 +49,14 @@ LOGGER = logging.getLogger(__name__)
 )
 @click.option("-D", "env", multiple=True,
               help="Set environment variable e.g. -Dvar=value")
-def atf(env):
+@click.option("-E", "--envfile", help="Path to the file with environmental variables' definition", default=None)
+def atf(env, envfile):
+    if envfile is not None:
+        set_env_from_file(envfile)
+    set_env_from_options(env)
+
+
+def set_env_from_options(env):
     for entry in env:
         entry_split = entry.split("=", 1)
         if len(entry_split) != 2:

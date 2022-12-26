@@ -1,8 +1,7 @@
 import logging
-from multiprocessing import Process
+import zipfile
 
-from commons.configparams import Config
-from commons.env import Env
+from commons.env import TempEnv
 from commons.tempdir import TempDir
 from commons.timing import step
 import pytest
@@ -13,10 +12,16 @@ LOGGER = logging.getLogger(__name__)
 
 @step
 def unit_tests(*args, **kwargs):
-    with TempDir() as td:
-        Config.set_param("UNIT_TESTING", "True")
-        Config.set_param("drive", "test")
-        Config.set_param("test_workspace", os.path.abspath(os.path.normpath(td)))
-        exit_code = pytest.main(["--cov-report=term-missing", "--cov=.", "tests/"])
+    with zipfile.ZipFile(file="unit_tests/resources.zip", mode='r') as zf:
+        zf.extractall("unit_tests/resources/")
+    with TempDir("unit_tests/resources"), TempEnv(UNIT_TESTING="True"):
+        exit_code = pytest.main([
+            "--cov-report=term-missing",
+            "--cov=.",
+            "unit_tests/tests/",
+            "--basetemp",
+            os.getenv("TEMP_DIR")
+        ])
+
     if exit_code != 0:
         raise AssertionError("Unit test failure")

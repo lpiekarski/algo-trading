@@ -1,35 +1,59 @@
 import os
-
-__all__ = ["getenv", "require_env"]
-
 from commons.exceptions import ArgumentError
 
+__all__ = ["require_env", "set_env_from_file", "TempEnv"]
 
-def getenv(name, default=None):
+DEFAULT_ENV = dict(
+    CACHE_DIR="./.cache",
+    TEMP_DIR="./.tmp",
+    DRIVE="local",
+    GIT_DRIVE_MAX_FILE_SIZE="100000000"
+)
+
+
+def require_env(name: str) -> str:
+    """Get environmental variable with given name. Raise "ArgumentError" if the variable has no value set."""
     value = os.getenv(name)
     if value is None:
-        if hasattr(DefaultEnv, name):
-            return getattr(DefaultEnv, name)
-        return default
-    return value
-
-
-def require_env(name):
-    value = os.getenv(name)
-    if value is None:
-        if hasattr(DefaultEnv, name):
-            return getattr(DefaultEnv, name)
         raise ArgumentError(f"Missing environment variable '{name}'")
     return value
 
 
-class Env:
+def set_env_from_file(filename: str) -> None:
+    """Read env file consisting of "var_name=value" lines. Store environmental variables present in that file
+    directly to os.environ. """
+    with open(filename, "r") as f:
+        lines = f.readlines()
+        # Filter out empty lines and comments
+        lines = list(filter(lambda line: line != "", lines))
+        lines = list(filter(lambda line: not line.isspace(), lines))
+        lines = list(filter(lambda line: not line.strip().startswith("#"), lines))
+        for entry in lines:
+            entry_split = entry.split("=", 1)
+            if len(entry_split) != 2:
+                raise ArgumentError(f"Invalid argument '{entry}'")
+            var, value = entry_split
+            os.environ[var] = value
+
+
+def initialize_default_env() -> None:
+    """Set environmental variables from DEFAULT_ENV to their values."""
+    for key, value in DEFAULT_ENV.items():
+        os.environ[key] = value
+
+
+class TempEnv:
+    """
+    Temporarily set values for environmental variables, then restore back previous values.
+    !!!NOT THREAD SAFE!!!
+    """
+
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self.old_values = None
 
     def __enter__(self):
-        self.old_values = {k: getenv(k) for k, _ in self.kwargs.items()}
+        self.old_values = {k: os.getenv(k) for k, _ in self.kwargs.items()}
         for k, v in self.kwargs.items():
             os.environ[k] = v
 
@@ -41,9 +65,4 @@ class Env:
                 os.environ[k] = v
 
 
-# TODO: Remove DefaultEnv when there is configparam...
-class DefaultEnv:
-    CACHE_DIR = './.cache'
-    TEMP_DIR = './.tmp'
-    drive = 'local'
-    GIT_DRIVE_MAX_FILE_SIZE = '100000000'
+initialize_default_env()
