@@ -1,4 +1,4 @@
-import collector.technical_indicators.technical_indicators as ti
+import commons.data.indicators as ti
 import commons.testing.mocks as mocks
 
 
