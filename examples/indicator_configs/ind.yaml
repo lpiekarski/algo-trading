@@ -1,0 +1,38 @@
+sma: [10, 20, 50, 100, 200]
+ema: [10, 20, 50, 100, 200]
+dema: [10, 20, 50, 100, 200]
+kama: [10, 20, 50, 100, 200]
+bolinger_bands: ~
+ichimoku: ~
+parabolic_sar: ~
+stdev: [10, 20, 50, 100, 200]
+stdev_percentage: [10, 20, 50, 100, 200]
+linreg: [10, 20, 50, 100, 200]
+atr: [14]
+rsi: [14, 26]
+cci: [20, 50]
+momentum: [10, 14, 21]
+macd: ~
+stochrsi: [14, [46, 46]]
+stoch: ~
+rvi: [14]
+willr: [14]
+ao: ~
+ha: ~
+donchian: ~
+kelch: [20]
+bop: ~
+uo: ~
+accbands: ~
+cyclical_datetime: ~
+us_time: ~
+on_balance_volume: ~
+chaikin_money_flow: ~
+klinger_oscillator: ~
+money_flow_index: ~
+negative_volume_index: ~
+price_volume: ~
+ad_oscillator: ~
+ease_of_movement: ~
+rsi_volume: [5, 14, 26]
+vwap: ~

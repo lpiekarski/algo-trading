@@ -13,8 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 @step
 def submit_to_drive(
-        binary_cross_entropy,
-        accuracy,
+        eval,
         model,
         dataset_name,
         label,
@@ -44,10 +43,8 @@ def submit_to_drive(
                 "parameters/model": [],
                 "parameters/version": [],
                 "parameters/dataset": [],
-                "parameters/label": [],
-                "eval/binary_cross_entropy": [],
-                "eval/accuracy": []
-            }, index=pd.DatetimeIndex([], name='date'))
+                "parameters/label": []
+            } | {f"eval/{metric}": [] for metric, _ in eval.items()}, index=pd.DatetimeIndex([], name='date'))
         try:
             version = git.file_version(f"model/predictors/{model}.py")
             if os.getenv('drive') == 'git':
@@ -62,9 +59,7 @@ def submit_to_drive(
                 "parameters/version": [version],
                 "parameters/dataset": [str(dataset_name)],
                 "parameters/label": [str(label)],
-                "eval/binary_cross_entropy": [binary_cross_entropy],
-                "eval/accuracy": [accuracy]
-            }
+            } | {f"eval/{metric}": [value] for metric, value in eval.items()}
             run = pd.DataFrame(params, index=pd.DatetimeIndex(
                 [datetime.datetime.now()], name='date'))
             LOGGER.info(f"Submitting evaluation:\n{run.to_string()}")

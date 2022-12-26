@@ -1,10 +1,9 @@
-import json
+import yaml
 import logging
 import os
 from typing import Union
 
-from commons.drive_utils import get_cache_dir
-from commons.drivepath import Drivepath, cache, copy, from_string
+from commons.drivepath import Drivepath, cache, copy
 
 __all__ = ["download_model_weights", "upload_model_weights", "download_model_config"]
 
@@ -24,4 +23,4 @@ def upload_model_weights(local_path: str, drivepath: Union[Drivepath, str]):
 def download_model_config(drivepath: Union[Drivepath, str]):
     file, _ = cache(drivepath)
     with open(file, 'r') as f:
-        return json.load(f)
+        return yaml.load(f, yaml.CLoader)

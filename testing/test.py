@@ -29,4 +29,4 @@ def test_group():
     conditional(not_interrupting(format_tests), "skip_format_tests", negation=True),
 ])
 def test(*args, **kwargs):
-    pass
+    """Run tests"""

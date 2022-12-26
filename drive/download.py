@@ -18,4 +18,4 @@ def download_group():
     download
 ])
 def download(*args, **kwargs):
-    pass
+    """Download a file from the default drive"""

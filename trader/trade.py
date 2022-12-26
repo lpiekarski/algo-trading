@@ -15,4 +15,4 @@ def trade_group():
 @click.option("--input", "-i", help="Input file to base the decisions from")
 @subcommand([])
 def trade(*args, **kwargs):
-    pass
+    """Trade based on a given input"""

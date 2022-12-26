@@ -18,4 +18,4 @@ def upload_group():
     upload
 ])
 def upload(*args, **kwargs):
-    pass
+    """Upload a file to the default drive"""
