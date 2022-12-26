@@ -20,7 +20,8 @@ LOGGER = logging.getLogger(__name__)
 def initialize(tempdir: str) -> None:
     git_password = os.getenv('GIT_PASSWORD')
     repo_url = require_env('GIT_DRIVE_REPO_URL')
-    if git_password is not None:
+    # Check for protocol requiring git password
+    if git_password is not None and repo_url.startswith("http"):
         parsed = urlparse(repo_url)
         repo_url = parsed._replace(netloc=f'{git_password}@{parsed.netloc}').geturl()
     git.clone_no_checkout(repo_url, tempdir)
