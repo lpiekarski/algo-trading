@@ -3,7 +3,7 @@ import numpy as np
 
 interface = {
     'initialize': {
-        'parameter_types': [Any],
+        'parameter_types': [int, dict],
         'return_type': None
     },
     'predict': {

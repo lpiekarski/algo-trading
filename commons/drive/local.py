@@ -3,7 +3,7 @@ import shutil
 import os
 
 from commons.env import getenv
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import NotFoundError
 
 __all__ = ["upload", "download"]
 
@@ -23,7 +23,7 @@ def upload(local_path: str, cloud_path: str) -> None:
 
 def download(cloud_path: str, local_path: str) -> None:
     if not os.path.exists(cloud_path):
-        raise CloudFileNotFoundError(
+        raise NotFoundError(
             f"Cannot find file in location: '{cloud_path}'")
     LOGGER.debug(
         f"Local drive copying file from '{formpath(cloud_path)}' to '{formpath(local_path)}'")
@@ -35,7 +35,7 @@ def download(cloud_path: str, local_path: str) -> None:
 
 def delete(cloud_path: str) -> None:
     if not os.path.exists(cloud_path):
-        raise CloudFileNotFoundError(
+        raise NotFoundError(
             f"Cannot find file in location: '{cloud_path}'")
     LOGGER.debug(
         f"Local drive deleting file from '{os.path.normpath(cloud_path)}'")

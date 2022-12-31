@@ -1,38 +1,33 @@
-import sys
-
 import pandas as pd
 import pandas_ta as pta
 import numpy as np
 
-from commons.data.dataset import Dataset
-from commons.data.utils import log_change
-
 
 def sma(df, time_tag, length):
     return [pd.Series(
-        name=f'SMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.sma(df["Close"], length=length))
+        name=f'SMA_{length}_{time_tag}',
+        data=pta.sma(df["Close"], length=length)
     )]
 
 
 def ema(df, time_tag, length):
     return [pd.Series(
-        name=f'EMA_log_change_{length}_{time_tag}',
-        data=log_change(pta.ema(df["Close"], length=length))
+        name=f'EMA_{length}_{time_tag}',
+        data=pta.ema(df["Close"], length=length)
     )]
 
 
 def dema(df, time_tag, length):
     return [pd.Series(
         name=f'DEMA_{length}_{time_tag}',
-        data=log_change(pta.dema(df["Close"], length=length))
+        data=pta.dema(df["Close"], length=length)
     )]
 
 
 def kama(df, time_tag, length):
     return [pd.Series(
         name=f'kama_{length}_{time_tag}',
-        data=log_change(pta.kama(df["Close"], length=length))
+        data=pta.kama(df["Close"], length=length)
     )]
 
 
@@ -86,7 +81,7 @@ def ichimoku(df, time_tag):
 
 
 def parabolic_sar(df, time_tag):
-    psar = pta.psar(df['High'], df['Low'])
+    psar = pta.psar(df['High'], df['Low'], fillna=0)
     return [
         pd.Series(
             name=f'PSAR_PSARl_0.02_0.2_{time_tag}',
@@ -394,16 +389,6 @@ def us_time(df, time_tag):
                     df.index.minute >= 30)).astype(int),
             index=df.index)]
 
-
-def price_log_change(df, time_tag):
-    return [
-        pd.Series(
-            name=f'{col}_log_change_{time_tag}',
-            data=log_change(df[col])
-        )
-        for col in ["Open", "High", "Low", "Close"]
-    ]
-
 # Volume indicators
 # OBV (on-Balance Volume)
 
@@ -493,64 +478,11 @@ def rsi_volume(df, time_tag, length):
         data=pta.rsi(df['Volume'], length=length)
     )]
 
-INDICATORS = dict(
-    sma=[10, 20, 50, 100, 200],
-    ema=[10, 20, 50, 100, 200],
-    dema=[10, 20, 50, 100, 200],
-    kama=[10, 20, 50, 100, 200],
-    bolinger_bands=None,
-    ichimoku=None,
-    parabolic_sar=None,
-    stdev=[10, 20, 50, 100, 200],
-    stdev_percentage=[10, 20, 50, 100, 200],
-    linreg=[10, 20, 50, 100, 200],
-    atr=[14],
-    rsi=[14, 26],
-    cci=[20, 50],
-    momentum=[10, 14, 21],
-    macd=None,
-    stochrsi=[14, [46, 46]],
-    stoch=None,
-    rvi=[14],
-    willr=[14],
-    ao=None,
-    ha=None,
-    donchian=None,
-    kelch=[20],
-    bop=None,
-    uo=None,
-    accbands=None,
-    cyclical_datetime=None,
-    us_time=None,
-    price_log_change=None,
-    on_balance_volume=None,
-    chaikin_money_flow=None,
-    klinger_oscillator=None,
-    money_flow_index=None,
-    negative_volume_index=None,
-    price_volume=None,
-    ad_oscillator=None,
-    ease_of_movement=None,
-    rsi_volume=[5, 14, 26]
-)
 
-
-def add_technical_indicators(dataset, time_tag):
-    df = dataset.df if isinstance(dataset, Dataset) else dataset
-    collected_indicators = [df]
-    for indicator, params in INDICATORS.items():
-        indicator_func = getattr(sys.modules[__name__], indicator)
-        if params is None:
-            collected_indicators.extend(indicator_func(df, time_tag))
-        else:
-            for param in params:
-                if isinstance(param, list):
-                    collected_indicators.extend(
-                        indicator_func(df, time_tag, *param))
-                elif isinstance(param, dict):
-                    collected_indicators.extend(
-                        indicator_func(df, time_tag, **param))
-                else:
-                    collected_indicators.extend(
-                        indicator_func(df, time_tag, param))
-    return pd.concat(collected_indicators, axis=1)
+def vwap(df, time_tag):
+    return [
+        pd.Series(
+            name=f'VWAP_{time_tag}',
+            data=pta.vwap(df['High'], df['Low'], df['Close'], df['Volume'])
+        )
+    ]

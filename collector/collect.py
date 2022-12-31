@@ -40,4 +40,4 @@ def collect_group():
     save_dataset
 ])
 def collect(*args, **kwargs):
-    pass
+    """Collect OHLCV data from an external source and save it as a dataset"""

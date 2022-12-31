@@ -10,7 +10,7 @@ from collector.csv2dataset import csv2dataset_group
 from collector.dataset2csv import dataset2csv_group
 from collector.extract import extract_group
 from commons.logging import init_logging
-from commons.exceptions import ArgumentError, BotError
+from commons.exceptions import ArgumentError, AtfError
 from commons.string import ENDLINE, TAB
 from commons.timing import command_failure
 from drive.copy import copy_group
@@ -62,11 +62,7 @@ def atf(env):
 if __name__ == '__main__':
     try:
         atf()
-    except BotError as e:
-        LOGGER.error(f"Error during command execution: {e}")
-        command_failure(LOGGER)
-        sys.exit(-1)
-    except Exception as e:
-        LOGGER.error(f"Error during command execution: {e}", exc_info=e)
-        command_failure(LOGGER)
+    except AtfError as e:
+        sys.exit(1)
+    except RuntimeError as e:
         sys.exit(-1)

@@ -21,7 +21,8 @@ def train_group():
 
 
 @train_group.command()
-@click.option("--model", "-m", help="Drivepath of the model's weights file. The name of the file must match the name of the model module")
+@click.option("--model", "-m",
+              help="Drivepath of the model's weights file. The name of the file must match the name of the model module")
 @click.option("--model-config", "-mc", help="Drivepath of the model's configuration file (in JSON format)")
 @click.option("--dataset", "-d", help="Drivepath of the training dataset")
 @click.option("--no-save",
@@ -51,4 +52,4 @@ def train_group():
     conditional(save_weights, "no_save", negation=True)
 ])
 def train(*args, **kwargs):
-    pass
+    """Train a model on a given dataset"""

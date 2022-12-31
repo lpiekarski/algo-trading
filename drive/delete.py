@@ -17,4 +17,4 @@ def delete_group():
     delete
 ])
 def delete(*args, **kwargs):
-    pass
+    """Delete file from local or remote location"""

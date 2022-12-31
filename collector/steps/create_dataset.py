@@ -6,7 +6,7 @@ from commons.timing import step
 import yfinance as yf
 from dateutil import parser
 from dateutil.parser import ParserError
-from commons.exceptions import BotError, DataDownloadError
+from commons.exceptions import DataDownloadError, ArgumentError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ def create_dataset(date, **kwargs):
         try:
             start_date = parser.parse(date)
         except ParserError as e:
-            raise BotError(f"Failed to parse date '{date}'")
+            raise ArgumentError(f"Failed to parse date '{date}'")
         end_date = start_date + datetime.timedelta(hours=1)
         start_date = start_date.replace(minute=0, second=0, microsecond=0)
         end_date = end_date.replace(minute=0, second=0, microsecond=0)

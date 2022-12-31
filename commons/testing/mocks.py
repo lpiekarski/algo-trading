@@ -3,11 +3,18 @@ import numpy as np
 import pandas as pd
 
 
-def dataset(size=1000):
+def dataset(size=500):
     return Dataset(ohlc_dataframe(size))
 
 
-def ohlc_dataframe(size=1000):
+def labeled_dataset(size=500):
+    d = dataset(size)
+    d.add_label('label1', [1] * size)
+    d.add_label('label2', np.random.uniform(0, 1, size))
+    return d
+
+
+def ohlc_dataframe(size=500):
     sequence = np.random.randint(100, 201, size)
     return pd.DataFrame({
         'Open': sequence + 0.25 + 0.1 * np.random.randn(sequence.shape[0]),

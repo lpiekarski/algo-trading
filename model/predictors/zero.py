@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 
-def initialize(config_json: Any) -> None:
+def initialize(num_features: int, config: dict) -> None:
     pass
 
 
@@ -16,9 +16,9 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     pass
 
 
-def save(path: str) -> None:
+def save_weights(path: str) -> None:
     pass
 
 
-def load(path: str) -> None:
+def load_weights(path: str) -> None:
     pass

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 from commons.env import getenv
-from commons.exceptions import BotError, NotInterruptingError
+from commons.exceptions import NonInterruptingError, CommandFailedError
 from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, WARNING, break_padded
 
 LOGGER = logging.getLogger(__name__)
@@ -68,7 +68,8 @@ def step(step_func):
             return result
         except Exception as e:
             s.resolve('FAILURE')
-            if not isinstance(e, NotInterruptingError):
+            LOGGER.error('Step failed:', exc_info=e)
+            if not isinstance(e, NonInterruptingError):
                 raise e
         finally:
             execution_id += 1
@@ -111,13 +112,17 @@ def set_step_ids(LOGGER):
 
 def execute_steps(LOGGER, args, kwargs):
     previous_step_result = dict()
+    result_status = 'SUCCESS'
     for s in steps:
         if previous_step_result is not None and isinstance(
                 previous_step_result, dict):
             kwargs.update(**previous_step_result)
         previous_step_result = s.callback(*args, **kwargs)
+        if s.result == 'FAILURE':
+            result_status = 'FAILURE'
         LOGGER.debug(f"Step completed, kwargs:")
         LOGGER.debug(f"\t{kwargs}")
+    return result_status
 
 
 def subcommand(step_list):
@@ -129,9 +134,15 @@ def subcommand(step_list):
             log_execution_plan(
                 LOGGER, subcommand_func.__module__, subcommand_func.__name__)
             set_step_ids(LOGGER)
-            execute_steps(LOGGER, args, kwargs)
-            subcommand_func(*args, **kwargs)
-            command_success(LOGGER)
+            status = 'FAILURE'
+            try:
+                status = execute_steps(LOGGER, args, kwargs)
+                subcommand_func(*args, **kwargs)
+            except Exception as e:
+                LOGGER.error('Executing steps failed with following exception:', exc_info=e)
+            log_command_resolution(LOGGER, status)
+            if status == 'FAILURE':
+                raise CommandFailedError(f"Command ended with status '{status}'")
         return wrapper
     return inner
 
@@ -157,8 +168,6 @@ def log_command_resolution(LOGGER, status):
         else:
             log_func(
                 f"{s.name + ' ' :.<52} {color_status(s.result)} [{s.end - s.start :.5f} s]")
-            if s.result == 'FAILURE':
-                status = 'FAILURE'
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
     LOGGER.info(f"COMMAND {color_status(status)}")
     LOGGER.info(f"{BOLD}{BREAK}{ENDC}")

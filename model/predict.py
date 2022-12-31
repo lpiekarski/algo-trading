@@ -35,4 +35,4 @@ def predict_group():
     save_prediction_result
 ])
 def predict(*args, **kwargs):
-    pass
+    """Generate model predictions for given data"""

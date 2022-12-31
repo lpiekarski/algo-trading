@@ -4,14 +4,14 @@ import pandas as pd
 import os
 import json
 from commons.env import getenv
-from commons.exceptions import BotError
+from commons.exceptions import AtfError, ArgumentError, IncompatibleDatasetsError, DatasetValidationError
 from commons.tempdir import TempDir
 
 
 class Dataset:
     def __init__(self, df: pd.DataFrame, labels=None, interval=None):
         if not isinstance(df.index, pd.DatetimeIndex):
-            raise BotError("Dataframe is required to have DatetimeIndex")
+            raise DatasetValidationError("Dataframe is required to have DatetimeIndex")
         self.df = df.dropna(
             axis=0, subset=["Open", "High", "Low", "Close", "Volume"])
         if labels is not None:
@@ -70,9 +70,9 @@ class Dataset:
             other_df = other.df
             other_labels = other.labels
         else:
-            raise BotError(f"Cannot concatenate dataset with {type(other)}")
+            raise IncompatibleDatasetsError(f"Cannot concatenate dataset with {type(other)}")
         if self.interval != other_interval:
-            raise BotError(
+            raise IncompatibleDatasetsError(
                 "Cannot concatenate datasets with different intervals")
         self.df = pd.concat([self.df, other_df], **kwargs)
         self.labels = list(dict.fromkeys(self.labels + other_labels))
@@ -91,11 +91,14 @@ class Dataset:
         if label in self.labels:
             return self.df[label]
         else:
-            raise BotError(f"'{label}' is not a valid label for the dataset")
+            raise ArgumentError(f"'{label}' is not a valid label for the dataset")
 
     def add_label(self, name, series):
         self.labels.append(name)
         self.df[name] = series
+
+    def num_features(self) -> int:
+        return self.df.shape[1] - len(self.labels)
 
 
 def infer_interval(df: pd.DataFrame):

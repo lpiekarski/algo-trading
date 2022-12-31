@@ -1,4 +1,5 @@
 from inspect import signature
+from typing import Any
 
 
 def validate_shape(module, interface):
@@ -16,13 +17,19 @@ def validate_shape(module, interface):
         for parameter in sig.parameters.values():
             if not is_subtype(parameter.annotation, expected_param_types[i]):
                 raise AssertionError(
-                    f"Expected {func_name} from module {module.__name__} to have parameter with type '{parameter.annotation}', but it has type '{expected_param_types[i]}'")
+                    f"Expected {func_name} from module {module.__name__} to have parameter with type '{expected_param_types[i]}', but it has type '{parameter.annotation}'")
             i += 1
 
 
 def is_subtype(t1, t2):
-    if isinstance(t1, type) and isinstance(t2, type):
-        return t1 == t2
+    if t2 is Any:
+        return True
+    elif t1 is t2:
+        return True
+    elif t1 == t2:
+        return True
+    elif isinstance(t1, type) and isinstance(t2, type):
+        return t1 is t2
     elif isinstance(t1, type) or isinstance(t2, type):
         return False
     elif t1 is None:

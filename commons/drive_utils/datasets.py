@@ -7,7 +7,7 @@ from commons.drivepath import Drivepath, cache, clear_cache, copy, delete, from_
 
 __all__ = ["download_dataset", "upload_dataset"]
 
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import NotFoundError
 from commons.string import formpath
 from commons.tempdir import TempDir
 
@@ -32,7 +32,7 @@ def upload_dataset(
                 result_dataset = Dataset.load(file)
                 result_dataset.concat(dataset)
                 delete(drivepath)
-            except CloudFileNotFoundError:
+            except NotFoundError:
                 LOGGER.debug(
                     f"Dataset not found on the drive, creating (append=True)")
                 result_dataset = dataset

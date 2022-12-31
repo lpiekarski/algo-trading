@@ -6,11 +6,12 @@ from subprocess import CalledProcessError
 from split_file_reader import SplitFileReader
 from split_file_reader.split_file_writer.split_file_writer import SplitFileWriter
 import commons.git as git
-from commons.env import getenv
+from commons.env import getenv, require_env
+from urllib.parse import urlparse
 
 __all__ = ["upload", "download"]
 
-from commons.exceptions import CloudFileNotFoundError
+from commons.exceptions import NotFoundError
 from commons.string import formpath
 from commons.tempdir import TempDir
 
@@ -19,11 +20,11 @@ LOGGER = logging.getLogger(__name__)
 
 def initialize(tempdir):
     git_password = getenv('GIT_PASSWORD')
+    repo_url = require_env('GIT_DRIVE_REPO_URL')
     if git_password is not None:
-        REPO_URL = f"https://{getenv('GIT_PASSWORD')}@github.com/S-P-2137/Data"
-    else:
-        REPO_URL = f"https://github.com/S-P-2137/Data"
-    git.clone_no_checkout(REPO_URL, tempdir)
+        parsed = urlparse(repo_url)
+        repo_url = parsed._replace(netloc=f'{git_password}@{parsed.netloc}').geturl()
+    git.clone_no_checkout(repo_url, tempdir)
 
 
 def upload(local_path: str, cloud_path: str) -> None:
@@ -62,7 +63,7 @@ def download(cloud_path: str, local_path: str) -> None:
             git.checkout(cloud_path, cwd=tempdir)
             git.fetch(cloud_path, cwd=tempdir)
         except CalledProcessError as e:
-            raise CloudFileNotFoundError(
+            raise NotFoundError(
                 f"File not found in the repository. {e}")
         git.reset_soft(cloud_path, cwd=tempdir)
         try:
@@ -79,7 +80,7 @@ def download(cloud_path: str, local_path: str) -> None:
                 i += 1
             except CalledProcessError as e:
                 if i == 0:
-                    raise CloudFileNotFoundError(
+                    raise NotFoundError(
                         f"File not found in the repository. {e}")
                 else:
                     break
@@ -102,7 +103,7 @@ def delete(cloud_path: str) -> None:
         try:
             git.delete_branch(cloud_path, cwd=tempdir)
         except CalledProcessError as e:
-            raise CloudFileNotFoundError(e)
+            raise NotFoundError(e)
 
 
 def split_filenames(path: str):
