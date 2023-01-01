@@ -2,7 +2,6 @@ import logging
 import shutil
 import os
 
-from commons.env import getenv
 from commons.exceptions import NotFoundError
 
 __all__ = ["upload", "download"]

@@ -1,6 +1,5 @@
 import importlib
 import logging
-
 from commons.env import require_env
 
 LOGGER = logging.getLogger(__name__)

@@ -6,22 +6,22 @@ from subprocess import CalledProcessError
 from split_file_reader import SplitFileReader
 from split_file_reader.split_file_writer.split_file_writer import SplitFileWriter
 import commons.git as git
-from commons.env import getenv, require_env
 from urllib.parse import urlparse
-
-__all__ = ["upload", "download"]
-
+from commons.env import require_env
 from commons.exceptions import NotFoundError
 from commons.string import formpath
 from commons.tempdir import TempDir
 
+__all__ = ["upload", "download"]
+
 LOGGER = logging.getLogger(__name__)
 
 
-def initialize(tempdir):
-    git_password = getenv('GIT_PASSWORD')
+def initialize(tempdir: str) -> None:
+    git_password = os.getenv('GIT_PASSWORD')
     repo_url = require_env('GIT_DRIVE_REPO_URL')
-    if git_password is not None:
+    # Check for protocol requiring git password
+    if git_password is not None and repo_url.startswith("http"):
         parsed = urlparse(repo_url)
         repo_url = parsed._replace(netloc=f'{git_password}@{parsed.netloc}').geturl()
     git.clone_no_checkout(repo_url, tempdir)
@@ -31,7 +31,7 @@ def upload(local_path: str, cloud_path: str) -> None:
     with TempDir() as tempdir:
         initialize(tempdir)
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
-        max_file_size = int(getenv('GIT_DRIVE_MAX_FILE_SIZE'))
+        max_file_size = int(os.getenv('GIT_DRIVE_MAX_FILE_SIZE'))
         add_path = os.path.join(tempdir, os.path.basename(cloud_path))
         git.reset_hard("main", cwd=tempdir)
         git.checkout("main", cwd=tempdir)

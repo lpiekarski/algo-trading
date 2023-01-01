@@ -1,9 +1,8 @@
 import logging
 import time
+import os
 from datetime import datetime, timedelta
 from functools import wraps
-
-from commons.env import getenv
 from commons.exceptions import NonInterruptingError, CommandFailedError
 from commons.string import BOLD, BREAK, ENDC, FAIL, OKBLUE, OKCYAN, OKGREEN, UNDERLINE, WARNING, break_padded
 
@@ -47,16 +46,16 @@ class Step:
         return logger.debug if self.invisible else logger.info
 
     def log_title(self, logger):
-        LOG = self.get_log_func(logger)
-        LOG("")
-        LOG(
+        log = self.get_log_func(logger)
+        log("")
+        log(
             f"{BOLD}---{ENDC} {OKCYAN}{self.name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{self.module}{ENDC} [{self.id}] {BOLD}---{ENDC}")
 
 
 def step(step_func):
     @wraps(step_func)
     def wrap(*args, **kwargs):
-        if getenv("UNIT_TESTING") == "True":
+        if os.getenv("UNIT_TESTING") == "True":
             return step_func(*args, **kwargs)
         global execution_id
         s = steps[execution_id]
@@ -88,17 +87,17 @@ def initialize_steps(step_list):
         steps.append(s)
 
 
-def log_execution_plan(LOGGER, module, name):
-    LOGGER.info(BOLD + OKBLUE + break_padded(f"{module}:{name}") + ENDC)
-    LOGGER.info("")
-    LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
-    LOGGER.info("\tExecution plan:")
-    LOGGER.info("")
+def log_execution_plan(logger, module, name):
+    logger.info(BOLD + OKBLUE + break_padded(f"{module}:{name}") + ENDC)
+    logger.info("")
+    logger.info(f"{BOLD}{BREAK}{ENDC}")
+    logger.info("\tExecution plan:")
+    logger.info("")
     for s in steps:
-        s.get_log_func(LOGGER)(f"\t\t{s.name} @ {s.module}")
+        s.get_log_func(logger)(f"\t\t{s.name} @ {s.module}")
 
 
-def set_step_ids(LOGGER):
+def set_step_ids(logger):
     visible_step_count = len([s for s in steps if not s.invisible])
     current_step_id = 1
     for s in steps:
@@ -107,10 +106,10 @@ def set_step_ids(LOGGER):
         else:
             s.set_id(f'{current_step_id}/{visible_step_count}')
             current_step_id += 1
-    LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
+    logger.info(f"{BOLD}{BREAK}{ENDC}")
 
 
-def execute_steps(LOGGER, args, kwargs):
+def execute_steps(logger, args, kwargs):
     previous_step_result = dict()
     result_status = 'SUCCESS'
     for s in steps:
@@ -120,8 +119,8 @@ def execute_steps(LOGGER, args, kwargs):
         previous_step_result = s.callback(*args, **kwargs)
         if s.result == 'FAILURE':
             result_status = 'FAILURE'
-        LOGGER.debug(f"Step completed, kwargs:")
-        LOGGER.debug(f"\t{kwargs}")
+        logger.debug(f"Step completed, kwargs:")
+        logger.debug(f"\t{kwargs}")
     return result_status
 
 
@@ -129,52 +128,52 @@ def subcommand(step_list):
     def inner(subcommand_func):
         @wraps(subcommand_func)
         def wrapper(*args, **kwargs):
-            LOGGER = logging.getLogger(subcommand_func.__module__)
+            logger = logging.getLogger(subcommand_func.__module__)
             initialize_steps(step_list)
             log_execution_plan(
-                LOGGER, subcommand_func.__module__, subcommand_func.__name__)
-            set_step_ids(LOGGER)
+                logger, subcommand_func.__module__, subcommand_func.__name__)
+            set_step_ids(logger)
             status = 'FAILURE'
             try:
-                status = execute_steps(LOGGER, args, kwargs)
+                status = execute_steps(logger, args, kwargs)
                 subcommand_func(*args, **kwargs)
             except Exception as e:
-                LOGGER.error('Executing steps failed with following exception:', exc_info=e)
-            log_command_resolution(LOGGER, status)
+                logger.error('Executing steps failed with following exception:', exc_info=e)
+            log_command_resolution(logger, status)
             if status == 'FAILURE':
                 raise CommandFailedError(f"Command ended with status '{status}'")
         return wrapper
     return inner
 
 
-def command_success(LOGGER):
-    log_command_resolution(LOGGER, "SUCCESS")
+def command_success(logger):
+    log_command_resolution(logger, "SUCCESS")
 
 
-def command_failure(LOGGER):
-    log_command_resolution(LOGGER, "FAILURE")
+def command_failure(logger):
+    log_command_resolution(logger, "FAILURE")
 
 
-def log_command_resolution(LOGGER, status):
+def log_command_resolution(logger, status):
     end_time = time.time()
-    LOGGER.info(f"")
-    LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
-    LOGGER.info(f"Results:")
-    LOGGER.info(f"")
+    logger.info(f"")
+    logger.info(f"{BOLD}{BREAK}{ENDC}")
+    logger.info(f"Results:")
+    logger.info(f"")
     for s in steps:
-        log_func = LOGGER.debug if s.invisible else LOGGER.info
+        log_func = logger.debug if s.invisible else logger.info
         if not s.resolved:
             log_func(f"{s.name + ' ' :.<52} SKIPPED")
         else:
             log_func(
                 f"{s.name + ' ' :.<52} {color_status(s.result)} [{s.end - s.start :.5f} s]")
-    LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
-    LOGGER.info(f"COMMAND {color_status(status)}")
-    LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
-    LOGGER.info(f"Total time: {end_time - start_time :.5f} s")
-    LOGGER.info(
+    logger.info(f"{BOLD}{BREAK}{ENDC}")
+    logger.info(f"COMMAND {color_status(status)}")
+    logger.info(f"{BOLD}{BREAK}{ENDC}")
+    logger.info(f"Total time: {end_time - start_time :.5f} s")
+    logger.info(
         f"Finished at: {datetime.fromtimestamp(end_time).strftime('%Y-%m-%dT%H:%M:%S')}")
-    LOGGER.info(f"{BOLD}{BREAK}{ENDC}")
+    logger.info(f"{BOLD}{BREAK}{ENDC}")
 
 
 def color_status(status):

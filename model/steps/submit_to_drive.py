@@ -1,12 +1,9 @@
 import datetime
 import logging
 import os
-
 import pandas as pd
-
 import commons.git as git
-from commons.drivepath import clear_cache, copy, delete
-from commons.env import getenv
+from commons.drivepath import clear_cache, copy, delete, Drivepath
 from commons.exceptions import SubmissionError, NotFoundError
 from commons.tempdir import TempDir
 from commons.timing import step
@@ -21,14 +18,18 @@ def submit_to_drive(
         dataset_name,
         label,
         task=None,
+        result_file_path=None,
         **kwargs):
     LOGGER.info("Storing the results")
 
     with TempDir() as tempdir:
-        cloud_path = "evaluation/results.csv"
+        if result_file_path is None:
+            cloud_path = "evaluation/results.csv"
+        else:
+            cloud_path = result_file_path
         local_path = os.path.join(tempdir, cloud_path)
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        drive_type = getenv('drive')
+        drive_type = os.getenv("drive")
         drivepath = f"{drive_type}:{cloud_path}"
         try:
             copy(drivepath, f"local:{local_path}")
@@ -46,7 +47,7 @@ def submit_to_drive(
             } | {f"eval/{metric}": [] for metric, _ in eval.items()}, index=pd.DatetimeIndex([], name='date'))
         try:
             version = git.file_version(f"model/predictors/{model}.py")
-            if getenv('drive') == 'git':
+            if os.getenv('drive') == 'git':
                 if git.get_branch() != 'master':
                     raise SubmissionError(
                         'Submitting results from non-master branch is prohibited.')
