@@ -1,4 +1,4 @@
-from commons.drive import get_drive_module
+from core.drive import get_drive_module
 
 
 def upload(local_path, remote_path, **kwargs):

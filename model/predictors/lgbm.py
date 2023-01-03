@@ -5,7 +5,7 @@ import numpy as np
 import lightgbm as lgbm
 import os
 
-from commons.data.preprocessor import Preprocessor
+from core.data.preprocessor import Preprocessor
 
 model: lgbm.Booster = None
 preprocessor: Preprocessor = None

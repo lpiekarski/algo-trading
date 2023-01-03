@@ -1,8 +1,8 @@
 import os
 
 from collector.steps.convert_csv_to_dataset import convert_csv_to_dataset
-from commons.data.dataset import Dataset
-import commons.testing.mocks as mocks
+from core.data.dataset import Dataset
+import core.testing.mocks as mocks
 
 
 def test_convert_csv_to_dataset(tmpdir):

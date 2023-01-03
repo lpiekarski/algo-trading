@@ -2,7 +2,7 @@ import click
 
 __all__ = ["trade_group"]
 
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.subcommand_execution.execution_flow import execution_flow
 
 
 @click.group()

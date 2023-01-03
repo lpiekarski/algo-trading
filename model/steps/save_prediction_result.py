@@ -1,6 +1,6 @@
 import datetime
 import logging
-from commons.drive_utils.predictions import upload_prediction
+from core.drive_utils.predictions import upload_prediction
 import pandas as pd
 
 LOGGER = logging.getLogger(__name__)

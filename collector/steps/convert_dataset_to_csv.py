@@ -1,9 +1,9 @@
 import logging
 import os
 
-from commons.data.dataset import Dataset
-from commons.drivepath import copy
-from commons.tempdir import TempDir
+from core.data.dataset import Dataset
+from core.drivepath import copy
+from core.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
 

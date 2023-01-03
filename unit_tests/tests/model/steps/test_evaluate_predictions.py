@@ -1,4 +1,4 @@
-import commons.testing.mocks as mocks
+import core.testing.mocks as mocks
 from model.steps.evaluate_predictions import evaluate_predictions
 
 

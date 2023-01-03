@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from commons.data.preprocessor import Preprocessor
+from core.data.preprocessor import Preprocessor
 
 
 def test_preprocessor_01():

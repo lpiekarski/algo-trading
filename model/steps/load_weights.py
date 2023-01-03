@@ -1,9 +1,9 @@
 import logging
 import zipfile
 
-from commons.drive_utils.models import download_model_weights
-from commons.exceptions import NotFoundError
-from commons.tempdir import TempDir
+from core.drive_utils.models import download_model_weights
+from core.exceptions import NotFoundError
+from core.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
 

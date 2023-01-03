@@ -1,6 +1,6 @@
 from collector.steps.add_labels import add_labels
-import commons.testing.mocks as mocks
-import commons.testing.asserts as asrt
+import core.testing.mocks as mocks
+import core.testing.asserts as asrt
 
 
 def test_label_in_dataframe():

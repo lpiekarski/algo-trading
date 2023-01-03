@@ -2,7 +2,7 @@ import logging
 import yaml
 from tqdm import tqdm
 import pandas as pd
-import commons.data.indicators as inds
+import core.data.indicators as inds
 
 
 LOGGER = logging.getLogger(__name__)

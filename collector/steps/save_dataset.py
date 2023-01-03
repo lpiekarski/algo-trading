@@ -1,5 +1,5 @@
-from commons.data.dataset import Dataset
-from commons.drive_utils.datasets import upload_dataset
+from core.data.dataset import Dataset
+from core.drive_utils.datasets import upload_dataset
 import logging
 
 LOGGER = logging.getLogger(__name__)

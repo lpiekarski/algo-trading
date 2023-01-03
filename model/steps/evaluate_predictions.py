@@ -1,6 +1,6 @@
 import logging
 
-from commons.data.utils import binary_crossentropy, accuracy, precision, recall
+from core.data.utils import binary_crossentropy, accuracy, precision, recall
 import numpy as np
 
 LOGGER = logging.getLogger(__name__)

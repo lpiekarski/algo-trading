@@ -6,11 +6,11 @@ import pandas as pd
 import numpy as np
 import logging
 import os
-import commons.torch as pytorch
-from commons.data.preprocessor import Preprocessor
-from commons.data.utils import accuracy, precision, recall
-import commons.torch.modules as commons_modules
-from commons.exceptions import AtfError
+import core.torch as pytorch
+from core.data.preprocessor import Preprocessor
+from core.data.utils import accuracy, precision, recall
+import core.torch.modules as commons_modules
+from core.exceptions import AtfError
 
 LOGGER = logging.getLogger(__name__)
 

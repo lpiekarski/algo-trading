@@ -1,4 +1,4 @@
-from commons.drive import get_drive_module
+from core.drive import get_drive_module
 
 
 def download(remote_path, local_path, **kwargs):

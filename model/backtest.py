@@ -1,8 +1,8 @@
 import click
 
-from commons.steps.conditional import Conditional
-from commons.steps.get_dataset import get_dataset
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.steps.conditional import Conditional
+from core.steps.get_dataset import get_dataset
+from core.subcommand_execution.execution_flow import execution_flow
 from model.steps.generate_predictions import generate_predictions
 from model.steps.initialize_model import initialize_model
 from model.steps.run_backtesting import run_backtesting

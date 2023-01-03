@@ -9,10 +9,10 @@ from collector.collect import collect_group
 from collector.csv2dataset import csv2dataset_group
 from collector.dataset2csv import dataset2csv_group
 from collector.extract import extract_group
-from commons.env import set_env_from_file
-from commons.logging import init_logging
-from commons.exceptions import ArgumentError, AtfError
-from commons.string import TAB
+from core.env import set_env_from_file
+from core.logging import init_logging
+from core.exceptions import ArgumentError, AtfError
+from core.string import TAB
 from drive.copy import copy_group
 from drive.delete import delete_group
 from drive.download import download_group

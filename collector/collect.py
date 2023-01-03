@@ -3,8 +3,8 @@ from click import group, option
 from collector.steps.create_dataset import create_dataset
 from collector.steps.save_dataset import save_dataset
 from collector.steps.wait_before_download import wait_before_download
-from commons.steps.conditional import Conditional
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.steps.conditional import Conditional
+from core.subcommand_execution.execution_flow import execution_flow
 
 __all__ = ["collect_group"]
 

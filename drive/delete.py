@@ -1,6 +1,6 @@
 import click
 
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.subcommand_execution.execution_flow import execution_flow
 from drive.steps.delete import delete
 
 __all__ = ["delete_group"]

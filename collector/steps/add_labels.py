@@ -1,6 +1,6 @@
 import logging
 import yaml
-import commons.data.labels as ls
+import core.data.labels as ls
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_LABEL_CONFIG = dict(

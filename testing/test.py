@@ -1,8 +1,8 @@
 from click import group, option
 
-from commons.steps.conditional import Conditional
-from commons.steps.non_interrupting import NonInterrupting
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.steps.conditional import Conditional
+from core.steps.non_interrupting import NonInterrupting
+from core.subcommand_execution.execution_flow import execution_flow
 from testing.steps.format_tests import format_tests
 from testing.steps.shape_tests import shape_tests
 from testing.steps.unit_tests import unit_tests

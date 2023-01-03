@@ -4,9 +4,9 @@ from collector.steps.add_indicators import add_indicators
 from collector.steps.add_labels import add_labels
 from collector.steps.add_resample_indicators import add_resample_indicators
 from collector.steps.save_dataset import save_dataset
-from commons.steps.conditional import Conditional
-from commons.steps.get_dataset import get_dataset
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.steps.conditional import Conditional
+from core.steps.get_dataset import get_dataset
+from core.subcommand_execution.execution_flow import execution_flow
 
 __all__ = ["extract_group"]
 

@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 import model.predictors.zero as zero
-from commons.env import TempEnv
+from core.env import TempEnv
 from model.steps.submit_to_drive import submit_to_drive
 
 

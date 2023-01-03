@@ -1,6 +1,6 @@
 import logging
 
-from commons.drive_utils.models import download_model_config
+from core.drive_utils.models import download_model_config
 
 LOGGER = logging.getLogger(__name__)
 

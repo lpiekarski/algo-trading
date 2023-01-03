@@ -1,7 +1,7 @@
 import click
 
-from commons.steps.get_dataset import get_dataset
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.steps.get_dataset import get_dataset
+from core.subcommand_execution.execution_flow import execution_flow
 from model.steps.generate_predictions import generate_predictions
 from model.steps.get_model_module import get_model_module
 from model.steps.initialize_model import initialize_model

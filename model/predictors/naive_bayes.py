@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 import pickle
-from commons.data.preprocessor import Preprocessor
+from core.data.preprocessor import Preprocessor
 
 model: GaussianNB = None
 preprocessor: Preprocessor = None

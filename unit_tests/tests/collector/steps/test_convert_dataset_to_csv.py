@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 from collector.steps.convert_dataset_to_csv import convert_dataset_to_csv
-from commons.testing import mocks
+from core.testing import mocks
 
 
 def test_convert_dataset_to_csv(tmpdir):

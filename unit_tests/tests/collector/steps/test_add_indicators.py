@@ -1,5 +1,5 @@
 from collector.steps.add_indicators import add_indicators
-import commons.testing.mocks as mocks
+import core.testing.mocks as mocks
 
 
 def test_add_indicators():

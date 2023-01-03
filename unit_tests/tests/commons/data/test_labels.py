@@ -1,6 +1,6 @@
 import numpy as np
-import commons.data.labels as labels
-import commons.testing.mocks as mocks
+import core.data.labels as labels
+import core.testing.mocks as mocks
 
 
 def test_add_best_decision_on_random_sequences():

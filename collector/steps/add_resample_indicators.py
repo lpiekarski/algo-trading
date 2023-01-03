@@ -4,12 +4,6 @@ import logging
 from tqdm import tqdm
 
 LOGGER = logging.getLogger(__name__)
-
-
-def add_resample_indicators(dataset, time_tag, *args, **kwargs):
-    raise NotImplementedError("TODO: https://github.com/lpiekarski/algo-trading/issues/126")
-
-
 OHLC_RESAMPLE_MAP = {
     'Open': 'first',
     'High': 'max',
@@ -17,6 +11,12 @@ OHLC_RESAMPLE_MAP = {
     'Close': 'last',
     'Volume': 'sum'
 }
+
+
+def add_resample_indicators(dataset, time_tag, *args, **kwargs):
+    LOGGER.info(f"reshape to time unit '{time_tag}'")
+    dataset.concat(resample_technical_indicators(
+        dataset, time_tag=time_tag), axis=1, join='inner')
 
 
 def resample_technical_indicators(dataset, time_tag="1h"):
@@ -30,7 +30,7 @@ def resample_technical_indicators(dataset, time_tag="1h"):
             continue
         resampled_df = resampled_df.tail(max_lookback).copy()
 
-        resampled_df = add_indicators.pure(resampled_df, time_tag, show_progress=False)
+        resampled_df = add_indicators(resampled_df, time_tag, show_progress=False)
 
         last_record = resampled_df.iloc[-1].copy()
         last_record.name = index

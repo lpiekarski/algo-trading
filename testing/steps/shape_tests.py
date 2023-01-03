@@ -1,9 +1,9 @@
 import logging
 import os
 
-from commons.import_utils import module_from_file
-from commons.string import formpath
-from commons.testing.validate_module import validate_shape
+from core.import_utils import module_from_file
+from core.string import formpath
+from core.testing.validate_module import validate_shape
 
 LOGGER = logging.getLogger(__name__)
 

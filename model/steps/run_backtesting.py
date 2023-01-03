@@ -3,7 +3,7 @@ import logging
 
 from backtesting import Backtest
 
-from commons.drivepath import cache
+from core.drivepath import cache
 
 LOGGER = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 from click import group, argument
 
-from commons.subcommand_execution.execution_flow import execution_flow
+from core.subcommand_execution.execution_flow import execution_flow
 from collector.steps.convert_csv_to_dataset import convert_csv_to_dataset
 
 __all__ = ["csv2dataset_group"]
