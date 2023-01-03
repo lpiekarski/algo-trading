@@ -2,12 +2,10 @@ import datetime
 import logging
 
 import commons.drive_utils.datasets as ds
-from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def get_dataset(dataset, **kwargs):
     LOGGER.info("Getting dataset")
     if dataset is None:

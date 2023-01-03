@@ -4,10 +4,9 @@ from collector.steps.add_indicators import add_indicators
 from collector.steps.add_labels import add_labels
 from collector.steps.add_resample_indicators import add_resample_indicators
 from collector.steps.save_dataset import save_dataset
-from commons.steps.conditional import conditional
+from commons.steps.conditional import Conditional
 from commons.steps.get_dataset import get_dataset
-from commons.steps.process_parameter import process_parameter
-from commons.timing import subcommand
+from commons.subcommand_execution.execution_flow import execution_flow
 
 __all__ = ["extract_group"]
 
@@ -35,17 +34,12 @@ def extract_group():
 @option("--labels",
         "-l",
         help="Specify yaml file with chosen labels")
-@subcommand([
-    process_parameter("time_tag", optional=True),
-    process_parameter("name", optional=True),
-    process_parameter("dataset"),
-    process_parameter("indicators", optional=True),
-    process_parameter("labels", optional=True),
+@execution_flow(
     get_dataset,
-    conditional(add_indicators, "time_tag", negation=True),
-    conditional(add_resample_indicators, "time_tag"),
+    Conditional(add_indicators, "time_tag", False),
+    Conditional(add_resample_indicators, "time_tag"),
     add_labels,
     save_dataset
-])
+)
 def extract(*args, **kwargs):
     """Add technical indicators and labels to the dataset"""

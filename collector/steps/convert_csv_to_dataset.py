@@ -4,13 +4,11 @@ import os
 from commons.data.dataset import Dataset
 from commons.drivepath import copy
 from commons.tempdir import TempDir
-from commons.timing import step
 import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def convert_csv_to_dataset(source, target, **kwargs):
     with TempDir() as tempdir:
         local_source_path = os.path.join(tempdir, 'source')

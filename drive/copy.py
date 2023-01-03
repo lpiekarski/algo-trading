@@ -1,6 +1,6 @@
 import click
 
-from commons.timing import subcommand
+from commons.subcommand_execution.execution_flow import execution_flow
 from drive.steps.copy import copy
 
 __all__ = ["copy_group"]
@@ -14,8 +14,10 @@ def copy_group():
 @copy_group.command()
 @click.argument("source")
 @click.argument("target")
-@subcommand([
+@execution_flow(
     copy
-])
+)
 def copy(*args, **kwargs):
-    """Copy file between local or remote locations"""
+    """
+    Copy file between local or remote locations
+    """

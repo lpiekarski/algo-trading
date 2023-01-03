@@ -4,12 +4,10 @@ import zipfile
 from commons.drive_utils.models import download_model_weights
 from commons.exceptions import NotFoundError
 from commons.tempdir import TempDir
-from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def load_weights(model, model_module, **kwargs):
     LOGGER.info(f"Trying to get weights for model '{model}'")
     try:

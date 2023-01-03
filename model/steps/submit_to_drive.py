@@ -3,15 +3,13 @@ import logging
 import os
 import pandas as pd
 import commons.git as git
-from commons.drivepath import clear_cache, copy, delete, Drivepath
+from commons.drivepath import clear_cache, copy, delete
 from commons.exceptions import SubmissionError, NotFoundError
 from commons.tempdir import TempDir
-from commons.timing import step
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def submit_to_drive(
         eval,
         model,

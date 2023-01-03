@@ -1,8 +1,6 @@
 import logging
 import yaml
 from tqdm import tqdm
-from commons.timing import step
-import sys
 import pandas as pd
 import commons.data.indicators as inds
 
@@ -50,7 +48,6 @@ DEFAULT_INDICATOR_CONFIG = dict(
 )
 
 
-@step
 def add_indicators(dataset, indicators=None, **kwargs):
     indicator_config = None
     if indicators is not None:

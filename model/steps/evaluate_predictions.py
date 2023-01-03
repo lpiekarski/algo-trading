@@ -1,13 +1,11 @@
 import logging
 
 from commons.data.utils import binary_crossentropy, accuracy, precision, recall
-from commons.timing import step
 import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def evaluate_predictions(dataset, y_pred, label, **kwargs):
     LOGGER.info("Comparing predictions to labels")
     if label is None and len(dataset.labels) == 1:

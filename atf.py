@@ -12,8 +12,7 @@ from collector.extract import extract_group
 from commons.env import set_env_from_file
 from commons.logging import init_logging
 from commons.exceptions import ArgumentError, AtfError
-from commons.string import ENDLINE, TAB
-from commons.timing import command_failure
+from commons.string import TAB
 from drive.copy import copy_group
 from drive.delete import delete_group
 from drive.download import download_group

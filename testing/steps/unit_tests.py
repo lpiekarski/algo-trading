@@ -3,14 +3,12 @@ import zipfile
 
 from commons.env import TempEnv
 from commons.tempdir import TempDir
-from commons.timing import step
 import pytest
 import os
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def unit_tests(*args, **kwargs):
     with zipfile.ZipFile(file="unit_tests/resources.zip", mode='r') as zf:
         zf.extractall("unit_tests/resources/")
