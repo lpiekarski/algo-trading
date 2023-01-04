@@ -18,29 +18,18 @@ def supports_color():
                                                   'ANSICON' in os.environ)
     # isatty is not always implemented, #6223.
     is_a_tty = hasattr(sys.stdout, 'isatty') and sys.stdout.isatty()
-    return supported_platform and is_a_tty
+    return (supported_platform and is_a_tty) or ("COLOR_OUTPUT" in os.environ)
 
 
-if supports_color():
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-else:
-    HEADER = ''
-    OKBLUE = ''
-    OKCYAN = ''
-    OKGREEN = ''
-    WARNING = ''
-    FAIL = ''
-    ENDC = ''
-    BOLD = ''
-    UNDERLINE = ''
+HEADER = ''
+OKBLUE = ''
+OKCYAN = ''
+OKGREEN = ''
+WARNING = ''
+FAIL = ''
+ENDC = ''
+BOLD = ''
+UNDERLINE = ''
 
 
 def break_padded(text: str) -> str:
@@ -58,3 +47,17 @@ def padded(text: str, pad_symbol: str, length: int) -> str:
 
 def formpath(path):
     return os.path.abspath(os.path.normpath(path))
+
+
+def initialize():
+    global HEADER, OKBLUE, OKCYAN, OKGREEN, WARNING, FAIL, ENDC, BOLD, UNDERLINE
+    if supports_color():
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKCYAN = '\033[96m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'

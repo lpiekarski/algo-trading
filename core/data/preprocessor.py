@@ -65,7 +65,7 @@ class Preprocessor:
                 x_ = rolling_window(self.rolling_window, x_)
             return x_
         if self.rolling_window is not None:
-            x_, y = rolling_window(self.rolling_window, x_, y_)
+            x_, y = rolling_window(self.rolling_window, x_, y)
         return x_, y
 
     def save(self, filepath):

@@ -11,17 +11,19 @@ def log_change(series):
 
 
 def accuracy(y_pred, y_true):
-    return accuracy_score(y_true, np.round(y_pred))
+    return accuracy_score(y_true.flatten(), np.round(y_pred.flatten()))
 
 
 def precision(y_pred, y_true):
-    return precision_score(y_true, np.round(y_pred))
+    return precision_score(y_true.flatten(), np.round(y_pred.flatten()))
 
 
 def recall(y_pred, y_true):
-    return recall_score(y_true, np.round(y_pred))
+    return recall_score(y_true.flatten(), np.round(y_pred.flatten()))
 
 
 def binary_crossentropy(y_true, y_pred):
+    y_true = y_true.flatten()
+    y_pred = y_pred.flatten()
     return np.sum(- y_true * log(y_pred) - (1 - y_true)
                   * log(1 - y_pred)) / y_true.shape[0]

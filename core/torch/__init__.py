@@ -32,7 +32,14 @@ def train(
     if sample_weights is not None:
         sample_weights = torch.tensor(sample_weights)
         x = torch.tensor(x)
-        x = torch.cat((sample_weights.unsqueeze(1), x), dim=1)
+        if len(x.shape) == 2:
+            x = torch.cat((sample_weights.unsqueeze(1), x), dim=1)
+        elif len(x.shape) == 3:
+            sample_weights = sample_weights.unsqueeze(1)
+            sample_weights = sample_weights.unsqueeze(1)
+            sample_weights = sample_weights.repeat(1, 1, x.shape[2])
+            x = torch.cat([sample_weights, x], dim=1)
+
     loader = torch.utils.data.DataLoader(
         list(zip(x, y)), batch_size=batch_size, **cuda_kwargs)
     for epoch in tqdm(range(n_epochs)):
@@ -41,13 +48,17 @@ def train(
         metric_series = {}
         for batch_idx, (inputs, labels) in enumerate(loader):
             inputs, labels = inputs.to(device), labels.to(device)
+            if len(inputs.shape) == 3:
+                inputs = inputs.swapdims(1, 2)
+                inputs = inputs.swapdims(0, 1)
+                labels = labels.swapdims(0, 1)
             optimizer.zero_grad()
             if sample_weights is not None:
-                outputs = model.forward(inputs[:, 1:])
+                outputs = model.forward(inputs[..., 1:])
             else:
                 outputs = model.forward(inputs)
             if sample_weights is not None:
-                loss = weighted_loss(loss_function, np.squeeze(outputs), labels, inputs[:, 0])
+                loss = weighted_loss(loss_function, np.squeeze(outputs), labels, inputs[..., 0])
             else:
                 loss = loss_function(np.squeeze(outputs), labels)
             loss.backward()
@@ -58,7 +69,7 @@ def train(
                     metric_series[name] = []
                 metric_series[name].append(
                     metric(
-                        np.squeeze(outputs).detach().numpy(),
-                        labels.detach().numpy()))
+                        np.squeeze(outputs).detach().cpu().numpy(),
+                        labels.detach().cpu().numpy()))
         LOGGER.info(
             f"Epoch: {epoch}, loss: {np.sum(losses) / len(losses)}, {', '.join([f'{name}: {np.sum(vals) / len(vals)}' for name, vals in metric_series.items()])}")

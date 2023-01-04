@@ -38,15 +38,20 @@ def set_env_from_file(filename: str) -> dict:
             if len(entry_split) != 2:
                 raise ArgumentError(f"Invalid argument '{entry}'")
             var, value = entry_split
+            var = var.strip()
+            value = value.strip()
             os.environ[var] = value
             result[var] = value
     return result
 
 
-def initialize_default_env() -> None:
+def initialize_default_env() -> dict:
     """Set environmental variables from DEFAULT_ENV to their values."""
+    result = {}
     for key, value in DEFAULT_ENV.items():
         os.environ[key] = value
+        result[key] = value
+    return result
 
 
 class TempEnv:
@@ -72,4 +77,3 @@ class TempEnv:
                 os.environ[k] = v
 
 
-initialize_default_env()

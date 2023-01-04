@@ -5,11 +5,12 @@ import os
 import sys
 import logging
 
+import core.string
 from collector.collect import collect_group
 from collector.csv2dataset import csv2dataset_group
 from collector.dataset2csv import dataset2csv_group
 from collector.extract import extract_group
-from core.env import set_env_from_file
+from core.env import set_env_from_file, initialize_default_env
 from core.logging import init_logging
 from core.exceptions import ArgumentError, AtfError
 from core.string import TAB
@@ -50,11 +51,12 @@ LOGGER = logging.getLogger(__name__)
               help="Set environment variable e.g. -Dvar=value")
 @click.option("-E", "--envfile", help="Path to the file with environmental variables' definition", default=None)
 def atf(env, envfile):
-    collected_env = {}
+    collected_env = initialize_default_env()
     if envfile is not None:
         collected_env |= set_env_from_file(envfile)
     collected_env |= set_env_from_options(env)
     init_logging()
+    core.string.initialize()
     LOGGER.debug(f"env:\n\t{TAB.join([f'{k}={v}' for k, v in collected_env.items()])}")
 
 
