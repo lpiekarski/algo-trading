@@ -75,5 +75,3 @@ class TempEnv:
                 del os.environ[k]
             else:
                 os.environ[k] = v
-
-

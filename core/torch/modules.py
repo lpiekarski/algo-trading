@@ -11,6 +11,7 @@ class Linear(nn.Module):
     """
     Linear block consisting of linear transformation, dropout, sigmoid and batch normalisation.
     """
+
     def __init__(self, in_features: int, out_features: int, dropout: float = 0.5):
         """
         Net initialization.
@@ -41,6 +42,7 @@ class LinearResidual(nn.Module):
     """
     Linear block with residual connection.
     """
+
     def __init__(self, in_out_features: int, dropout: float = 0.5):
         """
         Net initialization.
@@ -95,7 +97,13 @@ class GraphNN(nn.Module):
 
 
 class EncoderDecoder(nn.Module):
-    def __init__(self, encoder: nn.Module, decoder: nn.Module, src_embed: nn.Module, tgt_embed: nn.Module, generator: nn.Module):
+    def __init__(
+            self,
+            encoder: nn.Module,
+            decoder: nn.Module,
+            src_embed: nn.Module,
+            tgt_embed: nn.Module,
+            generator: nn.Module):
         """
         :param encoder: Encoder module
         :param decoder: Decoder module
@@ -126,7 +134,12 @@ class EncoderDecoder(nn.Module):
     def encode(self, src: torch.Tensor, src_mask: torch.Tensor) -> torch.Tensor:
         return self.encoder(self.src_embed(src), src_mask)
 
-    def decode(self, memory: torch.Tensor, src_mask: torch.Tensor, tgt: torch.Tensor, tgt_mask: torch.Tensor) -> torch.Tensor:
+    def decode(
+            self,
+            memory: torch.Tensor,
+            src_mask: torch.Tensor,
+            tgt: torch.Tensor,
+            tgt_mask: torch.Tensor) -> torch.Tensor:
         return self.decoder(self.tgt_embed(tgt), memory, src_mask, tgt_mask)
 
 
@@ -268,7 +281,12 @@ class DecoderLayer(nn.Module):
         self.feed_forward = feed_forward
         self.sublayer = clones(SublayerConnection(size, dropout), 3)
 
-    def forward(self, x: torch.Tensor, memory: torch.Tensor, src_mask: torch.Tensor, tgt_mask: torch.Tensor) -> torch.Tensor:
+    def forward(
+            self,
+            x: torch.Tensor,
+            memory: torch.Tensor,
+            src_mask: torch.Tensor,
+            tgt_mask: torch.Tensor) -> torch.Tensor:
         m = memory
         x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, tgt_mask))
         x = self.sublayer[1](x, lambda x: self.src_attn(x, m, m, src_mask))
@@ -281,7 +299,12 @@ def subsequent_mask(size: int) -> torch.Tensor:
     return torch.triu(torch.ones(attn_shape), diagonal=1).type(torch.uint8) == 0
 
 
-def attention(query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, mask: torch.Tensor = None, dropout: nn.Module = None):
+def attention(
+        query: torch.Tensor,
+        key: torch.Tensor,
+        value: torch.Tensor,
+        mask: torch.Tensor = None,
+        dropout: nn.Module = None):
     """
     Compute 'Scaled Dot Product Attention'
     :param query: shape (seq, h, batch, d_k)

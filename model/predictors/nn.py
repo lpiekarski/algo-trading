@@ -82,8 +82,8 @@ def initialize(num_features: int, config: dict) -> None:
 def predict(x: pd.DataFrame) -> np.ndarray:
     model.eval()
     x = torch.tensor(
-            preprocessor.apply(x).astype(
-                np.float32))
+        preprocessor.apply(x).astype(
+            np.float32))
     if len(x.shape) == 3:
         x = x.swapdims(1, 2)
         x = x.swapdims(0, 1)
@@ -91,8 +91,6 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
-    x = x[:10000]
-    y = y[:10000]
     preprocessor.fit(x)
     x, y = preprocessor.apply(x, y)
     sample_weights = np.flipud(np.power(params['sample_weight_ratio'], np.arange(x.shape[0]))).astype(np.float32)
