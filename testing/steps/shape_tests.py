@@ -1,15 +1,13 @@
 import logging
 import os
 
-from commons.import_utils import module_from_file
-from commons.string import formpath
-from commons.timing import step
-from commons.testing.validate_module import validate_shape
+from core.import_utils import module_from_file
+from core.string import formpath
+from core.testing.validate_module import validate_shape
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def shape_tests(*args, **kwargs):
     cd = os.path.dirname(os.path.realpath(__file__))
     for root, _, files in os.walk(os.path.join(cd, '..', '..'), topdown=False):

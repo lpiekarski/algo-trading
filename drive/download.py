@@ -1,6 +1,6 @@
 import click
 
-from commons.timing import subcommand
+from core.subcommand_execution.execution_flow import execution_flow
 from drive.steps.download import download
 
 __all__ = ["download_group"]
@@ -14,8 +14,8 @@ def download_group():
 @download_group.command()
 @click.argument("remote_path")
 @click.argument("local_path")
-@subcommand([
+@execution_flow(
     download
-])
+)
 def download(*args, **kwargs):
-    pass
+    """Download a file from the default drive"""

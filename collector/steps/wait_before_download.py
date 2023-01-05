@@ -1,12 +1,10 @@
 import datetime
 from time import sleep
-from commons.timing import step
 import logging
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def wait_before_download(**kwargs):
     LOGGER.info("Waiting for the correct time to download the data")
     while True:

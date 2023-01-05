@@ -1,6 +1,6 @@
 import click
 
-from commons.timing import subcommand
+from core.subcommand_execution.execution_flow import execution_flow
 from drive.steps.upload import upload
 
 __all__ = ["upload_group"]
@@ -14,8 +14,8 @@ def upload_group():
 @upload_group.command()
 @click.argument("local_path")
 @click.argument("remote_path")
-@subcommand([
+@execution_flow(
     upload
-])
+)
 def upload(*args, **kwargs):
-    pass
+    """Upload a file to the default drive"""

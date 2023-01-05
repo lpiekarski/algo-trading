@@ -20,5 +20,3 @@ if 'ta_strategy' in libs: ds.df.ta.strategy(MyStrategy, timed=True)
 # save to csv
 # x.to_csv('files/technical_indicators.csv')
 
-
-

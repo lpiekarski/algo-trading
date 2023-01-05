@@ -2,7 +2,7 @@ import importlib
 import os
 from typing import Union
 
-from commons.drivepath import Drivepath, from_string
+from core.drivepath import Drivepath, from_string
 
 
 def get_model_module(drivepath: Union[Drivepath, str] = None):

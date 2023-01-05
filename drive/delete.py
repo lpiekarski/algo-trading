@@ -1,6 +1,6 @@
 import click
 
-from commons.timing import subcommand
+from core.subcommand_execution.execution_flow import execution_flow
 from drive.steps.delete import delete
 
 __all__ = ["delete_group"]
@@ -13,8 +13,8 @@ def delete_group():
 
 @delete_group.command()
 @click.argument("path")
-@subcommand([
+@execution_flow(
     delete
-])
+)
 def delete(*args, **kwargs):
-    pass
+    """Delete file from local or remote location"""
