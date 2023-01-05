@@ -535,12 +535,12 @@ INDICATORS = dict(
 )
 
 
-def add_technical_indicators(dataset, time_tag, show_progress=True):
+def add_technical_indicators(dataset, time_tag, show_progress=True, indicators = INDICATORS):
     df = dataset.df if isinstance(dataset, Dataset) else dataset
     collected_indicators = [df]
     if show_progress:
-        pbar = tqdm(total=len(INDICATORS.items()))
-    for indicator, params in INDICATORS.items():
+        pbar = tqdm(total=len(indicators.items()))
+    for indicator, params in indicators.items():
         if show_progress:
             pbar.set_description(f'Adding {indicator}')
         indicator_func = getattr(sys.modules[__name__], indicator)
