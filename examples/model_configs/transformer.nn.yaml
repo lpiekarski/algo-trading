@@ -19,6 +19,6 @@ preprocessor:
 
 hyperparams:
   sample_weight_ratio: 0.9999
-  n_epochs: 10
-  batch_size: 512
-  weight_decay: 0.01
+  n_epochs: 20
+  batch_size: 128
+  weight_decay: 0 #0.01

@@ -80,14 +80,20 @@ def initialize(num_features: int, config: dict) -> None:
 
 
 def predict(x: pd.DataFrame) -> np.ndarray:
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda" if use_cuda else "cpu")
+    model.to(device)
     model.eval()
     x = torch.tensor(
         preprocessor.apply(x).astype(
-            np.float32))
+            np.float32)).to(device)
     if len(x.shape) == 3:
         x = x.swapdims(1, 2)
         x = x.swapdims(0, 1)
-    return model.forward(x).detach().numpy()
+    outputs = model.forward(x).detach().cpu().numpy()
+    if len(outputs.shape) == 3:
+        outputs = np.concatenate([outputs[:-1, 0].squeeze(), outputs[-1].squeeze()], axis=0)
+    return outputs
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:

@@ -409,10 +409,11 @@ class PositionalEncoding(nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
+        pe = pe.swapdims(0, 1)
         self.register_buffer("pe", pe)
 
     def forward(self, x):
-        x = x + self.pe[:, : x.size(1)].requires_grad_(False)
+        x = x + self.pe[:x.size(0)].requires_grad_(False)
         return self.dropout(x)
 
 
