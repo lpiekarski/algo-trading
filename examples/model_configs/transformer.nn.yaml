@@ -2,8 +2,8 @@ architecture:
   [  # from, module, [arguments]
     #[-1, nn.Linear, [~, 512]],
     #[-1, Transformer, [1, 6, 6, 512, 2048, 8, 0.1]]
-    [-1, nn.Linear, [~, 32]],
-    [-1, Transformer, [1, 4, 4, 32, 256, 4, 0.1]]
+    [-1, nn.Linear, [~, 64]],
+    [-1, Transformer, [1, 12, 12, 64, 256, 4, 0]]
   ]
 
 preprocessor:
@@ -19,6 +19,6 @@ preprocessor:
 
 hyperparams:
   sample_weight_ratio: 0.9999
-  n_epochs: 20
+  n_epochs: 100
   batch_size: 128
   weight_decay: 0 #0.01

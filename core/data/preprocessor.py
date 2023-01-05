@@ -43,11 +43,11 @@ class Preprocessor:
             elif col_matches_any(col, self.log_change_regexes):
                 self.log_change_columns.append(col)
         xstd = x_[self.standardized_columns]
-        self.mean = xstd.mean()
-        self.std = xstd.std()
+        self.mean = xstd.mean(axis=0)
+        self.std = xstd.std(axis=0)
         xnorm = x_[self.normalized_columns]
-        self.range_min = xnorm.min()
-        self.range_max = xnorm.max()
+        self.range_min = xnorm.min(axis=0)
+        self.range_max = xnorm.max(axis=0)
 
     def apply(self, x, y=None):
         x_ = x.copy()
