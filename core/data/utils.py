@@ -23,7 +23,11 @@ def balanced_accuracy(y_pred, y_true):
 
 
 def precision(y_pred, y_true):
-    return precision_score(y_true.flatten().astype(np.uint8), np.round(y_pred.flatten()).astype(np.uint8), zero_division=0)
+    return precision_score(
+        y_true.flatten().astype(
+            np.uint8), np.round(
+            y_pred.flatten()).astype(
+                np.uint8), zero_division=0)
 
 
 def recall(y_pred, y_true):

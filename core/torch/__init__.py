@@ -65,7 +65,11 @@ def train(
                 optimizer.zero_grad()
                 outputs = model.forward(inputs)
                 if sample_weights is not None:
-                    loss = weighted_loss(loss_function, outputs.squeeze(), labels.squeeze(), batch_sample_weights.squeeze())
+                    loss = weighted_loss(
+                        loss_function,
+                        outputs.squeeze(),
+                        labels.squeeze(),
+                        batch_sample_weights.squeeze())
                 else:
                     loss = loss_function(outputs.squeeze(), labels.squeeze()).mean()
                 loss.backward()

@@ -13,6 +13,7 @@ class Preprocessor:
     """
     This class is responsible for transforming input and targets to the format that is desired by the model.
     """
+
     def __init__(
             self,
             num_features: int = None,
