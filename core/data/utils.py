@@ -10,19 +10,19 @@ def log_change(series):
     return log(series / series.shift(1))
 
 
-def accuracy(y_pred, y_true):
+def accuracy(y_true, y_pred):
     y_true = y_true.flatten().astype(np.uint8)
     y_pred = np.round(y_pred.flatten()).astype(np.uint8)
     return accuracy_score(y_true, y_pred)
 
 
-def balanced_accuracy(y_pred, y_true):
+def balanced_accuracy(y_true, y_pred):
     y_true = y_true.flatten().astype(np.uint8)
     y_pred = np.round(y_pred.flatten()).astype(np.uint8)
     return balanced_accuracy_score(y_true, y_pred)
 
 
-def precision(y_pred, y_true):
+def precision(y_true, y_pred):
     return precision_score(
         y_true.flatten().astype(
             np.uint8), np.round(
@@ -30,7 +30,7 @@ def precision(y_pred, y_true):
                 np.uint8), zero_division=0)
 
 
-def recall(y_pred, y_true):
+def recall(y_true, y_pred):
     return recall_score(y_true.flatten().astype(np.uint8), np.round(y_pred.flatten()).astype(np.uint8), zero_division=0)
 
 

@@ -80,8 +80,8 @@ def train(
                         metric_series[name] = []
                     metric_series[name].append(
                         metric(
-                            outputs.squeeze().detach().cpu().numpy(),
-                            labels.detach().cpu().numpy()))
+                            labels.detach().cpu().numpy(),
+                            outputs.squeeze().detach().cpu().numpy()))
                 progress_bar.set_description(
                     f"Epoch: {epoch}, loss: {np.mean(losses):.5f}, {', '.join([f'{name}: {np.mean(vals):.5f}' for name, vals in metric_series.items()])}")
                 progress_bar.update()
