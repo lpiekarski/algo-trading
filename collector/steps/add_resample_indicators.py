@@ -1,7 +1,11 @@
-from collector.steps.add_indicators import add_indicators
+import yaml
+
+from collector.steps.add_indicators import add_indicators, DEFAULT_INDICATOR_CONFIG
 import pandas as pd
 import logging
 from tqdm import tqdm
+
+from core.data.dataset import Dataset
 
 LOGGER = logging.getLogger(__name__)
 OHLC_RESAMPLE_MAP = {
@@ -13,15 +17,21 @@ OHLC_RESAMPLE_MAP = {
 }
 
 
-def add_resample_indicators(dataset, time_tag, *args, **kwargs):
+def add_resample_indicators(dataset, time_tag, indicators=None, *args, **kwargs):
+    indicator_config = None
+    if indicators is not None:
+        with open(indicators, 'r') as f:
+            indicator_config = yaml.load(f, yaml.CLoader)
+    if indicator_config is None:
+        indicator_config = DEFAULT_INDICATOR_CONFIG
     LOGGER.info(f"reshape to time unit '{time_tag}'")
     dataset.concat(resample_technical_indicators(
-        dataset, time_tag=time_tag), axis=1, join='inner')
+        dataset, indicator_config, time_tag=time_tag), axis=1, join='inner')
 
 
-def resample_technical_indicators(dataset, time_tag="1h"):
+def resample_technical_indicators(dataset, indicator_config, time_tag="1h"):
     result_rows = []
-    max_lookback = get_max_lookback()
+    max_lookback = get_max_lookback(indicator_config)
     resampler = Resampler()
 
     for index, row in tqdm(dataset.df.iterrows(), total=dataset.df.shape[0]):
@@ -29,10 +39,10 @@ def resample_technical_indicators(dataset, time_tag="1h"):
         if resampled_df.shape[0] < max_lookback:
             continue
         resampled_df = resampled_df.tail(max_lookback).copy()
+        resampled_dataset = Dataset(resampled_df)
+        add_indicators(resampled_dataset, indicator_config=indicator_config, show_progress=False)
 
-        resampled_df = add_indicators(resampled_df, time_tag, show_progress=False)
-
-        last_record = resampled_df.iloc[-1].copy()
+        last_record = resampled_dataset.df.iloc[-1].copy()
         last_record.name = index
         last_record.drop(
             ['Open', 'High', 'Low', 'Close', 'Volume'], inplace=True)
@@ -62,9 +72,9 @@ class Resampler:
         return pd.concat([self.past_resampled_df, current_bucket_df.tail(1)])
 
 
-def get_max_lookback():
+def get_max_lookback(indicator_config):
     result = 0
-    for indicator, params in ti.INDICATORS.items():
+    for indicator, params in indicator_config.items():
         if params is None:
             pass
         else:

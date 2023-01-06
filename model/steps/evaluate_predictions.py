@@ -1,6 +1,6 @@
 import logging
 
-from core.data.utils import binary_crossentropy, accuracy, precision, recall
+from core.data.utils import binary_crossentropy, accuracy, precision, recall, balanced_accuracy
 import numpy as np
 
 LOGGER = logging.getLogger(__name__)
@@ -13,9 +13,12 @@ def evaluate_predictions(dataset, y_pred, label, **kwargs):
         label = dataset.labels[0]
     y_true = dataset.get_y(label).to_numpy().astype(np.float32)
     y_pred = np.array(y_pred).astype(np.float32)
-    return dict(eval=dict(
-        binary_cross_entropy=binary_crossentropy(y_true, y_pred),
-        accuracy=accuracy(y_true, y_pred),
-        precision=precision(y_true, y_pred),
-        recall=recall(y_true, y_pred),
-    ))
+    return dict(
+        eval=dict(
+            binary_cross_entropy=binary_crossentropy(y_true, y_pred),
+            accuracy=accuracy(y_true, y_pred),
+            balanced_accuracy=balanced_accuracy(y_true, y_pred),
+            precision=precision(y_true, y_pred),
+            recall=recall(y_true, y_pred),
+        )
+    )
