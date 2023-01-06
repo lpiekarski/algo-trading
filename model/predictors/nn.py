@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import logging
 import os
+from tqdm import tqdm
 
 from torch.utils.data import TensorDataset, DataLoader
 
@@ -18,7 +19,7 @@ from core.exceptions import AtfError
 LOGGER = logging.getLogger(__name__)
 
 
-model: nn.Sequential = None
+model: commons_modules.GraphNN = None
 preprocessor: Preprocessor = None
 params: dict = dict()
 
@@ -84,27 +85,28 @@ def initialize(num_features: int, config: dict) -> None:
 
 def predict(x: pd.DataFrame) -> np.ndarray:
     use_cuda = torch.cuda.is_available()
-    cuda_kwargs = {'num_workers': 1,
-                   'pin_memory': True}
     device = torch.device("cuda" if use_cuda else "cpu")
     model.to(device)
     model.eval()
-    x = torch.tensor(preprocessor.apply(x).astype(np.float32))
-    torch_dataset = TensorDataset(x)
-    loader = DataLoader(torch_dataset, shuffle=False, batch_size=params['batch_size'], **cuda_kwargs)
-    outputs = []
-    for idx, (inputs,) in enumerate(loader):
-        inputs = inputs.to(device)
-        if len(inputs.shape) == 3:
-            inputs = inputs.swapdims(1, 2)
-            inputs = inputs.swapdims(0, 1)
-        output = model.forward(inputs).detach().cpu().numpy()
-        if len(output.shape) == 3 and idx == 0:
-            output = np.concatenate([output[:-1, 0].squeeze(), output[-1].squeeze()], axis=0)
-        elif len(output.shape) == 3:
-            output = output[-1]
-        outputs.append(output.squeeze())
-    return np.concatenate(outputs, axis=0)
+    x = torch.tensor(preprocessor.apply(x, apply_rolling_window=False).astype(np.float32))
+    inputs = []
+    outputs = [0.5]
+    result = []
+    for i in tqdm(range(x.shape[0])):
+        inputs.append(x[i])
+        if len(inputs) > preprocessor.rolling_window:
+            inputs.pop(0)
+        src = torch.stack(inputs).to(device)
+        src = src.view(src.shape[0], 1, src.shape[1])
+        tgt = torch.tensor(outputs, dtype=torch.float32, device=device)
+        tgt = tgt.view(tgt.shape[0], 1, 1)
+        output = model.forward(src, tgt)
+        output = output.flatten()
+        result.append(output[-1].detach().cpu().item())
+        outputs.append(output[-1].detach().cpu().item())
+        if len(outputs) > preprocessor.rolling_window:
+            outputs.pop(0)
+    return np.array(result)
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
