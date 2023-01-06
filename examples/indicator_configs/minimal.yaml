@@ -1,0 +1,8 @@
+stdev: [10, 50]
+rsi: [14]
+momentum: [10]
+cyclical_datetime: ~
+us_time: ~
+money_flow_index: ~
+rsi_volume: [14]
+vwap: ~

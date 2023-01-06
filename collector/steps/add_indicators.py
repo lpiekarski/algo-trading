@@ -1,10 +1,8 @@
 import logging
 import yaml
 from tqdm import tqdm
-from commons.timing import step
-import sys
 import pandas as pd
-import commons.data.indicators as inds
+import core.data.indicators as inds
 
 
 LOGGER = logging.getLogger(__name__)
@@ -50,9 +48,7 @@ DEFAULT_INDICATOR_CONFIG = dict(
 )
 
 
-@step
-def add_indicators(dataset, indicators=None, **kwargs):
-    indicator_config = None
+def add_indicators(dataset, indicators=None, indicator_config=None, show_progress=True, **kwargs):
     if indicators is not None:
         with open(indicators, 'r') as f:
             indicator_config = yaml.load(f, yaml.CLoader)
@@ -61,9 +57,11 @@ def add_indicators(dataset, indicators=None, **kwargs):
     time_tag = f"{dataset.interval.total_seconds():.0f}s"
     df = dataset.df
     collected_indicators = [df]
-    pbar = tqdm(total=len(indicator_config.items()))
+    if show_progress:
+        pbar = tqdm(total=len(indicator_config.items()))
     for indicator, params in indicator_config.items():
-        pbar.set_description(f'Adding {indicator}')
+        if show_progress:
+            pbar.set_description(f'Adding {indicator}')
         indicator_func = getattr(inds, indicator)
         if params is None:
             collected_indicators.extend(indicator_func(df, time_tag))
@@ -78,6 +76,8 @@ def add_indicators(dataset, indicators=None, **kwargs):
                 else:
                     collected_indicators.extend(
                         indicator_func(df, time_tag, param))
-        pbar.update()
-    pbar.close()
+        if show_progress:
+            pbar.update()
+    if show_progress:
+        pbar.close()
     dataset.df = pd.concat(collected_indicators, axis=1)

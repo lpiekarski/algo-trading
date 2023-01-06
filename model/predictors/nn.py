@@ -6,11 +6,14 @@ import pandas as pd
 import numpy as np
 import logging
 import os
-import commons.torch as pytorch
-from commons.data.preprocessor import Preprocessor
-from commons.data.utils import accuracy, precision, recall
-import commons.torch.modules as commons_modules
-from commons.exceptions import AtfError
+
+from torch.utils.data import TensorDataset, DataLoader
+
+import core.torch as pytorch
+from core.data.preprocessor import Preprocessor
+from core.data.utils import accuracy, precision, recall, balanced_accuracy
+import core.torch.modules as commons_modules
+from core.exceptions import AtfError
 
 LOGGER = logging.getLogger(__name__)
 
@@ -66,6 +69,9 @@ def initialize(num_features: int, config: dict) -> None:
         else:
             raise AtfError(f"Invalid module arguments type for '{_module}'")
     model = commons_modules.GraphNN(connections, modules)
+    LOGGER.info(model)
+    num_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    LOGGER.info(f"Number of trainable parameters: {num_parameters}")
     params = config['hyperparams']
     ppargs = config['preprocessor']
     if isinstance(ppargs, list):
@@ -77,30 +83,49 @@ def initialize(num_features: int, config: dict) -> None:
 
 
 def predict(x: pd.DataFrame) -> np.ndarray:
+    use_cuda = torch.cuda.is_available()
+    cuda_kwargs = {'num_workers': 1,
+                   'pin_memory': True}
+    device = torch.device("cuda" if use_cuda else "cpu")
+    model.to(device)
     model.eval()
-    return model.forward(
-        torch.tensor(
-            preprocessor.apply(x).to_numpy().astype(
-                np.float32))).detach().numpy()
+    x = torch.tensor(preprocessor.apply(x).astype(np.float32))
+    torch_dataset = TensorDataset(x)
+    loader = DataLoader(torch_dataset, shuffle=False, batch_size=params['batch_size'], **cuda_kwargs)
+    outputs = []
+    for idx, (inputs,) in enumerate(loader):
+        inputs = inputs.to(device)
+        if len(inputs.shape) == 3:
+            inputs = inputs.swapdims(1, 2)
+            inputs = inputs.swapdims(0, 1)
+        output = model.forward(inputs).detach().cpu().numpy()
+        if len(output.shape) == 3 and idx == 0:
+            output = np.concatenate([output[:-1, 0].squeeze(), output[-1].squeeze()], axis=0)
+        elif len(output.shape) == 3:
+            output = output[-1]
+        outputs.append(output.squeeze())
+    return np.concatenate(outputs, axis=0)
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
-    sample_weights = np.flipud(np.power(params['sample_weight_ratio'], np.arange(x.shape[0]))).astype(np.float32)
     preprocessor.fit(x)
+    x, y = preprocessor.apply(x, y)
+    sample_weights = np.flipud(np.power(params['sample_weight_ratio'], np.arange(x.shape[0]))).astype(np.float32)
     pytorch.train(
         model,
-        preprocessor.apply(x).to_numpy().astype(np.float32),
-        y.to_numpy().astype(np.float32),
-        nn.BCELoss(),
+        x,
+        y,
+        nn.BCELoss(reduction="none"),
         optim.Adam(model.parameters(), weight_decay=params['weight_decay']),
         n_epochs=params['n_epochs'],
         batch_size=params['batch_size'],
         metrics=dict(
-            accuracy=accuracy,
-            precision=precision,
-            recall=recall
+            acc=accuracy,
+            b_acc=balanced_accuracy,
+            p=precision,
+            r=recall
         ),
-        sample_weights=sample_weights.copy()
+        sample_weights=sample_weights
     )
 
 

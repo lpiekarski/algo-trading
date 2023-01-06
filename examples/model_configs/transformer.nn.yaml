@@ -1,0 +1,26 @@
+architecture:
+  [  # from, module, [arguments]
+    #[-1, nn.Linear, [~, 512]],
+    #[-1, Transformer, [1, 6, 6, 512, 2048, 8, 0.1]]
+    #[-1, nn.Linear, [~, 256]],
+    #[-1, Transformer, [1, 6, 6, 256, 1024, 4, 0]]
+    [ -1, nn.Linear, [ ~, 16 ] ],
+    [-1, Transformer, [1, 4, 4, 16, 128, 2, 0]]
+  ]
+
+preprocessor:
+  log_change_regexes: [
+    'SMA_.*',
+    'EMA_.*',
+    'Open',
+    'High',
+    'Low',
+    'Close'
+  ]
+  rolling_window: 64
+
+hyperparams:
+  sample_weight_ratio: 0.9999
+  n_epochs: 10
+  batch_size: 128
+  weight_decay: 0 #0.01

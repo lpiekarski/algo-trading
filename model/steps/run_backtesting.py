@@ -1,15 +1,13 @@
 import json
 import logging
 
-from backtesting import Backtest, Strategy
+from backtesting import Backtest
 
-from commons.drivepath import cache
-from commons.timing import step
+from core.drivepath import cache
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def run_backtesting(
         dataset,
         y_pred,

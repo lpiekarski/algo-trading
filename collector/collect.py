@@ -3,9 +3,8 @@ from click import group, option
 from collector.steps.create_dataset import create_dataset
 from collector.steps.save_dataset import save_dataset
 from collector.steps.wait_before_download import wait_before_download
-from commons.steps.conditional import conditional
-from commons.steps.process_parameter import process_parameter
-from commons.timing import subcommand
+from core.steps.conditional import Conditional
+from core.subcommand_execution.execution_flow import execution_flow
 
 __all__ = ["collect_group"]
 
@@ -30,14 +29,12 @@ def collect_group():
         help="Whether to overwrite or append to an existing dataset with the same "
         "name",
         is_flag=True)
-@subcommand([
-    process_parameter("date"),
-    process_parameter("output"),
-    process_parameter("wait"),
-    process_parameter("append"),
-    conditional(wait_before_download, 'wait'),
+@execution_flow(
+    Conditional(wait_before_download, 'wait'),
     create_dataset,
     save_dataset
-])
+)
 def collect(*args, **kwargs):
-    """Collect OHLCV data from an external source and save it as a dataset"""
+    """
+    Collect OHLCV data from an external source and save it as a dataset
+    """

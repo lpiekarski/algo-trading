@@ -1,21 +1,15 @@
 import click
 
-from commons.steps.conditional import conditional
-from commons.steps.get_dataset import get_dataset
-from commons.steps.process_parameter import process_parameter
-from commons.steps.rename_parameters import rename_parameters
-from commons.timing import subcommand
+from core.steps.conditional import Conditional
+from core.steps.get_dataset import get_dataset
+from core.subcommand_execution.execution_flow import execution_flow
+from model.steps.generate_predictions import generate_predictions
 from model.steps.initialize_model import initialize_model
-from model.steps.evaluate_predictions import evaluate_predictions
 from model.steps.run_backtesting import run_backtesting
-from commons.steps.generate_predictions import generate_predictions
 from model.steps.get_model_module import get_model_module
 from model.steps.get_strategy_module import get_strategy_module
 from model.steps.initialize_clearml import initialize_clearml
 from model.steps.load_weights import load_weights
-from model.steps.run_training import run_training
-from model.steps.save_weights import save_weights
-from model.steps.submit_to_drive import submit_to_drive
 
 __all__ = ["backtest_group"]
 
@@ -46,26 +40,17 @@ def backtest_group():
               "-bcs",
               help="Backtest starting cash amount",
               default=200000)
-@subcommand([
-    process_parameter("model", optional=True),
-    process_parameter("model_config", optional=True),
-    process_parameter("strategy_config", optional=True),
-    process_parameter("dataset"),
-    process_parameter("strategy"),
-    process_parameter("clearml_access_key", optional=True),
-    process_parameter("clearml_secret_key", optional=True),
-    process_parameter("clearml_project", optional=True),
-    process_parameter("commission"),
-    process_parameter("leverage"),
-    process_parameter("starting_cash"),
-    conditional(initialize_clearml, "clearml_access_key"),
+@execution_flow(
+    Conditional(initialize_clearml, "clearml_access_key"),
     get_dataset,
-    conditional(get_model_module, "model"),
-    conditional(initialize_model, 'model'),
-    conditional(load_weights, 'model'),
-    conditional(generate_predictions, 'model'),
+    Conditional(get_model_module, "model"),
+    Conditional(initialize_model, "model"),
+    Conditional(load_weights, "model"),
+    Conditional(generate_predictions, "model"),
     get_strategy_module,
     run_backtesting
-])
+)
 def backtest(*args, **kwargs):
-    """Backtest a strategy and a model"""
+    """
+    Backtest a strategy and a model
+    """

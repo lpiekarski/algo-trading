@@ -27,7 +27,7 @@ There are a few environmental variables that are expected to be set by some part
 
 `GIT_DRIVE_REPO_URL` - URL of the git repository that is being used as a data source for git drive
 
-`DRIVE` - Default drive type. Can be `local` or `git` (Each file in `commons/drive` not starting with `__` corresponds to a drive type) 
+`DRIVE` - Default drive type. Can be `local` or `git` (Each file in `core/drive` not starting with `__` corresponds to a drive type) 
 
 ## Examples
 Here are some examples of how to use the ATF CLI to perform common tasks.

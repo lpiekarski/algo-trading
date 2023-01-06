@@ -1,15 +1,13 @@
 import logging
 import os
 
-from commons.data.dataset import Dataset
-from commons.drivepath import copy
-from commons.tempdir import TempDir
-from commons.timing import step
+from core.data.dataset import Dataset
+from core.drivepath import copy
+from core.tempdir import TempDir
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def convert_dataset_to_csv(source, target, **kwargs):
     with TempDir() as tempdir:
         local_source_path = os.path.join(tempdir, 'source')
