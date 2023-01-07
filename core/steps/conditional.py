@@ -24,4 +24,4 @@ class Conditional(Step):
         if self.flag_name not in kwargs or bool(kwargs[self.flag_name]) != self.flag_value:
             LOGGER.info("Skipping")
             return
-        self.wrapped_step(*args, **kwargs)
+        return self.wrapped_step(*args, **kwargs)

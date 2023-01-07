@@ -150,7 +150,7 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
 
 
-class TorchBinaryTransformer(nn.Module):
+class BinaryTransformer(nn.Module):
     def __init__(self, encoder_layers: int = 6, decoder_layers: int = 6, d_model: int = 512,
                  d_ff: int = 2048, num_heads: int = 8, dropout: float = 0.1):
         """

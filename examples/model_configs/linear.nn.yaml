@@ -11,12 +11,13 @@ architecture:
 
 preprocessor:
   log_change_regexes: [
-    'SMA_.*',
-    'EMA_.*',
     'Open',
     'High',
     'Low',
     'Close'
+  ]
+  normalization_regexes: [
+    "Volume"
   ]
   rolling_window: ~
 

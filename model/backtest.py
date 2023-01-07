@@ -35,7 +35,7 @@ def backtest_group():
               help="Backtest comission fee percentage for each transaction",
               default=0.0002)
 @click.option("--leverage", "-bm",
-              help="Backtest leverage", default=30)
+              help="Backtest leverage", default=5)
 @click.option("--starting-cash",
               "-bcs",
               help="Backtest starting cash amount",

@@ -88,25 +88,38 @@ def predict(x: pd.DataFrame) -> np.ndarray:
     device = torch.device("cuda" if use_cuda else "cpu")
     model.to(device)
     model.eval()
-    x = torch.tensor(preprocessor.apply(x, apply_rolling_window=False).astype(np.float32))
-    inputs = []
-    outputs = [0.5]
-    result = []
-    for i in tqdm(range(x.shape[0])):
-        inputs.append(x[i])
-        if len(inputs) > preprocessor.rolling_window:
-            inputs.pop(0)
-        src = torch.stack(inputs).to(device)
-        src = src.view(src.shape[0], 1, src.shape[1])
-        tgt = torch.tensor(outputs, dtype=torch.float32, device=device)
-        tgt = tgt.view(tgt.shape[0], 1, 1)
-        output = model.forward(src, tgt)
-        output = output.flatten()
-        result.append(output[-1].detach().cpu().item())
-        outputs.append(output[-1].detach().cpu().item())
-        if len(outputs) > preprocessor.rolling_window:
-            outputs.pop(0)
-    return np.array(result)
+    if preprocessor.rolling_window is not None:
+        x = torch.tensor(preprocessor.apply(x, apply_rolling_window=False).astype(np.float32))
+        inputs = []
+        outputs = [0.5]
+        result = []
+        for i in tqdm(range(x.shape[0])):
+            inputs.append(x[i])
+            if len(inputs) > preprocessor.rolling_window:
+                inputs.pop(0)
+            src = torch.stack(inputs).to(device)
+            src = src.view(src.shape[0], 1, src.shape[1])
+            tgt = torch.tensor(outputs, dtype=torch.float32, device=device)
+            tgt = tgt.view(tgt.shape[0], 1, 1)
+            output = model.forward(src, tgt)
+            output = output.flatten()
+            result.append(output[-1].detach().cpu().item())
+            outputs.append(output[-1].detach().cpu().item())
+            if len(outputs) > preprocessor.rolling_window:
+                outputs.pop(0)
+        return np.array(result)
+    else:
+        cuda_kwargs = {'num_workers': 1,
+                       'pin_memory': True}
+        x = torch.tensor(preprocessor.apply(x).astype(np.float32))
+        torch_dataset = TensorDataset(x)
+        loader = DataLoader(torch_dataset, shuffle=False, batch_size=params['batch_size'], **cuda_kwargs)
+        outputs = []
+        for idx, (inputs,) in enumerate(loader):
+            inputs = inputs.to(device)
+            output = model.forward(inputs).detach().cpu().numpy()
+            outputs.append(output.squeeze())
+        return np.concatenate(outputs, axis=0)
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
