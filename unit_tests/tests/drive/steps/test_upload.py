@@ -11,7 +11,7 @@ def test_upload_git(tmpdir):
     git_drive_dir = "./unit_tests/resources/test_drive"
     with TempEnv(drive="git",
                  GIT_DRIVE_REPO_URL=git_drive_dir):
-        remote_path = "test_upload_git.txt"
+        remote_path = "unit_test_upload_git.txt"
         local_path = os.path.join(tmpdir, "test_upload_git.txt")
         create_file(local_path, "This is a git upload test!")
 
