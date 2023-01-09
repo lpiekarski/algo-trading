@@ -1,10 +1,13 @@
 import os
 import logging
 
-__all__ = ["init_logging"]
+__all__ = ["init_logging", "TempFileLogger"]
+
+console_handler = None
 
 
 def init_logging():
+    global console_handler
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.NOTSET)
 
@@ -38,3 +41,30 @@ def init_logging():
 
     logger = logging.getLogger(__name__)
     logger.debug(f"Logging initialized {root_logger.handlers}")
+
+
+class TempFileLogger:
+
+    def __init__(self, path, level="INFO"):
+        self.path = path
+        self.level = level
+        self.handler = None
+        self.other_handlers = None
+
+    def __enter__(self):
+        root_logger = logging.getLogger()
+        self.other_handlers = root_logger.handlers.copy()
+        for handler in self.other_handlers:
+            root_logger.removeHandler(handler)
+        file_formatter = logging.Formatter(
+            "%(asctime)s [%(process)d:%(thread)d] %(pathname)s:%(funcName)s:%(lineno)d [%(levelname)s] %(message)s")
+        self.handler = logging.FileHandler(self.path)
+        self.handler.setFormatter(file_formatter)
+        self.handler.setLevel(self.level)
+        root_logger.addHandler(self.handler)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        root_logger = logging.getLogger()
+        root_logger.removeHandler(self.handler)
+        for handler in self.other_handlers:
+            root_logger.addHandler(handler)
