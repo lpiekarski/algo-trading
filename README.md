@@ -4,12 +4,12 @@ The Algorithmic Trading Framework is a project that provides a set of tools for 
 ## Model ranking
 | Model | Dataset | Label | Binary Cross Entropy | Accuracy | Precision | Recall   | Balanced Accuracy |
 |-------|---------|-------|----------------------|----------|-----------|----------|-------------------|
-| models/transformer/nn | git:datasets/TEST.zip | Best_decision_0.01 | 2.27918 | 0.57231  | 0.51961   | 0.53642  | 0.56880           |
-| models/linear/nn | git:datasets/TEST.zip | Best_decision_0.01 | 1.57024 | 	0.56610 | 	0.51327  | 	0.51377 | 	0.56097          |
-| models/lgbm | git:datasets/TEST.zip | Best_decision_0.01 | 2.60234 | 	0.53074 | 	0.47929	 | 0.61044	 | 0.53854           |
-| models/knn | git:datasets/TEST.zip | Best_decision_0.01 | 7.80574 | 	0.53121 | 	0.46818  | 	0.38043 | 	0.51645          |
-| models/naive_bayes | git:datasets/TEST.zip | Best_decision_0.01 | 10.20762 | 0.44580	 | 0.44576	  | 0.99979	 | 0.50004           |
-| models/zero | git:datasets/TEST.zip | Best_decision_0.01 | 8.21082| 0.55426	 | 0.00000	  | 0.00000	 | 0.50000           |                 |
+| models/linear/nn | git:datasets/TEST.zip | Best_decision_0.01 | 1.60980              | 	0.60413 | 	0.55940  | 	0.52673 | 	0.59655          |
+| models/transformer/nn | git:datasets/TEST.zip | Best_decision_0.01 | 2.27918              | 0.57231  | 0.51961   | 0.53642  | 0.56880           |
+| models/lgbm | git:datasets/TEST.zip | Best_decision_0.01 | 2.60234              | 	0.53074 | 	0.47929	 | 0.61044	 | 0.53854           |
+| models/knn | git:datasets/TEST.zip | Best_decision_0.01 | 7.80574              | 	0.53121 | 	0.46818  | 	0.38043 | 	0.51645          |
+| models/naive_bayes | git:datasets/TEST.zip | Best_decision_0.01 | 10.20762             | 0.44580	 | 0.44576	  | 0.99979	 | 0.50004           |
+| models/zero | git:datasets/TEST.zip | Best_decision_0.01 | 8.21082              | 0.55426	 | 0.00000	  | 0.00000	 | 0.50000           |                 |
 | models/one | git:datasets/TEST.zip | Best_decision_0.01 | 10.20987             | 	0.44574 | 	0.44574  | 	1.00000 | 	0.50000          |
 | models/uniform_random | git:datasets/TEST.zip | Best_decision_0.01 | 0.99853              | 0.49939  | 0.44460   | 0.49390  | 0.49886           |
 

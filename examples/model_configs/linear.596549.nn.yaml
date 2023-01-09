@@ -4,8 +4,6 @@ architecture:
     [-1, LinearResidual, [128, 0.5]],
     [-1, LinearResidual, [128, 0.5]],
     [-1, LinearResidual, [128, 0.5]],
-    [-1, LinearResidual, [128, 0.5]],
-    [-1, LinearResidual, [128, 0.5]],
     [-1, nn.Linear, [128, 1, 0.5]],
     [-1, nn.Sigmoid, []]
   ]
@@ -26,4 +24,4 @@ hyperparams:
   sample_weight_ratio: 0.9999
   n_epochs: 10
   batch_size: 512
-  weight_decay: 0.15
+  weight_decay: 0.1

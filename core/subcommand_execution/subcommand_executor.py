@@ -163,10 +163,13 @@ class SubcommandExecutorLogger:
         :param step: Step for which to create this log line.
         """
         log_func = step.get_log_func(self.logger)
+        step_name = step.name + ' '
+        if len(step_name) >= 68:
+            step_name = f"{step_name[:64]}... "
         if step.result == StepStatus.SKIPPED:
-            message = f"{step.name + ' ' :.<68} {colored_status_str(step.result)}"
+            message = f"{step_name:.<68} {colored_status_str(step.result)}"
         else:
-            message = f"{step.name + ' ' :.<68} {colored_status_str(step.result)} [{step.end_clock - step.start_clock :.5f} s]"
+            message = f"{step_name:.<68} {colored_status_str(step.result)} [{step.end_clock - step.start_clock :.5f} s]"
         if step.error is not None:
             message += f"{FAIL} {type(step.error).__name__}: {step.error}{ENDC}"
         log_func(message)

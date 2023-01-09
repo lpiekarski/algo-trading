@@ -1,7 +1,7 @@
 import os
 from core.exceptions import ArgumentError
 
-__all__ = ["require_env", "set_env_from_file", "TempEnv"]
+__all__ = ["require_env", "set_env_from_file", "initialize_default_env", "TempEnv"]
 
 DEFAULT_ENV = dict(
     CACHE_DIR="./.cache",
