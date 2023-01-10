@@ -1,15 +1,11 @@
 import logging
 from types import SimpleNamespace
-
-from commons.exceptions import NonInterruptingError
-from commons.timing import step
 import os
 import autopep8
 
 LOGGER = logging.getLogger(__name__)
 
 
-@step
 def format_tests(*args, **kwargs):
     diffs = autopep8.fix_multiple_files(
         [os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))],

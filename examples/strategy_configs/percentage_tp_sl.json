@@ -1,5 +1,5 @@
 {
-  "backtest_threshold": 0,
+  "backtest_threshold": 0.1,
   "backtest_volume": 1,
   "backtest_tpsl_pct": 0.01
 }

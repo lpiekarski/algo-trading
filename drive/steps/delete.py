@@ -1,7 +1,5 @@
-from commons.timing import step
-import commons.drivepath as dp
+import core.drivepath as dp
 
 
-@step
 def delete(path, **kwargs):
     dp.delete(path)

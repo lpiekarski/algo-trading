@@ -1,0 +1,29 @@
+architecture:
+  [  # from, module, [arguments]
+    #[-1, nn.Linear, [~, 512]],
+    #[-1, Transformer, [1, 6, 6, 512, 2048, 8, 0.1]]
+    #[-1, nn.Linear, [~, 256]],
+    #[-1, Transformer, [1, 6, 6, 256, 1024, 4, 0]]
+    [ -1, nn.Linear, [ ~, 256 ] ],
+    #[-1, nn.Transformer, 256, 4, 6, 6, 1024, 0],
+    [[-1, -3], BinaryTransformer, [6, 6, 256, 512, 4, 0.1]]
+  ]
+
+preprocessor:
+  log_change_regexes: [
+    'Open',
+    'High',
+    'Low',
+    'Close'
+  ]
+  normalization_regexes: [
+    "Volume"
+  ]
+  rolling_window: 60
+
+hyperparams:
+  sample_weight_ratio: 0.9999
+  n_epochs: 10
+  batch_size: 64
+  weight_decay: 0 #0.1
+  rolling_window: 60

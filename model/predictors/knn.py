@@ -1,18 +1,24 @@
-from typing import Any
-
 from sklearn.neighbors import KNeighborsClassifier
 import pandas as pd
 import numpy as np
 import os
 import pickle
-from commons.data.preprocessor import Preprocessor
+from core.data.preprocessor import Preprocessor
+from core.exceptions import AtfError
 
 model: KNeighborsClassifier = None
 preprocessor: Preprocessor = None
 
 
 def initialize(num_features: int, config: dict) -> None:
-    pass
+    global model, preprocessor
+    ppargs = config['preprocessor']
+    if isinstance(ppargs, list):
+        preprocessor = Preprocessor(*ppargs, num_features=num_features)
+    elif isinstance(ppargs, dict):
+        preprocessor = Preprocessor(**ppargs, num_features=num_features)
+    else:
+        raise AtfError(f"Invalid preprocessor arguments type")
 
 
 def predict(x: pd.DataFrame) -> np.ndarray:
@@ -20,8 +26,7 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
-    global model, preprocessor
-    preprocessor = Preprocessor()
+    global model
     preprocessor.fit(x)
     model = KNeighborsClassifier()
     model.fit(preprocessor.apply(x), y)

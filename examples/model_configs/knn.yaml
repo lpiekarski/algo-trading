@@ -1,0 +1,11 @@
+preprocessor:
+  log_change_regexes: [
+    'Open',
+    'High',
+    'Low',
+    'Close'
+  ]
+  normalization_regexes: [
+    "Volume"
+  ]
+  rolling_window: ~

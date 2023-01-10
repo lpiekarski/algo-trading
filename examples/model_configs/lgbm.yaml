@@ -1,0 +1,21 @@
+preprocessor:
+  log_change_regexes: [
+    'Open',
+    'High',
+    'Low',
+    'Close'
+  ]
+  normalization_regexes: [
+    "Volume"
+  ]
+  rolling_window: ~
+
+hyperparams:
+  n_estimators: 1000
+  reg_alpha: 0.3
+  reg_lambda: 0.02
+  objective: 'binary'
+  num_leaves: 127
+  learning_rate: 0.5
+  subsample_for_bin: 200000
+  min_child_samples: 20

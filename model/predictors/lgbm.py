@@ -1,18 +1,25 @@
-from typing import Any
-
 import pandas as pd
 import numpy as np
 import lightgbm as lgbm
 import os
 
-from commons.data.preprocessor import Preprocessor
+from core.data.preprocessor import Preprocessor
+from core.exceptions import AtfError
 
 model: lgbm.Booster = None
 preprocessor: Preprocessor = None
 
 
 def initialize(num_features: int, config: dict) -> None:
-    pass
+    global model, preprocessor, params
+    params = config['hyperparams']
+    ppargs = config['preprocessor']
+    if isinstance(ppargs, list):
+        preprocessor = Preprocessor(*ppargs, num_features=num_features)
+    elif isinstance(ppargs, dict):
+        preprocessor = Preprocessor(**ppargs, num_features=num_features)
+    else:
+        raise AtfError(f"Invalid preprocessor arguments type")
 
 
 def predict(x: pd.DataFrame) -> np.ndarray:
@@ -22,19 +29,9 @@ def predict(x: pd.DataFrame) -> np.ndarray:
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
-    global model, preprocessor
-    preprocessor = Preprocessor()
+    global model
     preprocessor.fit(x)
-    cls = lgbm.LGBMClassifier(
-        n_estimators=1000,
-        reg_alpha=0.3,
-        reg_lambda=0.02,
-        objective='binary',
-        num_leaves=127,
-        learning_rate=0.5,
-        subsample_for_bin=200000,
-        min_child_samples=20
-    )
+    cls = lgbm.LGBMClassifier(**params)
     cls.fit(preprocessor.apply(x), y)
     model = cls.booster_
 

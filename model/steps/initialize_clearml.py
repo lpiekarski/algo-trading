@@ -1,8 +1,6 @@
 from clearml import Task
-from commons.timing import step
 
 
-@step
 def initialize_clearml(
         model,
         clearml_project,

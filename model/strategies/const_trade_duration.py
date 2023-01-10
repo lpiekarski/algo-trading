@@ -4,8 +4,6 @@ from typing import Any, Type
 import numpy as np
 from backtesting import Backtest, Strategy
 
-from commons.timing import step
-
 
 # back testing 1 add 1 long, 0 do nothing, -1 add 1 short.
 # closing on the next time

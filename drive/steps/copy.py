@@ -1,7 +1,5 @@
-import commons.drivepath as dp
-from commons.timing import step
+import core.drivepath as dp
 
 
-@step
 def copy(source, target, **kwargs):
     dp.copy(source, target)
