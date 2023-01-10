@@ -30,8 +30,11 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
         
-      - name: Setup Git User
-        run: git config --global user.name "Automated Workflow" & git config --global user.email "workflow@github.com"
+      - name: Setup Git Username
+        run: git config --global user.name "Automated Workflow"
+      
+      - name: Setup Git Email
+        run: git config --global user.email "workflow@github.com"
         
       - name: Run Tests
         run: python -m atf -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test
