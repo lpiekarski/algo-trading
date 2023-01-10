@@ -20,21 +20,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Restore Docker cache
-        uses: actions/cache@v3
-        id: docker-cache
+      - name: Setup Virtualenv
+        uses: actions/setup-python@v4
         with:
-          path: /var/lib/docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/docker/linux/**') }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
-
-      - name: Setup
-        if: steps.docker-cache.outputs.cache-hit != 'true'
-        run: docker build . -t sp2137 -f docker/linux/Dockerfile
-
-      - name: Run tests
-        run: docker run -v $(pwd):/logs --rm sp2137 /bin/bash -c "source venv/bin/activate && python ./atf.py -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test"
+          python-version: '3.10'
+          cache: 'pip'
+          
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Run Tests
+        run: python -m atf -DGIT_PASSWORD=${{secrets.GIT_PASSWORD}} -DLOG_FILE=logs/test.log -DFILE_LOG_LEVEL=DEBUG test
 
       - name: Archive
         if: always()
