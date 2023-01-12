@@ -54,16 +54,24 @@ def train(
         with tqdm(total=n_batches) as progress_bar:
             for batch_idx, (inputs, labels) in enumerate(loader):
                 inputs, labels = inputs.to(device), labels.to(device)
-                if sample_weights is not None:
-                    inputs, batch_sample_weights = inputs[:, 1:, :], inputs[:, 0, :]
                 if len(inputs.shape) == 3:
+                    if sample_weights is not None:
+                        inputs, batch_sample_weights = inputs[:, 1:, :], inputs[:, 0, :]
                     inputs = inputs.swapdims(1, 2)
                     inputs = inputs.swapdims(0, 1)
                     labels = labels.swapdims(0, 1)
+                    if len(labels.shape) == 2:
+                        labels = labels.unsqueeze(-1)
                     if sample_weights is not None:
                         batch_sample_weights = batch_sample_weights.swapdims(0, 1)
+                else:
+                    if sample_weights is not None:
+                        inputs, batch_sample_weights = inputs[:, 1:], inputs[:, 0]
                 optimizer.zero_grad()
-                outputs = model.forward(inputs)
+                if len(inputs.shape) == 3:
+                    outputs = model.forward(inputs, labels)
+                else:
+                    outputs = model.forward(inputs)
                 if sample_weights is not None:
                     loss = weighted_loss(
                         loss_function,
@@ -89,4 +97,4 @@ def train(
                 del batch_sample_weights
                 del labels
         LOGGER.info(
-            f"Epoch: {epoch}, loss: {np.sum(losses) / len(losses)}, {', '.join([f'{name}: {np.sum(vals) / len(vals)}' for name, vals in metric_series.items()])}")
+            f"Epoch: {epoch}, loss: {np.mean(losses)}, {', '.join([f'{name}: {np.mean(vals)}' for name, vals in metric_series.items()])}")

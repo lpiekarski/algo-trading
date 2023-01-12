@@ -70,12 +70,15 @@ class Preprocessor:
         self.range_min = x_norm.min(axis=0)
         self.range_max = x_norm.max(axis=0)
 
-    def apply(self, x: pd.DataFrame, y: pd.DataFrame = None) -> Union[Tuple[pd.DataFrame, pd.DataFrame], pd.DataFrame]:
+    def apply(self, x: pd.DataFrame, y: pd.DataFrame = None,
+              apply_rolling_window: bool = True) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
         """
         Apply fitted transformations to the DataFrame "x",
         apply rolling window (if any was specified) for both "x" and "y".
         :param x: Inputs DataFrame.
         :param y: Targets DataFrame.
+        :param apply_rolling_window: Whether to apply the rolling window transformation.
+            The transformation still won't be applied if self.rolling_window is None.
         :return: Tuple of transformed "x", "y" if "y" was not None, only "x" otherwise.
         """
         x = clamp(x)
@@ -87,12 +90,14 @@ class Preprocessor:
         x.update(log_change(x_log_change))
         x = x.fillna(0)
         if y is None:
-            if self.rolling_window is not None:
+            if self.rolling_window is not None and apply_rolling_window:
                 x = rolling_window(self.rolling_window, x)
-            return x
-        if self.rolling_window is not None:
+                return x
+            return x.to_numpy()
+        if self.rolling_window is not None and apply_rolling_window:
             x, y = rolling_window(self.rolling_window, x, y)
-        return x, y
+            return x, y
+        return x.to_numpy(), y.to_numpy()
 
     def save(self, filepath: str) -> None:
         with open(filepath, 'wb') as file:
