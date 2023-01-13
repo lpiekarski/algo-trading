@@ -6,16 +6,20 @@ import pandas as pd
 import numpy as np
 import logging
 import os
+from tqdm import tqdm
+
+from torch.utils.data import TensorDataset, DataLoader
+
 import core.torch as pytorch
 from core.data.preprocessor import Preprocessor
-from core.data.utils import accuracy, precision, recall
+from core.data.utils import accuracy, precision, recall, balanced_accuracy
 import core.torch.modules as commons_modules
 from core.exceptions import AtfError
 
 LOGGER = logging.getLogger(__name__)
 
 
-model: nn.Sequential = None
+model: commons_modules.GraphNN = None
 preprocessor: Preprocessor = None
 params: dict = dict()
 
@@ -84,16 +88,25 @@ def predict(x: pd.DataFrame) -> np.ndarray:
     device = torch.device("cuda" if use_cuda else "cpu")
     model.to(device)
     model.eval()
-    x = torch.tensor(
-        preprocessor.apply(x).astype(
-            np.float32)).to(device)
-    if len(x.shape) == 3:
-        x = x.swapdims(1, 2)
-        x = x.swapdims(0, 1)
-    outputs = model.forward(x).detach().cpu().numpy()
-    if len(outputs.shape) == 3:
-        outputs = np.concatenate([outputs[:-1, 0].squeeze(), outputs[-1].squeeze()], axis=0)
-    return outputs
+    x = torch.tensor(preprocessor.apply(x, apply_rolling_window=False).astype(np.float32))
+    inputs = []
+    outputs = [0.5]
+    result = []
+    for i in tqdm(range(x.shape[0])):
+        inputs.append(x[i])
+        if len(inputs) > preprocessor.rolling_window:
+            inputs.pop(0)
+        src = torch.stack(inputs).to(device)
+        src = src.view(src.shape[0], 1, src.shape[1])
+        tgt = torch.tensor(outputs, dtype=torch.float32, device=device)
+        tgt = tgt.view(tgt.shape[0], 1, 1)
+        output = model.forward(src, tgt)
+        output = output.flatten()
+        result.append(output[-1].detach().cpu().item())
+        outputs.append(output[-1].detach().cpu().item())
+        if len(outputs) > preprocessor.rolling_window:
+            outputs.pop(0)
+    return np.array(result)
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
@@ -102,18 +115,19 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     sample_weights = np.flipud(np.power(params['sample_weight_ratio'], np.arange(x.shape[0]))).astype(np.float32)
     pytorch.train(
         model,
-        x.astype(np.float32),
-        y.astype(np.float32),
-        nn.BCELoss(),
+        x,
+        y,
+        nn.BCELoss(reduction="none"),
         optim.Adam(model.parameters(), weight_decay=params['weight_decay']),
         n_epochs=params['n_epochs'],
         batch_size=params['batch_size'],
         metrics=dict(
-            accuracy=accuracy,
-            precision=precision,
-            recall=recall
+            acc=accuracy,
+            b_acc=balanced_accuracy,
+            p=precision,
+            r=recall
         ),
-        sample_weights=sample_weights.copy()
+        sample_weights=sample_weights
     )
 
 
