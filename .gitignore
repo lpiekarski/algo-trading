@@ -11,6 +11,4 @@ __pycache__/
 /models/
 /predictions/
 .coverage
-/env/
-/tests/
 unit_tests/resources
