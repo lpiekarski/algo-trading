@@ -9,7 +9,7 @@ bokeh==2.4.3
 Backtesting==0.3.3
 scikit-learn==1.2.0
 torch==1.13.1+cu117
-lightgbm==3.3.3
+lightgbm==3.3.4
 yfinance==0.2.3
 pandas-ta==0.3.14b0
 split-file-reader==0.1.0
