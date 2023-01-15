@@ -6,7 +6,7 @@ __all__ = ["require_env", "set_env_from_file", "TempEnv"]
 DEFAULT_ENV = dict(
     CACHE_DIR="./.cache",
     TEMP_DIR="./.tmp",
-    DRIVE="local",
+    drive="local",
     GIT_DRIVE_MAX_FILE_SIZE="100000000"
 )
 
