@@ -10,6 +10,7 @@ from model.steps.get_model_module import get_model_module
 from model.steps.get_strategy_module import get_strategy_module
 from model.steps.initialize_clearml import initialize_clearml
 from model.steps.load_weights import load_weights
+from model.benchmark import benchmark_time_tags
 
 __all__ = ["backtest_group"]
 
@@ -48,7 +49,8 @@ def backtest_group():
     Conditional(load_weights, "model"),
     Conditional(generate_predictions, "model"),
     get_strategy_module,
-    run_backtesting
+    run_backtesting,
+    benchmark_time_tags
 )
 def backtest(*args, **kwargs):
     """
