@@ -31,7 +31,7 @@ setup(
         "scikit-learn==1.2.0",
         "pytest==7.2.0",
         "torch==1.13.1",
-        "lightgbm==3.3.3",
+        "lightgbm==3.3.5",
         "yfinance==0.2.3",
         "pandas-ta==0.3.14b0",
         "split-file-reader==0.1.0",
