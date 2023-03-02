@@ -7,37 +7,22 @@ import core.data.indicators as inds
 
 LOGGER = logging.getLogger(__name__)
 DEFAULT_INDICATOR_CONFIG = dict(
-    sma=[10, 20, 50, 100, 200],
-    ema=[10, 20, 50, 100, 200],
-    dema=[10, 20, 50, 100, 200],
-    kama=[10, 20, 50, 100, 200],
-    bolinger_bands=None,
-    ichimoku=None,
-    parabolic_sar=None,
-    stdev=[10, 20, 50, 100, 200],
-    stdev_percentage=[10, 20, 50, 100, 200],
-    linreg=[10, 20, 50, 100, 200],
+    sma=[10, 20],
+    stdev=[10, 20],
     atr=[14],
     rsi=[14, 26],
-    cci=[20, 50],
     momentum=[10, 14, 21],
-    macd=None,
-    stochrsi=[14, [46, 46]],
     stoch=None,
     rvi=[14],
     willr=[14],
-    ao=None,
     ha=None,
     donchian=None,
     kelch=[20],
     bop=None,
-    uo=None,
-    accbands=None,
     cyclical_datetime=None,
     us_time=None,
     on_balance_volume=None,
     chaikin_money_flow=None,
-    klinger_oscillator=None,
     money_flow_index=None,
     negative_volume_index=None,
     price_volume=None,
@@ -49,6 +34,7 @@ DEFAULT_INDICATOR_CONFIG = dict(
 
 
 def add_indicators(dataset, indicators=None, indicator_config=None, show_progress=True, **kwargs):
+    dataset.df = dataset.df.asfreq("1min")
     if indicators is not None:
         with open(indicators, 'r') as f:
             indicator_config = yaml.load(f, yaml.CLoader)

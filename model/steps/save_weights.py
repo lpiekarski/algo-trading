@@ -10,7 +10,7 @@ from core.tempdir import TempDir
 LOGGER = logging.getLogger(__name__)
 
 
-def save_weights(model, model_module, **kwargs):
+def save_weights(model, model_module, output, **kwargs):
     model = from_string(model)
     with TempDir() as td1:
         with TempDir() as td2:
@@ -24,5 +24,6 @@ def save_weights(model, model_module, **kwargs):
                     for file in files:
                         path = os.path.join(root, file)
                         zf.write(path, os.path.relpath(path, td1))
-            upload_model_weights(model_data_path, model)
+            save_path = model if output is None else output
+            upload_model_weights(model_data_path, save_path)
             clear_cache(model_data_path)

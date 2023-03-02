@@ -28,6 +28,11 @@ def initialize(tempdir: str) -> None:
 
 
 def upload(local_path: str, cloud_path: str) -> None:
+    try:
+        delete(cloud_path)
+        LOGGER.info(f"Overwriting file '{cloud_path}'")
+    except NotFoundError:
+        LOGGER.info(f"Creating new file '{cloud_path}'")
     with TempDir() as tempdir:
         initialize(tempdir)
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
@@ -53,6 +58,7 @@ def upload(local_path: str, cloud_path: str) -> None:
 
 
 def download(cloud_path: str, local_path: str) -> None:
+    LOGGER.info(f"Downloading file {cloud_path}")
     with TempDir() as tempdir:
         initialize(tempdir)
         cloud_path = os.path.normpath(cloud_path).replace('\\', '/')
@@ -73,10 +79,12 @@ def download(cloud_path: str, local_path: str) -> None:
         i = 0
         while True:
             try:
+                part_filename = f"{os.path.basename(cloud_path)}.zip.{i:03}"
                 git.checkout_file(
-                    f"{os.path.basename(cloud_path)}.zip.{i:03}",
+                    part_filename,
                     branch=cloud_path,
                     cwd=tempdir)
+                LOGGER.info(f"\tGetting part {part_filename}")
                 i += 1
             except CalledProcessError as e:
                 if i == 0:

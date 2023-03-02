@@ -37,7 +37,7 @@ def bolinger_bands(df, time_tag):
     return [
         pd.Series(
             name=f'Upperband_{time_tag}',
-            data=bbands_result['BBL_5_2.0']
+            data=bbands_result['BBU_5_2.0']
         ),
         pd.Series(
             name=f'Middleband_{time_tag}',
@@ -45,7 +45,7 @@ def bolinger_bands(df, time_tag):
         ),
         pd.Series(
             name=f'Lowerband_{time_tag}',
-            data=bbands_result['BBU_5_2.0']
+            data=bbands_result['BBL_5_2.0']
         ),
         pd.Series(
             name=f'Bandwidth_{time_tag}',

@@ -21,6 +21,8 @@ def predict_group():
 @click.option("--model-config", "-mc", help="Drivepath of the model's configuration file (in JSON format)")
 @click.option("--dataset", "-d", help="Dataset to generate a prediction for")
 @click.option("--output", "-o", help="Name of the results file")
+@click.option("--label", "-l",
+              help="Name of the label column within the dataset (required for transformer models)")
 @execution_flow(
     get_dataset,
     get_model_module,

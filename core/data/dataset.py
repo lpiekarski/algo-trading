@@ -1,4 +1,5 @@
 import zipfile
+from typing import List, Tuple
 
 import pandas as pd
 import os
@@ -11,8 +12,7 @@ class Dataset:
     def __init__(self, df: pd.DataFrame, labels=None, interval=None):
         if not isinstance(df.index, pd.DatetimeIndex):
             raise DatasetValidationError("Dataframe is required to have DatetimeIndex")
-        self.df = df.dropna(
-            axis=0, subset=["Open", "High", "Low", "Close", "Volume"])
+        self.df = df
         if labels is not None:
             self.labels = labels
         else:
@@ -86,11 +86,10 @@ class Dataset:
     def get_x(self):
         return self.df.drop(self.labels, axis=1)
 
-    def get_y(self, label):
-        if label in self.labels:
-            return self.df[label]
-        else:
-            raise ArgumentError(f"'{label}' is not a valid label for the dataset")
+    def get_y(self, *labels: Tuple[str]):
+        if any([label not in self.labels for label in labels]):
+            raise ArgumentError(f"List contains entries that are not valid labels: {labels}")
+        return self.df[list(labels)]
 
     def add_label(self, name, series):
         self.labels.append(name)

@@ -65,7 +65,5 @@ def submit_to_drive(
                 task.connect(run.iloc[0].to_dict())
             pd.concat([results, run]).to_csv(local_path)
         finally:
-            if task is not None:
-                task.close()
             copy(f"local:{local_path}", drivepath)
         clear_cache(f"local:{local_path}")

@@ -1,3 +1,5 @@
+from typing import Dict
+
 import torch.optim as optim
 import torch
 import sys
@@ -6,22 +8,26 @@ import pandas as pd
 import numpy as np
 import logging
 import os
-from tqdm import tqdm
 
 from torch.utils.data import TensorDataset, DataLoader
+from tqdm import tqdm
 
 import core.torch as pytorch
 from core.data.preprocessor import Preprocessor
-from core.data.utils import accuracy, precision, recall, balanced_accuracy
+import core.data.utils as metric_source
 import core.torch.modules as commons_modules
 from core.exceptions import AtfError
 
 LOGGER = logging.getLogger(__name__)
 
 
-model: commons_modules.GraphNN = None
-preprocessor: Preprocessor = None
+model: commons_modules.GraphNN | None = None
+preprocessor: Preprocessor | None = None
 params: dict = dict()
+optimizer: str | None = None
+optimizer_params: dict | None = None
+loss_fn: nn.Module | None = None
+metrics: Dict[str, str] | None = None
 
 
 def has_nested_attr(_obj, _nested_attr):
@@ -42,7 +48,7 @@ def get_nested_attr(_obj, _nested_attr):
 
 
 def initialize(num_features: int, config: dict) -> None:
-    global model, preprocessor, params
+    global model, preprocessor, params, optimizer, optimizer_params, loss_fn, metrics
     if config is None:
         raise AtfError("Config file not provided")
     architecture = config['architecture']
@@ -81,53 +87,95 @@ def initialize(num_features: int, config: dict) -> None:
         preprocessor = Preprocessor(**ppargs, num_features=num_features)
     else:
         raise AtfError(f"Invalid preprocessor arguments type")
+    optimizer = config["optimizer"]
+    optimizer_params = config["optimizer_params"]
+    if hasattr(commons_modules, config["loss"]):
+        loss_fn = getattr(commons_modules, config["loss"])
+    elif hasattr(nn, config["loss"]):
+        loss_fn = getattr(nn, config["loss"])
+    else:
+        raise AtfError(f"Invalid loss {config['loss']}")
+    metrics = config["metrics"]
 
 
-def predict(x: pd.DataFrame) -> np.ndarray:
+def get_result(src, tgt, device):
+    src = src.to(device).swapdims(0, 1)
+    tgt = tgt.to(device).swapdims(0, 1)
+    src[src.isnan()] = 0
+    output = model.forward(src, tgt)[0]
+    output = output[-1]
+    return output.detach().cpu().numpy()
+
+
+def predict(x: pd.DataFrame, y: pd.DataFrame) -> np.ndarray:
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     model.to(device)
     model.eval()
-    x = torch.tensor(preprocessor.apply(x, apply_rolling_window=False).astype(np.float32))
-    inputs = []
-    outputs = [0.5]
-    result = []
-    for i in tqdm(range(x.shape[0])):
-        inputs.append(x[i])
-        if len(inputs) > preprocessor.rolling_window:
-            inputs.pop(0)
-        src = torch.stack(inputs).to(device)
-        src = src.view(src.shape[0], 1, src.shape[1])
-        tgt = torch.tensor(outputs, dtype=torch.float32, device=device)
-        tgt = tgt.view(tgt.shape[0], 1, 1)
-        output = model.forward(src, tgt)
-        output = output.flatten()
-        result.append(output[-1].detach().cpu().item())
-        outputs.append(output[-1].detach().cpu().item())
-        if len(outputs) > preprocessor.rolling_window:
-            outputs.pop(0)
-    return np.array(result)
+    with torch.no_grad():
+        if preprocessor.rolling_window is not None:
+            x, y = preprocessor.apply(x, y, apply_rolling_window=False)
+            x = torch.tensor(x.astype(np.float32))
+            y = torch.tensor(y.astype(np.float32))
+            inputs = []
+            result = []
+            srcs = []
+            tgts = []
+            for i in tqdm(range(x.shape[0])):
+                inputs.append(x[i])
+                if len(inputs) > preprocessor.rolling_window:
+                    inputs.pop(0)
+                init_tensor = torch.ones(1, y.shape[1])
+                init_tensor = init_tensor / init_tensor.sum() if y.shape[1] > 1 else init_tensor / 2
+                outputs = torch.cat([init_tensor, y[:i]])
+                if outputs.shape[0] > preprocessor.rolling_window:
+                    outputs = outputs[-preprocessor.rolling_window:]
+                src = torch.stack(inputs)
+                src = src.view(1, src.shape[0], src.shape[1])
+                tgt = outputs
+                tgt = tgt.view(1, tgt.shape[0], tgt.shape[1])
+                if len(srcs) > 0 and (src.shape != srcs[0].shape or tgt.shape !=
+                                      tgts[0].shape or len(srcs) >= params["batch_size"]):
+                    result.append(get_result(torch.cat(srcs), torch.cat(tgts), device))
+                    srcs = []
+                    tgts = []
+                srcs.append(src)
+                tgts.append(tgt)
+            if len(srcs) > 0:
+                result.append(get_result(torch.cat(srcs), torch.cat(tgts), device))
+
+            return np.concatenate(result, axis=0)
+        else:
+            cuda_kwargs = {'num_workers': 1,
+                           'pin_memory': True}
+            x = torch.tensor(preprocessor.apply(x).astype(np.float32))
+            torch_dataset = TensorDataset(x)
+            loader = DataLoader(torch_dataset, shuffle=False, batch_size=params['batch_size'], **cuda_kwargs)
+            outputs = []
+            for idx, (inputs,) in enumerate(loader):
+                inputs = inputs.to(device)
+                output = model.forward(inputs).detach().cpu().numpy()
+                outputs.append(output.squeeze())
+            return np.concatenate(outputs, axis=0)
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
+    metrics_dict = {
+        k: getattr(metric_source, v)
+        for k, v in metrics.items()
+    }
     preprocessor.fit(x)
     x, y = preprocessor.apply(x, y)
-    sample_weights = np.flipud(np.power(params['sample_weight_ratio'], np.arange(x.shape[0]))).astype(np.float32)
     pytorch.train(
         model,
         x,
         y,
-        nn.BCELoss(reduction="none"),
-        optim.Adam(model.parameters(), weight_decay=params['weight_decay']),
+        loss_fn(reduction="none"),
+        getattr(optim, optimizer)(model.parameters(), **optimizer_params),
         n_epochs=params['n_epochs'],
         batch_size=params['batch_size'],
-        metrics=dict(
-            acc=accuracy,
-            b_acc=balanced_accuracy,
-            p=precision,
-            r=recall
-        ),
-        sample_weights=sample_weights
+        metrics=metrics_dict,
+        train_test_split=params["train_test_split"]
     )
 
 
@@ -138,5 +186,7 @@ def save_weights(path: str) -> None:
 
 def load_weights(path: str) -> None:
     global model, preprocessor
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda" if use_cuda else "cpu")
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
-    model.load_state_dict(torch.load(os.path.join(path, 'model')))
+    model.load_state_dict(torch.load(os.path.join(path, 'model'), map_location=device))

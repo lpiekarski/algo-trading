@@ -3,6 +3,7 @@ import click
 from core.steps.conditional import Conditional
 from core.steps.get_dataset import get_dataset
 from core.subcommand_execution.execution_flow import execution_flow
+from model.steps.finalize_clearml import finalize_clearml
 from model.steps.get_model_module import get_model_module
 from model.steps.initialize_clearml import initialize_clearml
 from model.steps.initialize_model import initialize_model
@@ -33,14 +34,17 @@ def train_group():
 @click.option("--clearml-access-key", "-cak", help="ClearML access key")
 @click.option("--clearml-secret-key", "-csk", help="ClearML secret key")
 @click.option("--clearml-project", "-cp", help="ClearML project name")
+@click.option("--new-weights", "-nw", help="Initialize weights randomly", is_flag=True, default=None)
+@click.option("--output", "-nw", help="Output path for model weights", default=None)
 @execution_flow(
-    Conditional(initialize_clearml, "clearml_access_key"),
     get_dataset,
     get_model_module,
+    Conditional(initialize_clearml, "clearml_access_key"),
     initialize_model,
-    load_weights,
+    Conditional(load_weights, "new_weights", False),
     run_training,
-    Conditional(save_weights, "no_save", False)
+    Conditional(save_weights, "no_save", False),
+    Conditional(finalize_clearml, "clearml_access_key")
 )
 def train(*args, **kwargs):
     """

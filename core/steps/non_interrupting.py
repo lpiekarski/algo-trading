@@ -18,6 +18,6 @@ class NonInterrupting(Step):
 
     def callback(self, *args, **kwargs):
         try:
-            self.wrapped_step(*args, **kwargs)
+            return self.wrapped_step(*args, **kwargs)
         except Exception as e:
             raise NonInterruptingError(e)

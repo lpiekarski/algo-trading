@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from core.exceptions import NonInterruptingError
-from core.string import BOLD, break_padded, ENDC, OKBLUE, BREAK, FAIL, OKCYAN
+from core.string import BOLD, break_padded, ENDC, OKBLUE, BREAK, FAIL, OKCYAN, HEADER
 from core.subcommand_execution.step import StepStatus, Step, StepExecutionTracker, colored_status_str
 
 LOGGER = logging.getLogger(__name__)
@@ -37,8 +37,6 @@ class SubcommandExecutor:
         Output subcommand execution plan to the logger.
         """
         self.logger.log_module_and_name()
-        self.logger.log_horizontal_line()
-        self.logger.log_execution_plan_str()
         for step in self.steps:
             self.logger.log_step_execution_plan(step)
 
@@ -51,20 +49,17 @@ class SubcommandExecutor:
         """
         self.logger.log_empty_line()
         if any([step.error is not None for step in self.steps]):
-            self.logger.log_horizontal_line()
             self.logger.log_detailed_errors_str()
             for step in filter(lambda s: s.error is not None, self.steps):
                 self.logger.log_step_detailed_error(step)
-        self.logger.log_horizontal_line()
+        self.logger.log_empty_line()
         self.logger.log_results_str()
         for step in self.steps:
             self.logger.log_step_resolution(step)
-        self.logger.log_horizontal_line()
+        self.logger.log_empty_line()
         self.logger.log_command_status(status)
-        self.logger.log_horizontal_line()
         self.logger.log_total_time(start_clock, end_clock)
         self.logger.log_end_time(end_clock)
-        self.logger.log_horizontal_line()
         self.logger.log_empty_line()
 
     def execute_steps(self, args: tuple, kwargs: dict) -> StepStatus:
@@ -112,21 +107,13 @@ class SubcommandExecutorLogger:
         """
         Output horizontal line of '-' signs.
         """
-        self.logger.info(f"{BOLD}{BREAK}{ENDC}")
+        self.logger.info(BOLD + f"{BREAK}" + ENDC)
 
     def log_module_and_name(self) -> None:
         """
         Output subcommand module and name as a title line
         """
-        self.logger.info(BOLD + OKBLUE + break_padded(f"{self.module}:{self.name}") + ENDC)
-        self.log_empty_line()
-
-    def log_execution_plan_str(self) -> None:
-        """
-        Log "\tExecution plan:" followed by an empty line.
-        """
-        self.logger.info("\tExecution plan:")
-        self.log_empty_line()
+        self.logger.info(f"Goal {BOLD}{self.name}{ENDC} [{HEADER}{self.module}{ENDC}] with steps:")
 
     def log_step_execution_plan(self, step) -> None:
         """
@@ -134,7 +121,7 @@ class SubcommandExecutorLogger:
         step name followed by "@" sign, followed by step module.
         :param step: Step from which the name and module values are extracted.
         """
-        step.get_log_func(self.logger)(f"\t\t{step.name} @ {step.module}")
+        step.get_log_func(self.logger)(f" ↳ {step.name} [{step.module}]")
 
     def log_empty_line(self) -> None:
         """
@@ -146,15 +133,13 @@ class SubcommandExecutorLogger:
         """
         Log "Results:" followed by an empty line.
         """
-        self.logger.info(f"Results:")
-        self.log_empty_line()
+        self.logger.info(f"➡  {BOLD}Results{ENDC}")
 
     def log_detailed_errors_str(self) -> None:
         """
         Log "Detailed Errors:" followed by an empty line.
         """
-        self.logger.info(f"Detailed Errors:")
-        self.log_empty_line()
+        self.logger.info(f"➡  {BOLD}Detailed Errors{ENDC}")
 
     def log_step_resolution(self, step) -> None:
         """
@@ -163,12 +148,27 @@ class SubcommandExecutorLogger:
         :param step: Step for which to create this log line.
         """
         log_func = step.get_log_func(self.logger)
+        step_name = step.name + ' '
+        if len(step_name) >= 52:
+            step_name = f"{step_name[:49]}..."
+        #step_name = f"{step_name: <52}"
         if step.result == StepStatus.SKIPPED:
-            message = f"{step.name + ' ' :.<68} {colored_status_str(step.result)}"
+            message = f"⏸  {step_name}"
+        elif step.result == StepStatus.SUCCESS:
+            message = f"✔  {step_name}"
+        elif step.result == StepStatus.FAILURE:
+            message = f"❌  {step_name}"
         else:
-            message = f"{step.name + ' ' :.<68} {colored_status_str(step.result)} [{step.end_clock - step.start_clock :.5f} s]"
+            message = f"❌  {step_name}"
+        #if step.result == StepStatus.SKIPPED:
+        #    message = f"{step_name} {colored_status_str(step.result)}"
+        #else:
+        #    message = f"{step_name} {colored_status_str(step.result)} [{step.end_clock - step.start_clock :.5f} s]"
         if step.error is not None:
-            message += f"{FAIL} {type(step.error).__name__}: {step.error}{ENDC}"
+            error_msg = f"{type(step.error).__name__}: {step.error}"
+            endl = "\n"
+            tabendl = "\n    "
+            message += f"\n    ☠  {FAIL}{error_msg.replace(endl, tabendl)}{ENDC}"
         log_func(message)
 
     def log_step_detailed_error(self, step) -> None:
@@ -177,14 +177,22 @@ class SubcommandExecutorLogger:
         Assumes that an error occurred during the execution of the step i.e. step.error is not None.
         :param step: Step for which to create this log line.
         """
-        self.logger.error(f"Error in step {step.name} @ {step.module}:", exc_info=step.error)
+        self.logger.error(f"☠  {step.name} [{step.module}]", exc_info=step.error)
 
     def log_command_status(self, status: StepStatus) -> None:
         """
         Log given command status.
         :param status: Status of the subcommand to log.
         """
-        self.logger.info(f"COMMAND {colored_status_str(status)}")
+        if status == StepStatus.SKIPPED:
+            message = f"[⏸ ]"
+        elif status == StepStatus.SUCCESS:
+            message = f"[✔ ]"
+        elif status == StepStatus.FAILURE:
+            message = f"[❌ ]"
+        else:
+            message = f"[❌ ]"
+        self.logger.info(f"Final status: {message}")
 
     def log_total_time(self, start_clock: float, end_clock: float) -> None:
         """
@@ -192,14 +200,14 @@ class SubcommandExecutorLogger:
         :param start_clock: Unix start clock time in seconds.
         :param end_clock: Unix end clock time in seconds.
         """
-        self.logger.info(f"Total time: {end_clock - start_clock :.5f} s")
+        self.logger.info(f"⌛  {end_clock - start_clock :.5f} s")
 
     def log_end_time(self, end_clock: float) -> None:
         """
         Log formatted time at which the subcommand was completed.
         :param end_clock: Unix end clock time in seconds.
         """
-        self.logger.info(f"Finished at: {datetime.fromtimestamp(end_clock).strftime('%Y-%m-%dT%H:%M:%S')}")
+        self.logger.info(f"⌚  {datetime.fromtimestamp(end_clock).strftime('%Y-%m-%d %H:%M:%S')}")
 
     def log_step_title(self, step) -> None:
         """
@@ -208,7 +216,7 @@ class SubcommandExecutorLogger:
         """
         log = step.get_log_func(self.logger)
         log("")
-        log(f"{BOLD}---{ENDC} {OKCYAN}{step.name}{ENDC} {BOLD}@{ENDC} {OKCYAN}{step.module}{ENDC} {BOLD}---{ENDC}")
+        log(f"➡  {BOLD}{step.name}{ENDC} [{HEADER}{step.module}{ENDC}]")
 
     def log_step_completion(self, kwargs: dict) -> None:
         """

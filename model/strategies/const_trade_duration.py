@@ -1,28 +1,38 @@
-import logging
-from typing import Any, Type
-
+from typing import List
+import pandas as pd
 import numpy as np
-from backtesting import Backtest, Strategy
+
+from trader.broker_apis import Signal, Trade
+
+threshold: float = 0
+volume: float = 0.01
+duration: float = 0.01
 
 
-# back testing 1 add 1 long, 0 do nothing, -1 add 1 short.
-# closing on the next time
+def initialize(config_dict: dict | None = None):
+    global threshold
+    global volume
+    global duration
+    if config_dict is not None:
+        if "threshold" in config_dict:
+            threshold = config_dict["threshold"]
+        if "volume" in config_dict:
+            volume = config_dict["volume"]
+        if "duration" in config_dict:
+            duration = config_dict["duration"]
 
-def get_strategy(predictions: np.ndarray, config_json: Any) -> Type[Strategy]:
-    backtest_volume = config_json['backtest_volume']
 
-    class BacktestStrategy(Strategy):
-        def init(self):
-            self.id = 1
+def load_state(path: str):
+    pass
 
-        def next(self):
-            pred = predictions[self.id]
-            close = self.data.Close[-1]
-            self.position.close()
-            if pred > 0.5:
-                self.buy(size=backtest_volume)
-            elif pred < 0.5:
-                self.sell(size=backtest_volume)
-            self.id += 1
 
-    return BacktestStrategy
+def get_trades(predictions: np.ndarray, data: pd.DataFrame) -> List[Trade]:
+    signals = np.full_like(predictions, Signal.NO_ACTION)
+    signals[predictions > 0.5 + threshold] = Signal.BUY
+    signals[predictions < 0.5 - threshold] = Signal.SELL
+    return [Trade(signal, price, volume, close_after=duration) for
+            signal, price in zip(signals, data["Close"])]
+
+
+def save_state(path: str):
+    pass

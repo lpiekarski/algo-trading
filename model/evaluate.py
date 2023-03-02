@@ -3,6 +3,7 @@ import click
 from core.steps.conditional import Conditional
 from core.steps.get_dataset import get_dataset
 from core.subcommand_execution.execution_flow import execution_flow
+from model.steps.finalize_clearml import finalize_clearml
 from model.steps.generate_predictions import generate_predictions
 from model.steps.initialize_model import initialize_model
 from model.steps.evaluate_predictions import evaluate_predictions
@@ -37,7 +38,8 @@ def evaluate_group():
     load_weights,
     generate_predictions,
     evaluate_predictions,
-    submit_to_drive
+    submit_to_drive,
+    Conditional(finalize_clearml, "clearml_access_key")
 )
 def evaluate(*args, **kwargs):
     """

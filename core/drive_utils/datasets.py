@@ -41,5 +41,5 @@ def upload_dataset(
         LOGGER.debug(
             f"Saving dataset '{drivepath}' to local file '{formpath(tempfile)}'")
         result_dataset.save(tempfile)
-        copy(tempfile, drivepath)
+        copy(f"local:{tempfile}", drivepath)
         clear_cache(tempfile)

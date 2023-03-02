@@ -1,13 +1,16 @@
 import os
+from typing import List, Dict
+
 from core.exceptions import ArgumentError
 
-__all__ = ["require_env", "set_env_from_file", "TempEnv"]
+__all__ = ["require_env", "set_env_from_file", "initialize_default_env", "TempEnv"]
 
 DEFAULT_ENV = dict(
     CACHE_DIR="./.cache",
     TEMP_DIR="./.tmp",
-    DRIVE="local",
-    GIT_DRIVE_MAX_FILE_SIZE="100000000"
+    drive="local",
+    GIT_DRIVE_MAX_FILE_SIZE="100000000",
+    DEFAULT_ENV_FILE=os.path.join(os.path.expanduser("~"), ".atf")
 )
 
 
@@ -19,6 +22,94 @@ def require_env(name: str) -> str:
     return value
 
 
+class EnvfileDirective:
+    def __init__(self):
+        pass
+
+
+class ImportDirective(EnvfileDirective):
+    def __init__(self, filename: str):
+        super().__init__()
+        self.filename = filename
+
+    def __str__(self):
+        return f"import {self.filename}"
+
+
+class CommentDirective(EnvfileDirective):
+    def __init__(self, content: str):
+        super().__init__()
+        self.content = content
+
+    def __str__(self):
+        return f"#{self.content}"
+
+
+class KeywordValueDirective(EnvfileDirective):
+    def __init__(self, keyword: str, value: str):
+        super().__init__()
+        self.keyword = keyword
+        self.value = value
+
+    def __str__(self):
+        return f"{self.keyword}={self.value}"
+
+
+class Envfile:
+    def __init__(self, directives: List[EnvfileDirective]):
+        self.directives = directives
+
+    @classmethod
+    def parse_from_file(cls, filename: str) -> "Envfile":
+        result = []
+        with open(filename, "r") as f:
+            lines = f.readlines()
+            lines = list(filter(lambda line: line != "", lines))
+            lines = list(filter(lambda line: not line.isspace(), lines))
+            for directive in lines:
+                directive = directive.lstrip()
+                if directive.startswith("import "):
+                    imported_file = directive.split(" ", 1)[1].strip()
+                    result.append(ImportDirective(imported_file))
+                elif directive.startswith("#"):
+                    content = directive[1:] if len(directive) > 1 else ""
+                    result.append(CommentDirective(content))
+                else:
+                    entry_split = directive.split("=", 1)
+                    if len(entry_split) != 2:
+                        raise ArgumentError(f"Invalid argument '{directive}'")
+                    var, value = entry_split
+                    var = var.strip()
+                    value = value.strip()
+                    result.append(KeywordValueDirective(var, value))
+        return Envfile(result)
+
+    def execute(self) -> Dict[str, str]:
+        result = {}
+        for directive in self.directives:
+            if isinstance(directive, ImportDirective):
+                result |= Envfile.parse_from_file(directive.filename).execute()
+            elif isinstance(directive, KeywordValueDirective):
+                os.environ[directive.keyword] = directive.value
+                result[directive.keyword] = directive.value
+        return result
+
+    def save(self, filename: str) -> None:
+        with open(filename, "w") as f:
+            f.writelines([str(directive) + "\n" for directive in self.directives])
+
+    def set_keyword_value(self, keyword: str, value: str):
+        self.unset_keyword(keyword)
+        self.directives.append(KeywordValueDirective(keyword, value))
+
+    def unset_keyword(self, keyword: str):
+        self.directives = [
+            directive
+            for directive in self.directives
+            if not isinstance(directive, KeywordValueDirective) or directive.keyword != keyword
+        ]
+
+
 def set_env_from_file(filename: str) -> dict:
     """
     Read env file consisting of "var_name=value" lines. Store environmental variables present in that file
@@ -26,23 +117,7 @@ def set_env_from_file(filename: str) -> dict:
 
     Returns a dictionary of all variables read from the file
     """
-    result = {}
-    with open(filename, "r") as f:
-        lines = f.readlines()
-        # Filter out empty lines and comments
-        lines = list(filter(lambda line: line != "", lines))
-        lines = list(filter(lambda line: not line.isspace(), lines))
-        lines = list(filter(lambda line: not line.strip().startswith("#"), lines))
-        for entry in lines:
-            entry_split = entry.split("=", 1)
-            if len(entry_split) != 2:
-                raise ArgumentError(f"Invalid argument '{entry}'")
-            var, value = entry_split
-            var = var.strip()
-            value = value.strip()
-            os.environ[var] = value
-            result[var] = value
-    return result
+    return Envfile.parse_from_file(filename).execute()
 
 
 def initialize_default_env() -> dict:
@@ -51,6 +126,9 @@ def initialize_default_env() -> dict:
     for key, value in DEFAULT_ENV.items():
         os.environ[key] = value
         result[key] = value
+    envfile = os.getenv("DEFAULT_ENV_FILE")
+    if os.path.exists(envfile):
+        set_env_from_file(envfile)
     return result
 
 

@@ -12,3 +12,6 @@ __pycache__/
 /predictions/
 .coverage
 unit_tests/resources
+secrets.env
+*.egg-info/
+build/

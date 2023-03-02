@@ -3,6 +3,7 @@ from click import group, option
 from collector.steps.add_indicators import add_indicators
 from collector.steps.add_labels import add_labels
 from collector.steps.add_resample_indicators import add_resample_indicators
+from collector.steps.convert_to_percentages import convert_to_percentages
 from collector.steps.save_dataset import save_dataset
 from core.steps.conditional import Conditional
 from core.steps.get_dataset import get_dataset
@@ -19,13 +20,13 @@ def extract_group():
 @extract_group.command()
 @option("--output", "-o",
         help="Name of the output dataset")
-@option("--time-tag", "-t",
-        help="Rescale data to hours, days, month")
+@option("--percentage", "-pct",
+        help="Rescale to percentage difference")
 @option("--dataset", "-d",
         help="Dataset to extract features from")
 @option("--append",
         "-a",
-        default=True,
+        default=False,
         help="Whether to overwrite or append to an existing dataset with the same name",
         is_flag=True)
 @option("--indicators",
@@ -36,9 +37,9 @@ def extract_group():
         help="Specify yaml file with chosen labels")
 @execution_flow(
     get_dataset,
-    Conditional(add_indicators, "time_tag", False),
-    Conditional(add_resample_indicators, "time_tag"),
-    add_labels,
+    Conditional(convert_to_percentages, "percentage"),
+    Conditional(add_indicators, "indicators"),
+    Conditional(add_labels, "labels"),
     save_dataset
 )
 def extract(*args, **kwargs):
