@@ -29,7 +29,7 @@ setup(
         "bokeh==2.4.3",
         "Backtesting==0.3.3",
         "scikit-learn==1.2.0",
-        "pytest==7.2.0",
+        "pytest==7.2.1",
         "torch==1.13.1",
         "lightgbm==3.3.3",
         "yfinance==0.2.3",
