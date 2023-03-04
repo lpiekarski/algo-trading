@@ -6,6 +6,7 @@ import pickle
 from core.data.preprocessor import Preprocessor
 from core.exceptions import AtfError
 from hmmlearn import hmm
+import warnings
 
 model: SVC = None
 preprocessor: Preprocessor = None
@@ -13,27 +14,19 @@ preprocessor: Preprocessor = None
 
 def initialize(num_features: int, config: dict) -> None:
     global preprocessor, model
+    warnings.filterwarnings("ignore")
     model = SVC(C=0.5, kernel='rbf', degree=1, probability=True)
-    if config is None:
-        raise AtfError("Config file not provided")
-    ppargs = config['preprocessor']
-    if isinstance(ppargs, list):
-        preprocessor = Preprocessor(*ppargs, num_features=num_features)
-    elif isinstance(ppargs, dict):
-        preprocessor = Preprocessor(**ppargs, num_features=num_features)
-    else:
-        raise AtfError(f"Invalid preprocessor arguments type")
 
 
-def predict(x: pd.DataFrame) -> np.ndarray:
-    pred = hmm(x)
+def predict(x: pd.DataFrame, y) -> np.ndarray:
+    pred = hmm_pred(x)
     x = pd.concat([x, pred], axis=1)
     return model.predict_proba(preprocessor.apply(x))[:, 1]
 
 
 def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     global model
-    pred = hmm(x)
+    pred = hmm_pred(x)
     x = pd.concat([x, pred], axis=1)
 
     # weight = []
@@ -45,7 +38,7 @@ def train(x: pd.DataFrame, y: pd.DataFrame) -> None:
     # weight = weight.to_numpy().squeeze()
 
     preprocessor.fit(x)
-    model.fit(preprocessor.apply(x), y, sample_weight=weight)
+    model.fit(preprocessor.apply(x), y)  # sample_weight=weight
 
 
 def save_weights(path: str) -> None:
@@ -60,11 +53,13 @@ def load_weights(path: str) -> None:
         model = pickle.load(file)
     preprocessor = Preprocessor.load(os.path.join(path, "preprocessor"))
 
-def hmm(df: pd.DataFrame):
+
+def hmm_pred(df: pd.DataFrame):
+    warnings.filterwarnings("ignore")
     df['Time'] = df.index
     time = df['Time']
     time.reset_index()
-    HMM = np.stack((df['Close_change'],
+    HMM = np.stack((df['Close'],
                     df['Volume']),
                    axis=1)
 
@@ -78,7 +73,7 @@ def hmm(df: pd.DataFrame):
             for idx in range(n_fits):
                 model_hmm = hmm.GaussianHMM(
                     n_components=n_components, random_state=idx,
-                    init_params='se', n_iter=n, n_init="10")  # some upgrades here needed
+                    init_params='se', n_iter=n)  # some upgrades here needed
                 model_hmm.fit(HMM)
                 score = model_hmm.score(HMM)
                 if best_score is None or score > best_score:
@@ -95,5 +90,4 @@ def hmm(df: pd.DataFrame):
     time = pd.DataFrame(time)
     pred = pd.concat([time, pred], axis=1)
     pred = pred.set_index('Time')
-    df = pd.concat([df, pred], axis=1)
     return pred
