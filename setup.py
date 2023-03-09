@@ -20,7 +20,7 @@ setup(
         "https://download.pytorch.org/whl/cu117"
     ],
     install_requires=[
-        "clearml==1.8.3",
+        "clearml==1.9.3",
         "pandas==1.5.2",
         "numpy==1.24.1",
         "python-dateutil==2.8.2",
