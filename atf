@@ -26,6 +26,7 @@ from settings.set import set_group
 from settings.unset import unset_group
 from testing.test import test_group
 from trader.trade import trade_group
+from some_module.function import function_group
 
 LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +49,8 @@ LOGGER = logging.getLogger(__name__)
         dataset2csv_group,
         backtest_group,
         set_group,
-        unset_group
+        unset_group,
+        function_group
     ]
 )
 @click.option("-D", "env", multiple=True,
@@ -61,6 +63,7 @@ def atf(env, envfile):
     collected_env |= set_env_from_options(env) #zczytuje z opcji 
     init_logging()
     core.string.initialize()
+    LOGGER.debug(os.getenv("a"))
     LOGGER.debug(f"env:\n\t{TAB.join([f'{k}={v}' for k, v in collected_env.items()])}")
 
  

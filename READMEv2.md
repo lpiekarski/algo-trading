@@ -30,19 +30,45 @@ There are a few environmental variables that are expected to be set by some part
 
 `DRIVE` - Default drive type. Can be `local` or `git` (Each file in `core/drive` not starting with `__` corresponds to a drive type) 
 
+`LOG_TYPE` - DEBUG or something 
+
+
+
 1. they can be set in the file ".atf" in your user/username/ path 
 2. they can be set by cli with "-D" before using a command e.g. "atf -Dname=value subcommand"
 3. They can be set by "atf set name value" - it saves 
 3.5 it can be unset by atf unset name 
 
 
+it is saved in /User/[username]/.atf - you can save it also manually
+atf -E --envfile[envfile (absolute?) filepath] - examples are in the folder examples
+
 # env module 
 basically env module serves the purpose of loading the environmental variables either fqrom files or options passed in the command 
 
-1. po prostu odpalenie ze srodowiskiem z ta zmienna
-2. ustawienie na stale wartosci poprzez "atf set nazwa wartosc"
-3. przez argument w cli np "atf -Dnazwa=wartosc subkomenda ... "
 
-4. przez plik ze zmiennymi w formacie nazwa=wartosc w osobnych liniach i potem w cli "atf -E sciezka/do/pliku.env subkomenda ..."
+# create new module 
 
-w examples sa takie przykladowe pliki
+module name /
+- __init__.py
+- function_name.py
+- steps/
+--- __init__.py
+---function_step_name.py
+
+# collector 
+
+collector is a module that let you download data from the list of external sources and save it 
+for now supported sources are 
+twitter 
+xtb
+yfinance 
+
+collector arguments are listed in ... atf collect --help 
+
+https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases - pandas way of timeseries formats 
+
+yfinance options [1m, 2m, 5m]
+https://www.qmr.ai/wp-content/uploads/2022/08/image-23.png
+
+Twitter requires TWITTER_BEARER_TOKEN set 

@@ -62,7 +62,7 @@ class Envfile:
     @classmethod
     def parse_from_file(cls, filename: str) -> "Envfile":
         result = []
-        with open(filename, "r") as f:
+        with open(filename, "r") as f: #czy to nie bierze z absolutnej ścieki? Nie lepiej z relatywnej? 
             lines = f.readlines()
             lines = list(filter(lambda line: line != "", lines))
             lines = list(filter(lambda line: not line.isspace(), lines))

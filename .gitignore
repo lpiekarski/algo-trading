@@ -16,3 +16,4 @@ secrets.env
 *.egg-info/
 build/
 .python-version
+.vscode/launch.json
