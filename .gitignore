@@ -15,3 +15,4 @@ unit_tests/resources
 secrets.env
 *.egg-info/
 build/
+.python-version

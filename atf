@@ -55,16 +55,16 @@ LOGGER = logging.getLogger(__name__)
               help="Set environment variable e.g. -Dvar=value")
 @click.option("-E", "--envfile", help="Path to the file with environmental variables' definition", default=None)
 def atf(env, envfile):
-    collected_env = initialize_default_env()
+    collected_env = initialize_default_env() #sprawdza czy jest środowisko i ustawia podstawowe
     if envfile is not None:
-        collected_env |= set_env_from_file(envfile)
-    collected_env |= set_env_from_options(env)
+        collected_env |= set_env_from_file(envfile) 
+    collected_env |= set_env_from_options(env) #zczytuje z opcji 
     init_logging()
     core.string.initialize()
     LOGGER.debug(f"env:\n\t{TAB.join([f'{k}={v}' for k, v in collected_env.items()])}")
 
-
-def set_env_from_options(env):
+ 
+def set_env_from_options(env): #do przeniesienia do modułu env? 
     result = {}
     for entry in env:
         entry_split = entry.split("=", 1)
