@@ -41,3 +41,4 @@ def hmm_predict(df: pd.DataFrame):
     pred = pd.concat([time, pred], axis=1)
     pred = pred.set_index('Time')
     return pred
+    
