@@ -109,11 +109,20 @@ If you have only `.csv` file first you need to convert it to dataset format.
     python -m atf delete git:datasets/raw/dataset_to_delete.zip
     ```
 
-### Collecting OHLC Data
-1. You can collect the ohcl S&P 500 data from yfinance using command below (you can also run `atf.py collect --help` to see additional options)
+### Collecting OHLC data from external sources
+Collector module allows to download ohcl S&P 500 data from external soruces. To do this run command below (you can also run `atf.py collect --help` to see additional options)
    ```bash
-   python -m atf collect --name=local:raw/latest
+   atf collect -s [source]
    ```
+Currently available sources: 
+- yfinance
+
+Additonal option -i (intervals) accepts [standard pandas aliases](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases) 
+
+**Warning**
+Different sources accept only some types of intervals 
+e.g. [yfinance](https://www.qmr.ai/wp-content/uploads/2022/08/image-23.png)
+
 
 ### Live Trading (TODO: implement)
    ```bash
