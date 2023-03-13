@@ -1,0 +1,16 @@
+data: path/to/file
+
+functions:
+  func1:
+    file: indicators
+    name: add_indicators
+    params:
+      resample: 1h
+  func2:
+    file: hmm
+    name: list_hmm
+
+flow:
+  - func1
+  - func2
+  - func1
