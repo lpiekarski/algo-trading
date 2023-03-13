@@ -14,7 +14,7 @@ def preprocess_group():
 
 
 @preprocess_group.command()
-@click.option("--config_path", "-cf", help="Drivepath to the preprocessing configuration YAML file", default="...")
+@click.argument("config")
 @click.option("--dataset", "-ds", help="Drivepath to the dataset file to be preprocessed")
 @execution_flow(
     read_config,
@@ -23,5 +23,5 @@ def preprocess_group():
 )
 def preprocess(*args, **kwargs):
     """
-    Copy file between local or remote locations
+    Preprocess data according to the specified flow
     """
