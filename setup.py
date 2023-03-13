@@ -26,7 +26,7 @@ setup(
         "python-dateutil==2.8.2",
         "click==8.1.3",
         "tqdm==4.64.1",
-        "bokeh==2.4.3",
+        "bokeh==3.1.0",
         "Backtesting==0.3.3",
         "scikit-learn==1.2.0",
         "pytest==7.2.0",
