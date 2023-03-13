@@ -26,6 +26,7 @@ from settings.set import set_group
 from settings.unset import unset_group
 from testing.test import test_group
 from trader.trade import trade_group
+from preporcessor.preprocess import preprocess_group
 
 LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +49,8 @@ LOGGER = logging.getLogger(__name__)
         dataset2csv_group,
         backtest_group,
         set_group,
-        unset_group
+        unset_group, 
+        preprocess_group
     ]
 )
 @click.option("-D", "env", multiple=True,
