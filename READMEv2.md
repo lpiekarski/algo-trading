@@ -72,3 +72,15 @@ yfinance options [1m, 2m, 5m]
 https://www.qmr.ai/wp-content/uploads/2022/08/image-23.png
 
 Twitter requires TWITTER_BEARER_TOKEN set 
+
+
+### Downloading Datasets from Drive
+1. Download a file from drive using command below (you can also run `atf.py copy --help` to see additional options)
+    ```bash
+    python -m atf copy git:datasets/train/M30_H1 M30_H1.zip 
+    ```
+    Data files are in different branches of datasets repository. The list is available at https://github.com/S-P-2137/data
+
+   - requires env var: GIT_DRIVE_REPO_URL=https://github.com/S-P-2137???
+   - it also requires to be logged in [github](
+   https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git?platform=linux)
