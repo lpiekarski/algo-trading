@@ -186,3 +186,6 @@ Every pull request should contain appropriate tests for the changes and all the 
 
 ## Implementing New Strategy
 TODO
+
+## Preprocessor module 
+ `atf preprocess --datapath "datasets/H1.zip" preporcessor/steps/config_template.yaml`  
