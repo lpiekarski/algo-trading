@@ -18,6 +18,7 @@ def hmm_predict(df: pd.DataFrame):
     best_score = best_model = None
     n_fits = 50  # 50
     np.random.seed(2137)
+    # TODO: Parametrize and use more efficient algorithm than grid search (maybe optuna)
     for n in range(15, 121, 15):  # (15, 121, 15)
         for n_components in range(3, 10):  # (2,10)
             for idx in range(n_fits):
