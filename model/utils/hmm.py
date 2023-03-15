@@ -9,7 +9,7 @@ def hmm_predict(df: pd.DataFrame):
     df['Time'] = df.index
     time = df['Time']
     time.reset_index()
-    HMM = np.stack((df['Close'],
+    hmm_data = np.stack((df['Close'],
                     df['Volume']),
                    axis=1)
 
