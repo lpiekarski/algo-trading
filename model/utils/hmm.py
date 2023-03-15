@@ -24,7 +24,7 @@ def hmm_predict(df: pd.DataFrame):
                 model_hmm = hmm.GaussianHMM(
                     n_components=n_components, random_state=idx,
                     init_params='se', n_iter=n)  # some upgrades here needed
-                model_hmm.fit(HMM)
+                model_hmm.fit(hmm_data)
                 score = model_hmm.score(HMM)
                 if best_score is None or score > best_score:
                     best_model = model_hmm
