@@ -33,7 +33,7 @@ def hmm_predict(df: pd.DataFrame):
     print(f'Generated score: \nBest score:      {best_score}')
     # use the Viterbi algorithm to predict the most likely sequence of states
     # probabilities of each state and merge with df
-    predict_proba = best_model.predict_proba(HMM)
+    predict_proba = best_model.predict_proba(hmm_data)
     pred = pd.DataFrame(predict_proba)
 
     time = time.reset_index(drop=True)
