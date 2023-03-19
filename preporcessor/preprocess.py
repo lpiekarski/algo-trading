@@ -16,6 +16,7 @@ def preprocess_group():
 @preprocess_group.command()
 @click.argument("config_path")
 @click.option("--datapath", "-dp", help="Drivepath to the dataset file to be preprocessed")
+@click.option("--savepath", "-sp", help="Drivepath to which the data will be saved")
 @execution_flow(
     read_config,
     preprocess_data,

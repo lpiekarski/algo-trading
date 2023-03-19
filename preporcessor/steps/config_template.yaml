@@ -10,6 +10,9 @@ functions:
     file: hmm
     name: list_hmm
 
+save: 
+  savepath: path/to/file
+
 flow:
   - func1
   - func2
