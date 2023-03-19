@@ -119,6 +119,17 @@ def set_env_from_file(filename: str) -> dict:
     """
     return Envfile.parse_from_file(filename).execute()
 
+def set_env_from_options(arguments: tuple) -> dict: 
+    """Set environmetnal variables from cli command options."""
+    result = {}
+    for entry in arguments:
+        entry_split = entry.split("=", 1)
+        if len(entry_split) != 2:
+            raise ArgumentError(f"Invalid argument '{entry}'")
+        var, value = entry_split
+        os.environ[var] = value
+        result[var] = value
+    return result
 
 def initialize_default_env() -> dict:
     """Set environmental variables from DEFAULT_ENV to their values."""
@@ -131,6 +142,13 @@ def initialize_default_env() -> dict:
         set_env_from_file(envfile)
     return result
 
+def initialize_env(arguments: tuple, filename: str) -> dict: 
+    """Initialize environment with default values, command options or envfile"""
+    result = initialize_default_env()
+    if filename is not None: 
+        result |= set_env_from_file(filename)
+    result |= set_env_from_options(arguments)
+    return result
 
 class TempEnv:
     """
