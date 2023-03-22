@@ -32,7 +32,7 @@ setup(
         "pytest==7.2.0",
         "torch==1.13.1",
         "lightgbm==3.3.3",
-        "yfinance==0.2.3",
+        "yfinance==0.2.13",
         "pandas-ta==0.3.14b0",
         "split-file-reader==0.1.0",
         "autopep8==2.0.1",
